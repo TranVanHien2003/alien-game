@@ -30,7 +30,8 @@ var _repath := 0.0
 var _base_tint := Color.WHITE
 
 @onready var body: Sprite2D = $Body
-@onready var agent: NavigationAgent2D = $Agent
+## Tìm đường A* (gán từ MissionLevel) + gỡ kẹt
+var mover := PathFollower.new()
 
 
 var _damage_mult := 1.0
@@ -56,7 +57,7 @@ func setup(id: String, difficulty: float = 1.0) -> void:
 	$Body.scale = Vector2.ONE * float(data.get("sprite_scale", 1.0))
 	_base_tint = Color(data.get("tint", "#FFFFFF"))
 	$Body.modulate = _base_tint
-	$Agent.radius = _radius
+
 	_attack_timer = randf() * float(data.get("fire_interval", 1.0))
 
 
@@ -97,13 +98,9 @@ func _physics_process(delta: float) -> void:
 func _chase_direction(delta: float, to_target: Vector2, sees: bool) -> Vector2:
 	if sees:
 		return to_target.normalized()
-	_repath -= delta
-	if _repath <= 0.0:
-		_repath = 0.4
-		agent.target_position = target.global_position
-	if agent.is_navigation_finished():
-		return Vector2.ZERO
-	return (agent.get_next_path_position() - global_position).normalized()
+	mover.arrive_radius = _radius + 16.0
+	mover.set_goal(global_position, target.global_position)
+	return mover.next_direction(global_position, delta)
 
 
 func _face(dir: Vector2) -> void:

@@ -30,6 +30,7 @@ var gen: LevelGenerator
 var map: LevelMap
 var camera: Camera2D
 var controller: SquadController
+var pathgrid: PathGrid
 var autopilot: AutoPilot
 var exit_zone: ExitZone
 var units: Array = []
@@ -76,6 +77,8 @@ func _ready() -> void:
 	add_child(map)
 	move_child(map, 0)
 	map.build(gen, params, rng, world)
+	pathgrid = PathGrid.new()
+	pathgrid.setup(gen, map.cell_size)
 
 	camera = Camera2D.new()
 	camera.position_smoothing_enabled = true
@@ -231,6 +234,7 @@ func _spawn_resource_nodes() -> void:
 			node.setup(node_id)
 			node.depleted.connect(_on_node_depleted)
 			world.add_child(node)
+			pathgrid.set_obstacle(node.position, true)
 
 
 ## Quái đứng theo bầy (levels[].pack_size) tại các điểm khám phá, tránh xa bãi đáp.
@@ -252,6 +256,7 @@ func spawn_enemy(enemy_id: String, pos: Vector2) -> Enemy:
 	enemy.position = pos
 	world.add_child(enemy)
 	enemy.setup(enemy_id, difficulty)
+	enemy.mover.grid = pathgrid
 	enemy.died.connect(_on_enemy_died)
 	enemy.summon_requested.connect(func(id, p): spawn_enemy(id, p))
 	return enemy
@@ -371,6 +376,7 @@ func _on_enemy_died(enemy: Enemy) -> void:
 
 
 func _on_node_depleted(node: ResourceNode, by: Node) -> void:
+	pathgrid.set_obstacle(node.global_position, false)
 	_drop_loot(Loot.roll_drops(rng, node.data.get("drops", {})), node.global_position)
 	if node.data.has("loot"):
 		_drop_loot(Loot.roll(rng, node.data.loot), node.global_position)

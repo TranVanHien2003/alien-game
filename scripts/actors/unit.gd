@@ -53,7 +53,8 @@ var _role_color := Color.WHITE
 @onready var feet: AnimatedSprite2D = $Feet
 @onready var muzzle: Sprite2D = $Body/Muzzle
 @onready var sight_light: PointLight2D = $Sight
-@onready var agent: NavigationAgent2D = $Agent
+## Tìm đường A* + gỡ kẹt (PathGrid của màn)
+var mover := PathFollower.new()
 
 
 func setup(id: String, lvl: Node, hazards_protected: Array) -> void:
@@ -79,6 +80,7 @@ func setup(id: String, lvl: Node, hazards_protected: Array) -> void:
 	feet.play("idle")
 	sight_light.texture_scale = float(stats.sight_radius) / 128.0
 	_think = randf() * 0.3
+	mover.grid = lvl.pathgrid if lvl and lvl.get("pathgrid") else null
 
 
 ## Tính lại chỉ số (sau kỳ ngộ / tài năng mới), giữ tỉ lệ máu.
@@ -121,16 +123,16 @@ func command(new_order: Dictionary, manual: bool = true) -> void:
 	_enemy = null
 	match order.type:
 		"move", "evac", "advance":
-			agent.target_position = order.pos
+			mover.set_goal(global_position, order.pos, true)
 		_:
 			if is_instance_valid(order.get("target")):
-				agent.target_position = order.target.global_position
+				mover.set_goal(global_position, order.target.global_position, true)
 
 
 ## Dừng theo lệnh chỉ huy: đứng yên 8 giây (lệnh thủ công) rồi mới quay lại tự động.
 func stop() -> void:
 	order = {"type": "idle", "manual": true, "until": Time.get_ticks_msec() + 8000}
-	agent.target_position = global_position
+	mover.clear()
 
 
 # --- Vòng lặp ------------------------------------------------------------------------
@@ -160,19 +162,16 @@ func _physics_process(delta: float) -> void:
 	var work_done := false
 	match order.type:
 		"move", "evac":
-			if agent.is_navigation_finished():
-				if order.type == "move":
-					order = {"type": "idle"}
-			else:
-				move_to = agent.get_next_path_position()
+			move_to = _follow(order.pos, delta)
+			if move_to == Vector2.INF and order.type == "move":
+				order = {"type": "idle"}
 		"advance":
 			# Tiến công: đi tới điểm, gặp quái trong tầm bắn thì dừng lại giao chiến
 			var engaged := is_instance_valid(_enemy) and global_position.distance_to(_enemy.global_position) <= weapon_range() * 0.9
 			if not engaged:
-				if agent.is_navigation_finished():
+				move_to = _follow(order.pos, delta)
+				if move_to == Vector2.INF:
 					order = {"type": "idle"}
-				else:
-					move_to = agent.get_next_path_position()
 		"attack":
 			if not is_instance_valid(order.target) or order.target.hp <= 0.0:
 				order = {"type": "idle"}
@@ -201,6 +200,7 @@ func _physics_process(delta: float) -> void:
 		velocity = (move_to - global_position).normalized() * float(stats.move_speed)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, 1200.0 * delta)
+	velocity += _separation()
 	move_and_slide()
 	counters.distance += velocity.length() * delta
 
@@ -243,10 +243,29 @@ func _tick(delta: float) -> void:
 	body.modulate = tint
 
 
+## Điểm cần hướng tới để đi về goal theo đường A*; Vector2.INF nếu đã tới.
+func _follow(goal: Vector2, delta: float) -> Vector2:
+	mover.set_goal(global_position, goal)
+	var dir := mover.next_direction(global_position, delta)
+	return Vector2.INF if dir == Vector2.ZERO else global_position + dir * 64.0
+
+
 func _path_to(pos: Vector2) -> Vector2:
-	if agent.target_position.distance_squared_to(pos) > 900.0:
-		agent.target_position = pos
-	return agent.get_next_path_position() if not agent.is_navigation_finished() else pos
+	var p := _follow(pos, get_physics_process_delta_time())
+	return p if p != Vector2.INF else pos
+
+
+## Đẩy nhẹ các thành viên tách nhau ra để không đứng chồng / chặn nhau ở hành lang.
+func _separation() -> Vector2:
+	var push := Vector2.ZERO
+	for other in get_tree().get_nodes_in_group("squad_active"):
+		if other == self:
+			continue
+		var d: Vector2 = global_position - other.global_position
+		var dist := d.length()
+		if dist < 34.0 and dist > 0.01:
+			push += d / dist * (34.0 - dist) * 5.0
+	return push
 
 
 func _face(dir: Vector2) -> void:

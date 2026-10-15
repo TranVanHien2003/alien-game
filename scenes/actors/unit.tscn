@@ -32,8 +32,3 @@ color = Color(1, 0.96, 0.9, 1)
 energy = 0.35
 texture = ExtResource("4")
 texture_scale = 3.0
-
-[node name="Agent" type="NavigationAgent2D" parent="."]
-path_desired_distance = 20.0
-target_desired_distance = 16.0
-radius = 16.0

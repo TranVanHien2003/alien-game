@@ -15,7 +15,3 @@ script = ExtResource("1")
 shape = SubResource("shape")
 
 [node name="Body" type="Sprite2D" parent="."]
-
-[node name="Agent" type="NavigationAgent2D" parent="."]
-path_desired_distance = 24.0
-target_desired_distance = 24.0

@@ -22,3 +22,4 @@
 - `Roles.role_of()` trả về vai chính (`crew[id].active_role`); dữ liệu nhân vật `role` chỉ là vai ban đầu.
 - Sự kiện cần người chơi quyết định ngoài data events (lễ trưởng thành, kỳ ngộ) xếp vào `Game.special_queue`, hub phát bằng StoryPlayer.
 - AutoPilot (`scripts/mission/auto_pilot.gd`) chỉ ra lệnh qua `Unit.command(order, false)`; lệnh của người chơi luôn `manual = true` và không bị AutoPilot ghi đè cho tới khi xong.
+- Di chuyển dùng `PathGrid` (AStarGrid2D theo ô, đi qua tâm ô, không cắt góc, ô sát tường đắt hơn) + `PathFollower` (gỡ kẹt). Không dùng NavigationAgent2D. Test: `tests/test_movement.gd`.
