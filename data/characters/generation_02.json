@@ -3,7 +3,6 @@
 		"id": "an",
 		"name": "Trần An",
 		"title": "Đứa trẻ đầu tiên của con tàu",
-		"role": "scout",
 		"generation": 2,
 		"birth_year": 3,
 		"traits": [
@@ -13,6 +12,17 @@
 		"skills": {
 			"science": 1
 		},
-		"sprite": "survivor"
+		"sprite": "survivor",
+		"portrait": "vs_women26",
+		"attributes": {
+			"strength": 8,
+			"agility": 10,
+			"intellect": 12,
+			"endurance": 9,
+			"perception": 12,
+			"willpower": 10
+		},
+		"gender": "female",
+		"child": true
 	}
 ]

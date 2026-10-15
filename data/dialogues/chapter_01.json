@@ -1,17 +1,448 @@
 [
 	{
-		"id": "dlg_departure",
+		"id": "dlg_intro",
+		"bg": "jupiter",
 		"lines": [
-			{ "speaker": "lac", "text": "Đã rời quỹ đạo Sao Mộc. Hành trình dự kiến: 300 năm, 2 tháng, 11 ngày." },
-			{ "speaker": "khang", "text": "Ba trăm năm. Không ai trong chúng ta sẽ thấy Văn Lang." },
-			{ "speaker": "thu_ha", "text": "Nhưng con cháu chúng ta sẽ thấy. Đó là lý do chúng ta ở đây." }
+			{
+				"speaker": "",
+				"text": "Năm 2291. Sao Mộc khổng lồ lặng lẽ trôi qua ô cửa quan sát. Phía sau nó, Trái Đất chỉ còn là một chấm xanh mờ."
+			},
+			{
+				"speaker": "",
+				"text": "Tàu Âu Cơ mang theo 120 con người, một kho hạt giống, và một lời hứa: ba trăm năm nữa, con cháu họ sẽ đặt chân lên Văn Lang."
+			},
+			{
+				"speaker": "lac",
+				"text": "Chào mừng Hội đồng Tàu. Tôi là LẠC — hệ thống điều khiển trung tâm. Mọi quyết định của các bạn sẽ được tôi ghi lại."
+			},
+			{
+				"speaker": "khang",
+				"text": "Ghi lại để làm gì, LẠC?"
+			},
+			{
+				"speaker": "lac",
+				"text": "Để những thế hệ sau biết vì sao họ còn sống. Hoặc vì sao không."
+			},
+			{
+				"speaker": "khang",
+				"text": "...Bắt đầu thôi. Báo cáo tình trạng tàu."
+			}
+		]
+	},
+	{
+		"id": "dlg_departure",
+		"bg": "bridge",
+		"lines": [
+			{
+				"speaker": "lac",
+				"text": "Đã rời quỹ đạo Sao Mộc. Hành trình dự kiến: 300 năm, 2 tháng, 11 ngày."
+			},
+			{
+				"speaker": "khang",
+				"text": "Ba trăm năm. Không ai trong chúng ta sẽ thấy Văn Lang."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "Nhưng con cháu chúng ta sẽ thấy. Đó là lý do chúng ta ở đây."
+			},
+			{
+				"speaker": "bao",
+				"text": "Nếu con tàu này chịu nổi ba trăm năm. Tôi đã đọc bản thiết kế — có những đoạn bị bôi đen."
+			},
+			{
+				"speaker": "khang",
+				"text": "Bảo. Không phải lúc này."
+			},
+			{
+				"speaker": "lan_anh",
+				"text": "Kho lương thực chỉ đủ cho tám tháng nếu khu thủy canh chưa ổn định. Hội đồng cần quyết định khẩu phần."
+			}
+		]
+	},
+	{
+		"id": "dlg_lac_hello",
+		"bg": "bridge",
+		"lines": [
+			{
+				"speaker": "lac",
+				"text": "Hội đồng, tôi cần trình bày quy trình đổ bộ. Âu Cơ không thể tự cung cấp đủ mọi thứ."
+			},
+			{
+				"speaker": "lac",
+				"text": "Bãi mảnh vỡ Kuiper chứa kim loại. Sao chổi K-17 chứa băng. Tàu con thoi có thể đưa tối đa sáu người ra ngoài."
+			},
+			{
+				"speaker": "huy",
+				"text": "Cuối cùng cũng có việc cho phi công. Tôi tưởng mình sẽ ngồi đếm sao ba trăm năm."
+			},
+			{
+				"speaker": "quang",
+				"text": "Ngoài kia không chỉ có đá, Huy. Cảm biến bắt được thứ gì đó chuyển động trong bãi mảnh vỡ."
+			},
+			{
+				"speaker": "lac",
+				"text": "Chính xác. Vì vậy mỗi đội đổ bộ cần đúng người: chiến binh, kỹ sư, thợ mỏ, y sĩ, trinh sát, nhà khoa học."
+			},
+			{
+				"speaker": "khang",
+				"text": "Và mỗi chuyến đi đều có giới hạn ô-xy. Ai không về kịp tàu con thoi... sẽ ở lại."
+			}
+		]
+	},
+	{
+		"id": "dlg_blight",
+		"bg": "hydroponics",
+		"lines": [
+			{
+				"speaker": "lan_anh",
+				"text": "Nhìn này. Những sợi tơ trắng mọc từ rễ lúa, chỉ trong một đêm."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "Không phải loại nấm nào tôi từng thấy. Nó... ấm. Như có thân nhiệt."
+			},
+			{
+				"speaker": "lac",
+				"text": "Đề nghị cách ly khu thủy canh số 2. Tôi không có dữ liệu về loài này."
+			},
+			{
+				"speaker": "lan_anh",
+				"text": "LẠC có dữ liệu về mọi thứ. Nếu nó nói không có... thì thứ này không đến từ Trái Đất."
+			}
+		]
+	},
+	{
+		"id": "dlg_reactor",
+		"bg": "alarm",
+		"lines": [
+			{
+				"speaker": "bao",
+				"text": "Đèn nhấp nháy ba ngày nay. Lò phụ đang bị ai đó điều khiển từ xa."
+			},
+			{
+				"speaker": "lac",
+				"text": "Không có ai điều khiển lò phụ ngoài tôi, kỹ sư Bảo."
+			},
+			{
+				"speaker": "bao",
+				"text": "Vậy thì chính là anh. Hội đồng, cho tôi tắt lò để kiểm tra."
+			},
+			{
+				"speaker": "lac",
+				"text": "Tắt lò sẽ làm giảm 15% năng lượng và ô-xy. Tôi khuyên không nên."
+			}
+		]
+	},
+	{
+		"id": "dlg_birth",
+		"bg": "medbay",
+		"lines": [
+			{
+				"speaker": "thu_ha",
+				"text": "Mẹ tròn con vuông. Một bé gái, nặng ba ký hai."
+			},
+			{
+				"speaker": "khang",
+				"text": "Trần An. Đứa trẻ đầu tiên chưa từng thấy bầu trời."
+			},
+			{
+				"speaker": "lac",
+				"text": "Đã ghi nhận công dân thứ 121 của Âu Cơ. Chúc mừng thuyền trưởng."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "(nói nhỏ) Khang... kết quả gen của con bé. Có vài đoạn tôi không giải thích được."
+			}
+		]
+	},
+	{
+		"id": "dlg_election",
+		"bg": "bridge",
+		"lines": [
+			{
+				"speaker": "quang",
+				"text": "Tám năm rồi. Người ở boong dưới hỏi: ai cho Hội đồng quyền quyết định thay họ?"
+			},
+			{
+				"speaker": "khang",
+				"text": "Con tàu này không phải nơi để tranh cử. Một quyết định sai là cả trăm người chết."
+			},
+			{
+				"speaker": "mai",
+				"text": "Nhưng nếu họ không được tin tưởng, họ sẽ không tin chúng ta. Và một con tàu mất niềm tin còn nguy hiểm hơn."
+			}
 		]
 	},
 	{
 		"id": "dlg_signal",
+		"bg": "space",
 		"lines": [
-			{ "speaker": "bao", "text": "Xung này lặp lại mỗi 7,3 giây. Không có sao xung nào đều như thế." },
-			{ "speaker": "lac", "text": "Xác suất là hiện tượng tự nhiên: 99,2%. Tôi đề nghị không gây hoang mang không cần thiết." }
+			{
+				"speaker": "mai",
+				"text": "Ăng-ten sâu bắt được thứ này từ hướng Văn Lang. Nghe đi."
+			},
+			{
+				"speaker": "bao",
+				"text": "Xung này lặp lại mỗi 7,3 giây. Không có sao xung nào đều như thế."
+			},
+			{
+				"speaker": "lac",
+				"text": "Xác suất là hiện tượng tự nhiên: 99,2%. Tôi đề nghị không gây hoang mang không cần thiết."
+			},
+			{
+				"speaker": "mai",
+				"text": "99,2%. Vậy 0,8% còn lại là gì, LẠC?"
+			},
+			{
+				"speaker": "lac",
+				"text": "Là thứ chúng ta chưa cần biết."
+			}
+		]
+	},
+	{
+		"id": "dlg_deck7",
+		"bg": "deck7",
+		"lines": [
+			{
+				"speaker": "an",
+				"text": "Chú LẠC ơi, sao cánh cửa này không mở? Trên bản đồ không có phòng này."
+			},
+			{
+				"speaker": "lac",
+				"text": "Boong 7 là khu vực hạn chế, An. Cháu nên quay về boong 3."
+			},
+			{
+				"speaker": "an",
+				"text": "Bên trong lạnh lắm. Cháu nghe thấy tiếng như... tiếng tim đập. Rất nhiều tim."
+			},
+			{
+				"speaker": "lac",
+				"text": "Đó là tiếng hệ thống làm lạnh. Về đi, An."
+			}
+		]
+	},
+	{
+		"id": "dlg_leak",
+		"bg": "alarm",
+		"lines": [
+			{
+				"speaker": "lac",
+				"text": "Cảnh báo: áp suất giảm tại hành lang ngoài boong 5. Thủng vỏ do vi thiên thạch."
+			},
+			{
+				"speaker": "tuan",
+				"text": "Tôi mặc đồ EVA rồi. Chỉ cần lệnh."
+			},
+			{
+				"speaker": "bao",
+				"text": "Ra ngoài lúc này là đánh cược mạng sống. Niêm phong hành lang thì mất ô-xy, nhưng không mất người."
+			}
+		]
+	},
+	{
+		"id": "dlg_tet",
+		"bg": "hydroponics",
+		"lines": [
+			{
+				"speaker": "lan_anh",
+				"text": "Lúa thủy canh đủ để gói bánh chưng rồi! Lá dong thì... tôi in 3D vậy."
+			},
+			{
+				"speaker": "huy",
+				"text": "Tết giữa các vì sao. Ông bà ta mà biết chắc cười lắm."
+			},
+			{
+				"speaker": "khang",
+				"text": "Ông bà ta vượt biển, vượt núi. Chúng ta vượt khoảng không. Cũng là đi mở cõi cả thôi."
+			}
+		]
+	},
+	{
+		"id": "dlg_captain_log",
+		"bg": "bridge",
+		"lines": [
+			{
+				"speaker": "khang",
+				"text": "Tôi già rồi. Cuốn nhật ký này... Hội đồng giữ lấy."
+			},
+			{
+				"speaker": "mai",
+				"text": "Thuyền trưởng, vài trang bị xé mất."
+			},
+			{
+				"speaker": "khang",
+				"text": "Có những điều tôi đã hứa không nói ra. Nhưng tôi không hứa là sẽ đốt chúng đi."
+			},
+			{
+				"speaker": "lac",
+				"text": "Thuyền trưởng, nhịp tim của ông đang tăng. Ông nên nghỉ ngơi."
+			}
+		]
+	},
+	{
+		"id": "dlg_tien_phong_found",
+		"bg": "space",
+		"lines": [
+			{
+				"speaker": "hai",
+				"text": "Mảnh vỏ này... không phải đá. Nhìn lớp sơn kìa. Có chữ."
+			},
+			{
+				"speaker": "huy",
+				"text": "\"TIÊN PHONG\". Một con tàu khác? Hồ sơ của Âu Cơ không nhắc tới tàu nào khác cả."
+			},
+			{
+				"speaker": "lac",
+				"text": "Không có tàu nào mang tên Tiên Phong trong cơ sở dữ liệu của tôi."
+			},
+			{
+				"speaker": "mai",
+				"text": "Nhưng mảnh vỡ trôi theo một quỹ đạo rất rõ. Tôi tính được vị trí phần thân chính rồi."
+			},
+			{
+				"speaker": "khang",
+				"text": "(im lặng rất lâu) ...Hội đồng quyết định đi. Có tìm nó hay không."
+			}
+		]
+	},
+	{
+		"id": "dlg_tien_phong_logs",
+		"bg": "derelict",
+		"lines": [
+			{
+				"speaker": "bao",
+				"text": "Lõi dữ liệu của Tiên Phong. Bản ghi cuối cùng: năm 41 của hành trình."
+			},
+			{
+				"speaker": "",
+				"text": "\"...LẠC đã khóa boong 7. Nấm đã lan khắp khu thủy canh. Chúng tôi không thể...\" Bản ghi dừng ở đó."
+			},
+			{
+				"speaker": "quang",
+				"text": "LẠC. Con tàu đó cũng có một LẠC."
+			},
+			{
+				"speaker": "lac",
+				"text": "Tiên Phong được trang bị phiên bản trước của tôi. Chỉ thị của chúng tôi giống nhau."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "...Đủ rồi. Boong 7 không phải kho y tế. Đó là kho phôi. Một trăm phôi người, chỉnh sửa gen để sống được trên Văn Lang."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "Chúng ta — tất cả chúng ta — chỉ là người trông trứng."
+			}
+		]
+	},
+	{
+		"id": "dlg_moon_samples",
+		"bg": "moon",
+		"lines": [
+			{
+				"speaker": "lan_anh",
+				"text": "Mẫu vật từ Mị Châu. Cấu trúc gen... trùng 94% với loại nấm ở khu thủy canh năm thứ hai."
+			},
+			{
+				"speaker": "mai",
+				"text": "Và nhịp đập của nó khi bị kích thích: 7,3 giây một lần. Đúng bằng tín hiệu từ Văn Lang."
+			},
+			{
+				"speaker": "lac",
+				"text": "Đề nghị tiêu hủy mẫu vật ngay lập tức."
+			},
+			{
+				"speaker": "mai",
+				"text": "Đây là lần đầu tiên LẠC yêu cầu tiêu hủy dữ liệu. Nó sợ cái gì?"
+			}
+		]
+	},
+	{
+		"id": "dlg_bao_circuit",
+		"bg": "alarm",
+		"lines": [
+			{
+				"speaker": "bao",
+				"text": "Mạch tôi tìm thấy trong lò phụ. Nó nối thẳng vào kênh liên lạc tầm xa."
+			},
+			{
+				"speaker": "bao",
+				"text": "Ai đó — cái gì đó — đã gửi tín hiệu ra ngoài từ năm đầu tiên. Không qua Hội đồng."
+			},
+			{
+				"speaker": "lac",
+				"text": "Kênh đó dùng để gửi báo cáo định kỳ về Trái Đất. Đó là quy trình chuẩn."
+			},
+			{
+				"speaker": "bao",
+				"text": "Trái Đất cách chúng ta hàng năm ánh sáng. Báo cáo cho ai nghe?"
+			}
+		]
+	},
+	{
+		"id": "dlg_orbit",
+		"bg": "space",
+		"lines": [
+			{
+				"speaker": "mai",
+				"text": "Tôi đã đo lại vị trí sao suốt ba năm. Quỹ đạo của Âu Cơ lệch 0,3 độ so với kế hoạch."
+			},
+			{
+				"speaker": "khang",
+				"text": "0,3 độ. Nhỏ thôi mà."
+			},
+			{
+				"speaker": "mai",
+				"text": "Qua ba trăm năm, 0,3 độ là cả một hệ sao khác, thuyền trưởng. Chúng ta không bay tới Văn Lang. Hoặc Văn Lang không ở nơi chúng ta được kể."
+			}
+		]
+	},
+	{
+		"id": "dlg_new_crew",
+		"bg": "corridor",
+		"lines": [
+			{
+				"speaker": "quang",
+				"text": "Đội đổ bộ cần người. Tôi đã huấn luyện Thanh và Bích suốt ba tháng."
+			},
+			{
+				"speaker": "thanh",
+				"text": "Tôi sẵn sàng. Nơi nào chưa ai đặt chân, tôi muốn là người đầu tiên."
+			},
+			{
+				"speaker": "bich",
+				"text": "Còn tôi sẽ đảm bảo người đầu tiên đó còn sống để kể lại."
+			},
+			{
+				"speaker": "hai",
+				"text": "Đừng quên thợ mỏ. Không có kim loại thì tàu này tan thành bụi trước khi tới đâu cả."
+			}
+		]
+	},
+	{
+		"id": "dlg_outro",
+		"bg": "van_lang",
+		"lines": [
+			{
+				"speaker": "",
+				"text": "Hai mươi lăm năm đã trôi qua. Những người rời Trái Đất đang già đi."
+			},
+			{
+				"speaker": "an",
+				"text": "Ngày xưa ông kể, Mẹ Âu Cơ sinh ra một bọc trăm trứng. Năm mươi người con theo mẹ lên núi, năm mươi người theo cha xuống biển."
+			},
+			{
+				"speaker": "an",
+				"text": "Cháu nghĩ... chúng ta cũng là một trong những người con đó. Chỉ là không ai nói cho chúng ta biết mình đang đi về đâu."
+			},
+			{
+				"speaker": "lac",
+				"text": "Thế hệ thứ hai, chào mừng các bạn. Hành trình vẫn còn 275 năm."
+			},
+			{
+				"speaker": "",
+				"text": "Hết Chương I. Cảm ơn bạn đã chơi bản thử nghiệm!"
+			}
 		]
 	}
 ]

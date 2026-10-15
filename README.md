@@ -5,13 +5,13 @@ Một con tàu chở 120 người bay 300 năm đến hành tinh Văn Lang. Bạ
 (Chiến binh, Kỹ sư, Thợ mỏ, Y sĩ, Trinh sát, Nhà khoa học), trang bị vũ khí/công cụ, rồi ra lệnh cho họ trên những bản đồ lớn:
 **khám phá, chiến đấu với quái và boss, khai thác tài nguyên, giải cứu đồng đội — và rút lui trước khi hết giờ**.
 
-**Điều khiển:** chuột trái chọn/kéo khung · chuột phải ra lệnh theo ngữ cảnh · 1–6 chọn người · Q/E/R kỹ năng · Z/X vật phẩm · B rút lui · WASD/mép màn hình camera · minimap.
+**Điều khiển:** chuột trái chọn/kéo khung · chuột phải ra lệnh theo ngữ cảnh · 1–6 chọn người · thanh lệnh: đội hình (Nêm/Ngang/Dọc/Tản), Tiến, Xung kích, Giữ, Lùi, Dừng, Rút lui · Q/E/R kỹ năng · Z/X vật phẩm · tốc độ ×½/×1/×2 · WASD/mép màn hình/lăn chuột camera · minimap.
 
 > 🎮 Chơi thử: https://tranvanhien2003.github.io/alien-game/ (sau khi bật GitHub Pages, xem bên dưới)
 
-| Mị Châu | Xác tàu Tiên Phong | Kho & trang bị |
+| Dẫn truyện | Bản đồ khai phá Mị Châu | Hub phi hành đoàn |
 |---|---|---|
-| ![](design/screenshots/moon.png) | ![](design/screenshots/derelict.png) | ![](design/screenshots/hub_inventory.png) |
+| ![](design/screenshots/story.png) | ![](design/screenshots/moon.png) | ![](design/screenshots/hub_inventory.png) |
 
 ## Bắt đầu nhanh
 
@@ -51,10 +51,18 @@ tools/           setup.sh, godot.sh, import_assets.py, build_tileset.gd, screens
 design/          story_bible.md (bí mật cốt truyện), game_design.md
 ```
 
+## Dẫn truyện
+
+- Sự kiện cốt truyện phát kiểu visual novel (`scripts/ui/story_player.gd`): nền minh họa, chân dung hai bên, chữ hiện dần, Bỏ qua / Tự động / Nhật ký.
+- Mọi lời thoại, lựa chọn và sự kiện của tàu được lưu vào **Nhật ký** (`scripts/ui/backlog.gd`, lưu trong save).
+- Nội dung: `data/dialogues/*.json` (`bg`, `lines[{speaker, text, side?, bg?}]`) và `data/events/*.json` (`dialogue`, `background`).
+
 ## Đồ họa & bản đồ
 
-- **Asset:** 100% CC0 từ [Kenney](https://kenney.nl) (Topdown Shooter, Sci-Fi RTS, Space Shooter, Tower Defense, Generic Items, Monster Builder, Particle Pack, Sci-Fi/Impact Sounds). Danh sách đầy đủ: [assets/CREDITS.md](assets/CREDITS.md).
-- **Bản đồ:** Godot `TileMapLayer` + `TileSet` có va chạm, bóng đổ (occluder) và lưới tìm đường; tường autotile 47 biến thể theo 8 ô lân cận.
+- **Asset:** chủ yếu CC0 từ [Kenney](https://kenney.nl) (Topdown Shooter, Sci-Fi RTS, Space Shooter, Tower Defense, Generic Items, Monster Builder, Particle Pack, Sci-Fi/Impact Sounds). Danh sách đầy đủ: [assets/CREDITS.md](assets/CREDITS.md).
+- **Bản đồ ngoài trời** (sao chổi, mặt trăng, bãi mảnh vỡ): địa hình mở sinh từ noise (`TerrainGenerator`) — đồi, vách đá, rừng, suối/khe băng, đường mòn nối các điểm khám phá — vẽ bằng shader `shaders/terrain.gdshader` (đổ bóng đồi, texture chi tiết, nước gợn).
+- **Bản đồ trong tàu** (Âu Cơ, xác tàu): `TileMapLayer` autotile 47 biến thể, va chạm, bóng đổ, lưới tìm đường.
+- Chân dung: VegaStrike Portraits + Justin Nichol (CC-BY-SA 3.0); sprite đội có hoạt ảnh: Top Down Survivor (CC-BY 3.0), đổi màu theo vai trò; nền nội thất tàu: CC0.
 - **2.5D:** tường có mặt trước, Y-sort giữa nhân vật / tường / đồ vật, ánh sáng 2D + bóng đổ, đèn pin hình nón theo hướng ngắm.
 - **5 biome:** tàu Âu Cơ, xác tàu Tiên Phong, bãi mảnh vỡ, sao chổi băng, mặt trăng Mị Châu (chọn qua `data/levels/*.tileset`).
 - Muốn đổi asset: sửa bảng ánh xạ trong `tools/import_assets.py` rồi `make assets`. Asset đã sinh được commit sẵn nên CI không cần tải.

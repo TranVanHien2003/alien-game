@@ -1,0 +1,521 @@
+[
+	{
+		"id": "sol_drill",
+		"role": "soldier",
+		"name": "Huấn luyện tác chiến",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"max_hp": 20
+		},
+		"attributes": {
+			"endurance": 3
+		}
+	},
+	{
+		"id": "sol_marksman",
+		"role": "soldier",
+		"name": "Thiện xạ",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"crit_chance": 0.05
+		},
+		"attributes": {
+			"perception": 2
+		}
+	},
+	{
+		"id": "sol_bulwark",
+		"role": "soldier",
+		"name": "Tường thép",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sol_drill"
+		],
+		"modifiers": {
+			"armor": 12
+		}
+	},
+	{
+		"id": "sol_rampage",
+		"role": "soldier",
+		"name": "Cuồng nộ",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sol_marksman"
+		],
+		"modifiers": {
+			"damage_mult": 0.15,
+			"fire_rate_mult": 0.1
+		}
+	},
+	{
+		"id": "sol_commander",
+		"role": "soldier",
+		"name": "Chỉ huy chiến trường",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"sol_bulwark",
+			"sol_rampage"
+		],
+		"modifiers": {
+			"damage_mult": 0.1,
+			"armor": 8
+		},
+		"attributes": {
+			"willpower": 4
+		},
+		"grants_ability": "suppress"
+	},
+	{
+		"id": "eng_tinker",
+		"role": "engineer",
+		"name": "Thợ máy lành nghề",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"interact_speed": 0.3
+		},
+		"attributes": {
+			"intellect": 2
+		}
+	},
+	{
+		"id": "eng_plating",
+		"role": "engineer",
+		"name": "Gia cố giáp",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"armor": 8
+		}
+	},
+	{
+		"id": "eng_turret_mk2",
+		"role": "engineer",
+		"name": "Tháp pháo Mk-II",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"eng_tinker"
+		],
+		"modifiers": {
+			"max_energy": 20
+		}
+	},
+	{
+		"id": "eng_overclock",
+		"role": "engineer",
+		"name": "Ép xung vũ khí",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"eng_plating"
+		],
+		"modifiers": {
+			"fire_rate_mult": 0.2
+		}
+	},
+	{
+		"id": "eng_master",
+		"role": "engineer",
+		"name": "Kỹ sư trưởng",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"eng_turret_mk2",
+			"eng_overclock"
+		],
+		"modifiers": {
+			"interact_speed": 0.5,
+			"damage_mult": 0.1
+		},
+		"attributes": {
+			"intellect": 4
+		}
+	},
+	{
+		"id": "min_strong",
+		"role": "miner",
+		"name": "Tay khoan",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"mining_power": 0.5
+		},
+		"attributes": {
+			"strength": 2
+		}
+	},
+	{
+		"id": "min_tough",
+		"role": "miner",
+		"name": "Da sắt",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"max_hp": 30
+		},
+		"attributes": {
+			"endurance": 2
+		}
+	},
+	{
+		"id": "min_vein",
+		"role": "miner",
+		"name": "Mắt quặng",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"min_strong"
+		],
+		"modifiers": {
+			"mining_power": 0.8,
+			"pickup_radius": 40
+		},
+		"attributes": {
+			"perception": 2
+		}
+	},
+	{
+		"id": "min_brawler",
+		"role": "miner",
+		"name": "Đấm đá",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"min_tough"
+		],
+		"modifiers": {
+			"armor": 10,
+			"damage_mult": 0.1
+		}
+	},
+	{
+		"id": "min_quake",
+		"role": "miner",
+		"name": "Địa chấn",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"min_vein",
+			"min_brawler"
+		],
+		"modifiers": {
+			"mining_power": 1.0
+		},
+		"attributes": {
+			"strength": 4
+		},
+		"grants_ability": "seismic_charge"
+	},
+	{
+		"id": "med_triage",
+		"role": "medic",
+		"name": "Phân loại thương binh",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"revive_speed": 0.4
+		},
+		"attributes": {
+			"willpower": 2
+		}
+	},
+	{
+		"id": "med_care",
+		"role": "medic",
+		"name": "Chăm sóc tận tâm",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"heal_power": 0.3
+		}
+	},
+	{
+		"id": "med_stim",
+		"role": "medic",
+		"name": "Thuốc kích thích",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"med_triage"
+		],
+		"modifiers": {
+			"max_energy": 25,
+			"energy_regen": 2
+		}
+	},
+	{
+		"id": "med_shield",
+		"role": "medic",
+		"name": "Lá chắn sinh học",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"med_care"
+		],
+		"modifiers": {
+			"armor": 10,
+			"max_hp": 20
+		}
+	},
+	{
+		"id": "med_angel",
+		"role": "medic",
+		"name": "Thiên thần hộ mệnh",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"med_stim",
+			"med_shield"
+		],
+		"modifiers": {
+			"heal_power": 0.6,
+			"revive_speed": 0.6
+		},
+		"attributes": {
+			"willpower": 4
+		},
+		"grants_ability": "heal_pulse"
+	},
+	{
+		"id": "sco_runner",
+		"role": "scout",
+		"name": "Chân chạy",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"move_speed": 30
+		},
+		"attributes": {
+			"agility": 2
+		}
+	},
+	{
+		"id": "sco_eagle",
+		"role": "scout",
+		"name": "Mắt đại bàng",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"sight_radius": 120
+		},
+		"attributes": {
+			"perception": 2
+		}
+	},
+	{
+		"id": "sco_ghost",
+		"role": "scout",
+		"name": "Bóng ma",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sco_runner"
+		],
+		"modifiers": {
+			"move_speed": 30,
+			"armor": 5
+		}
+	},
+	{
+		"id": "sco_sniper",
+		"role": "scout",
+		"name": "Xạ thủ bắn tỉa",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sco_eagle"
+		],
+		"modifiers": {
+			"crit_chance": 0.1,
+			"crit_mult": 0.3
+		}
+	},
+	{
+		"id": "sco_pathfinder",
+		"role": "scout",
+		"name": "Người mở đường",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"sco_ghost",
+			"sco_sniper"
+		],
+		"modifiers": {
+			"sight_radius": 160,
+			"damage_mult": 0.15
+		},
+		"attributes": {
+			"agility": 4
+		},
+		"grants_ability": "flare"
+	},
+	{
+		"id": "sci_analyst",
+		"role": "scientist",
+		"name": "Nhà phân tích",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"max_energy": 20
+		},
+		"attributes": {
+			"intellect": 2
+		}
+	},
+	{
+		"id": "sci_xeno",
+		"role": "scientist",
+		"name": "Sinh học ngoại giới",
+		"tier": 1,
+		"cost": 1,
+		"requires": [],
+		"modifiers": {
+			"heal_power": 0.2
+		},
+		"grants_ability": "xeno_pheromone"
+	},
+	{
+		"id": "sci_field",
+		"role": "scientist",
+		"name": "Phòng thí nghiệm dã chiến",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sci_analyst"
+		],
+		"modifiers": {
+			"energy_regen": 3
+		}
+	},
+	{
+		"id": "sci_neural",
+		"role": "scientist",
+		"name": "Giao diện thần kinh",
+		"tier": 2,
+		"cost": 2,
+		"requires": [
+			"sci_xeno"
+		],
+		"modifiers": {
+			"crit_chance": 0.06,
+			"fire_rate_mult": 0.1
+		},
+		"attributes": {
+			"perception": 2
+		}
+	},
+	{
+		"id": "sci_oracle",
+		"role": "scientist",
+		"name": "Tiên tri dữ liệu",
+		"tier": 3,
+		"cost": 3,
+		"requires": [
+			"sci_field",
+			"sci_neural"
+		],
+		"modifiers": {
+			"sight_radius": 200,
+			"max_energy": 40
+		},
+		"attributes": {
+			"intellect": 5
+		},
+		"grants_ability": "scan"
+	},
+	{
+		"id": "rare_lac_echo",
+		"role": "",
+		"rare": true,
+		"name": "Tiếng vọng của LẠC",
+		"tier": 4,
+		"cost": 0,
+		"requires": [],
+		"modifiers": {
+			"crit_chance": 0.12,
+			"sight_radius": 150,
+			"max_energy": 40
+		},
+		"attributes": {
+			"intellect": 8,
+			"perception": 6
+		},
+		"grants_ability": "neural_overclock",
+		"description": "Đứa trẻ nghe thấy LẠC trong giấc mơ — và hiểu được nó."
+	},
+	{
+		"id": "rare_van_lang_call",
+		"role": "",
+		"rare": true,
+		"name": "Tiếng gọi Văn Lang",
+		"tier": 4,
+		"cost": 0,
+		"requires": [],
+		"modifiers": {
+			"max_hp": 40,
+			"heal_power": 0.4,
+			"move_speed": 30
+		},
+		"attributes": {
+			"willpower": 8,
+			"endurance": 6
+		},
+		"grants_ability": "field_medic",
+		"description": "Nhịp 7,3 giây vang trong lồng ngực. Cơ thể như được làm ra cho thế giới khác."
+	},
+	{
+		"id": "rare_captain_legacy",
+		"role": "",
+		"rare": true,
+		"name": "Di sản thuyền trưởng",
+		"tier": 4,
+		"cost": 0,
+		"requires": [],
+		"modifiers": {
+			"damage_mult": 0.25,
+			"armor": 15
+		},
+		"attributes": {
+			"strength": 6,
+			"willpower": 8
+		},
+		"grants_ability": "frag_grenade",
+		"description": "Những trang nhật ký bị xé, được trao lại cho đúng người."
+	},
+	{
+		"id": "rare_relic",
+		"role": "",
+		"rare": true,
+		"name": "Dấu ấn cổ vật",
+		"tier": 4,
+		"cost": 0,
+		"requires": [],
+		"modifiers": {
+			"crit_mult": 0.4,
+			"energy_regen": 3
+		},
+		"attributes": {
+			"perception": 5
+		},
+		"grants_ability": "",
+		"description": "Chạm vào cổ vật ngoài hành tinh, một phần ký ức lạ ở lại."
+	}
+]

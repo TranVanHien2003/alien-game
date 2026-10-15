@@ -43,7 +43,12 @@ var evac_left := 0.0
 var wave_index := 0
 var next_wave := 0.0
 var _revealed_until := 0.0
+var game_speed := 1.0
 var _finished := false
+## Người lạ gia nhập trong màn (chờ quyết định thu nhận) & ghi chú kỳ ngộ
+var guests: Array = []
+var relic_texts: Array = []
+var growth_texts: Dictionary = {}
 
 
 func _ready() -> void:
@@ -63,7 +68,8 @@ func _ready() -> void:
 	next_wave = float(waves.get("first", 60))
 	rng.seed = Game.rng.randi()
 
-	gen = LevelGenerator.generate(rng, params)
+	var outdoor: bool = params.get("layout", "interior") == "terrain"
+	gen = TerrainGenerator.generate(rng, params) if outdoor else LevelGenerator.generate(rng, params)
 	world.y_sort_enabled = true
 	map = LevelMap.new()
 	add_child(map)
@@ -73,6 +79,7 @@ func _ready() -> void:
 	camera = Camera2D.new()
 	camera.position_smoothing_enabled = true
 	camera.position_smoothing_speed = 10.0
+	camera.zoom = Vector2.ONE * (0.42 if outdoor else 0.85)
 	add_child(camera)
 
 	_spawn_exit()
@@ -81,6 +88,7 @@ func _ready() -> void:
 	_spawn_enemies()
 	_spawn_hazards()
 	_spawn_caches()
+	_spawn_extras()
 	_spawn_objectives()
 
 	controller = SquadController.new()
@@ -120,19 +128,83 @@ func _spawn_exit() -> void:
 	world.add_child(exit_zone)
 
 
-func _spawn_squad() -> void:
+func _protected_hazards() -> Array:
 	var protected := []
 	for hazard in location.get("hazards", []):
 		if MissionSystem.is_protected(Game, hazard, entry.team):
 			protected.append(hazard)
+	return protected
+
+
+func _spawn_squad() -> void:
 	for i in entry.team.size():
-		var unit: Unit = UNIT.instantiate()
-		unit.position = exit_zone.position + Vector2.from_angle(TAU * i / entry.team.size()) * 70.0
-		world.add_child(unit)
-		unit.setup(entry.team[i], self, protected)
-		unit.downed.connect(func(u): hud.show_message("⚠ %s bị hạ gục! Ra lệnh cứu (chuột phải vào người đó)." % u.display_name()))
-		unit.lost.connect(_on_unit_lost)
-		units.append(unit)
+		_make_unit(entry.team[i], exit_zone.position + Vector2.from_angle(TAU * i / entry.team.size()) * 70.0)
+
+
+func _make_unit(char_id: String, pos: Vector2) -> Unit:
+	var unit: Unit = UNIT.instantiate()
+	unit.position = pos
+	world.add_child(unit)
+	unit.setup(char_id, self, _protected_hazards())
+	# Ngoài trời ban ngày không cần đèn tầm nhìn
+	unit.sight_light.visible = not map.outdoor
+	unit.downed.connect(func(u): hud.show_message("⚠ %s bị hạ gục! Ra lệnh cứu (chuột phải vào người đó)." % u.display_name()))
+	unit.lost.connect(_on_unit_lost)
+	units.append(unit)
+	return unit
+
+
+## Người được cứu / người lạ gia nhập đội ngay trên bản đồ.
+func _join_unit(char_id: String, pos: Vector2, guest: bool) -> void:
+	var unit := _make_unit(char_id, pos)
+	unit.guest = guest
+	unit.hp = unit.stats.max_hp * 0.4
+	if hud.has_method("add_unit_card"):
+		hud.add_unit_card(unit)
+	hud.show_message("%s gia nhập đội! Đưa họ về tàu con thoi." % unit.display_name())
+	Sfx.play("pickup")
+
+
+## Kỳ ngộ (cổ vật) và người sống sót lạ rải ngẫu nhiên trên bản đồ.
+func _spawn_extras() -> void:
+	var cfg: Dictionary = Content.config.get("lifecycle", {})
+	for i in int(params.get("relics", 0)):
+		if rng.randf() > float(cfg.get("mission_relic_chance", 0.5)):
+			continue
+		var relic: Objective = OBJECTIVE.instantiate()
+		relic.setup("relic", "Cổ vật", map.accent)
+		relic.position = map.cell_to_world(gen.random_cell_in_room(rng, _random_room()))
+		relic.completed.connect(_on_relic)
+		world.add_child(relic)
+	for i in int(params.get("strangers", 0)):
+		if rng.randf() > float(cfg.get("stranger_chance", 0.5)):
+			continue
+		var survivor: Objective = OBJECTIVE.instantiate()
+		var gender_sprite := "survivor" if rng.randf() < 0.5 else "man_brown"
+		survivor.setup("stranger", "Người sống sót", map.accent, "res://assets/characters/%s_stand.png" % gender_sprite)
+		survivor.position = map.cell_to_world(gen.random_cell_in_room(rng, _random_room()))
+		survivor.completed.connect(_on_stranger)
+		world.add_child(survivor)
+
+
+func _on_relic(obj: Objective) -> void:
+	if not obj.finisher is Unit:
+		return
+	var unit: Unit = obj.finisher
+	var text := Lifecycle.resolve_encounter(Game, unit.char_id, "enc_relic")
+	unit.refresh_stats()
+	relic_texts.append(text)
+	hud.show_message("✦ " + text)
+
+
+func _on_stranger(obj: Objective) -> void:
+	var person := CharacterFactory.stranger(Game, rng, location.get("name", ""))
+	CrewSystem.add_member(Game, person.id)
+	Game.crew[person.id].guest = true
+	Game.crew[person.id].status = CrewSystem.MISSION
+	Roles.auto_equip(Game, person.id)
+	guests.append(person.id)
+	_join_unit(person.id, obj.global_position, true)
 
 
 func _scaled(count: float, kind: String) -> int:
@@ -157,10 +229,18 @@ func _spawn_resource_nodes() -> void:
 			world.add_child(node)
 
 
+## Quái đứng theo bầy (levels[].pack_size) tại các điểm khám phá, tránh xa bãi đáp.
 func _spawn_enemies() -> void:
+	var pack := maxi(1, int(params.get("pack_size", 1)))
+	var far := gen.rooms_by_distance_desc()
+	var safe_rooms: Array = far.slice(0, maxi(1, far.size() - 2)) if far.size() > 2 else far
 	for enemy_id in params.get("enemies", {}):
-		for i in _scaled(float(params.enemies[enemy_id]), "enemy_count"):
-			spawn_enemy(enemy_id, map.cell_to_world(gen.random_cell_in_room(rng, _random_room())))
+		var total := _scaled(float(params.enemies[enemy_id]), "enemy_count")
+		var room := 0
+		for i in total:
+			if i % pack == 0:
+				room = safe_rooms[rng.randi() % safe_rooms.size()] if not safe_rooms.is_empty() else _random_room()
+			spawn_enemy(enemy_id, map.cell_to_world(gen.random_cell_in_room(rng, room)))
 
 
 func spawn_enemy(enemy_id: String, pos: Vector2) -> Enemy:
@@ -208,7 +288,10 @@ func _spawn_objectives() -> void:
 				# Rải mục tiêu ở nửa xa của bản đồ để buộc phải khám phá
 				var room: int = far_rooms[(i * 2) % maxi(1, far_rooms.size() / 2 + 1)] if not far_rooms.is_empty() else 0
 				obj.position = map.cell_to_world(gen.random_cell_in_room(rng, room))
-				obj.completed.connect(func(_o): _add_progress(1))
+				obj.completed.connect(func(o):
+					_add_progress(1)
+					if objective.type == "rescue" and entry.target != "":
+						_join_unit(entry.target, o.global_position, false))
 				world.add_child(obj)
 		"boss":
 			var boss := spawn_enemy(objective.boss, map.cell_to_world(gen.room_center(far_rooms[0] if not far_rooms.is_empty() else 0)))
@@ -390,6 +473,13 @@ func call_evac() -> void:
 	hud.show_message("RÚT LUI! Mọi người về tàu con thoi trong %d giây." % roundi(evac_left))
 
 
+## Tốc độ trò chơi (×0.5 / ×1 / ×2). Tạm dừng dùng Esc.
+func set_speed(speed: float) -> void:
+	game_speed = speed
+	Engine.time_scale = speed
+	hud.show_message("Tốc độ ×%s" % str(speed))
+
+
 func seconds_left() -> float:
 	return maxf(0.0, time_limit - elapsed)
 
@@ -426,9 +516,19 @@ func _finish(success: bool, evacuated: bool) -> void:
 		var safe: bool = u.state == Unit.State.EVACUATED or (evacuated and u.is_active() and u in exit_zone.units_inside())
 		if safe:
 			aboard.append(u.char_id)
-		else:
+			# Khám phá -> tăng thuộc tính, XP, tài năng
+			if Game.crew.has(u.char_id):
+				growth_texts[u.char_id] = AttributeSystem.apply_mission_growth(Game, u.char_id, u.counters, success)
+		elif u.char_id in entry.team:
 			missing.append(u.char_id)
 		u.set_physics_process(false)
+	# Người mất tích đã được đưa về tàu
+	if entry.target != "" and entry.target in aboard:
+		CrewSystem.rescue(Game, entry.target)
+	# Người lạ bị bỏ lại -> không còn nữa
+	for guest_id in guests.duplicate():
+		if not guest_id in aboard:
+			_release_guest(guest_id)
 	var keep_loot := not aboard.is_empty()
 	if keep_loot:
 		Loot.give(Game, run_loot)
@@ -439,3 +539,27 @@ func _finish(success: bool, evacuated: bool) -> void:
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.set_physics_process(false)
 	hud.show_result(report, run_loot if keep_loot else {}, aboard)
+	if hud.has_method("show_growth"):
+		hud.show_growth(growth_texts, relic_texts, guests.filter(func(g): return g in aboard))
+
+
+## Quyết định với người lạ sau màn: thu nhận vào phi hành đoàn hay để họ đi.
+func decide_recruit(char_id: String, accept: bool) -> void:
+	if not char_id in guests:
+		return
+	if accept:
+		Game.crew[char_id].guest = false
+		Game.crew[char_id].status = CrewSystem.IDLE
+		Roles.auto_equip(Game, char_id)
+		Game.add_log("🤝 %s gia nhập phi hành đoàn Âu Cơ." % CrewSystem.display_name(char_id))
+		guests.erase(char_id)
+	else:
+		Game.add_log("%s được tiếp tế và tiễn đi tại %s." % [CrewSystem.display_name(char_id), location.get("name", "")])
+		_release_guest(char_id)
+	SaveManager.save_game()
+
+
+func _release_guest(char_id: String) -> void:
+	Game.crew.erase(char_id)
+	CharacterFactory.unregister(Game, char_id)
+	guests.erase(char_id)

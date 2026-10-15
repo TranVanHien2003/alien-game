@@ -15,9 +15,15 @@ func setup(lvl: Node) -> void:
 	var gen: LevelGenerator = lvl.gen
 	var img := Image.create(gen.size.x, gen.size.y, false, Image.FORMAT_RGBA8)
 	var floor_color := Color(lvl.map.accent, 0.35).blend(Color(0.12, 0.14, 0.2, 0.9))
+	var palette: Dictionary = lvl.params.get("palette", {})
+	var keys := ["ground", "rough", "forest", "path", "water", "cliff"]
 	for y in gen.size.y:
 		for x in gen.size.x:
-			img.set_pixel(x, y, floor_color if gen.is_floor(Vector2i(x, y)) else Color(0, 0, 0, 0.55))
+			var c := Vector2i(x, y)
+			if gen is TerrainGenerator:
+				img.set_pixel(x, y, Color(palette.get(keys[gen.type_at(c)], "#808080")))
+			else:
+				img.set_pixel(x, y, floor_color if gen.is_floor(c) else Color(0, 0, 0, 0.55))
 	_texture = ImageTexture.create_from_image(img)
 	_scale = minf(size.x / gen.size.x, size.y / gen.size.y)
 	mouse_filter = Control.MOUSE_FILTER_STOP

@@ -81,3 +81,29 @@ Loại mục tiêu nhiệm vụ: `collect` (nhặt N vật), `interact` (giữ E
 - Kỹ năng (`abilities`): `type` ∈ heal, heal_allies, aoe, buff, slow_enemies, time_slow, turret, mining_blast, flare, scan.
 - Nhiệm vụ: `team_size: [min, max]`, `time_limit` (giây), `recommended_roles: {vai: số}`, `tier` (cộng thêm độ khó).
 - Bản đồ (`levels`): `grid`, `rooms`, `enemies`, `resource_nodes`, `caches` (tủ tiếp tế), `waves: {first, interval, enemies, growth}`.
+
+## Dẫn truyện
+
+- `dialogues/*.json`: `{id, bg: "<tên nền>", lines: [{speaker: "<id nhân vật>" | "" (lời dẫn), text, side?: "left"|"right", bg?: "<đổi nền>"}]}`.
+- `events/*.json`: `dialogue` (đoạn hội thoại phát trước lựa chọn), `background`.
+- `chapters`: `intro_dialogue`, `outro_dialogue`. `endings`: `background`.
+- Nhân vật: `portrait` = tên file trong `assets/portraits/` (không có đuôi).
+- Nền: `assets/backgrounds/<tên>.jpg` (1280×720). Có sẵn: corridor, bridge, hydroponics, alarm, medbay, deck7, derelict, space, jupiter, van_lang, moon, comet.
+
+## Bản đồ ngoài trời
+
+`levels[]`: `"layout": "terrain"` + `grid`, `rooms` (số điểm khám phá), `palette {ground, rough, forest, path, water, cliff}`,
+`trees`, `rocks` (tên prop), `tree_density`, `terrain {height_freq, moisture_freq, river_freq, cliff, forest, river}`, `pack_size` (quái theo bầy).
+`"layout": "interior"` = kiểu phòng/hành lang trong tàu.
+
+## Nhân vật: thuộc tính, vai trò, tài năng, vòng đời
+
+- `config.attributes`: 6 thuộc tính; `config.attribute_bonuses`: (thuộc tính − 30) × hệ số cộng vào chỉ số chiến đấu.
+- `roles[].attribute_weights`: trọng số tính thành thạo (0..100); hiệu quả vai = 0.6 + thành thạo/100 × 0.8.
+  `assign_min`: thành thạo tối thiểu để chỉ huy giao vai; `auto_unlock`: tự mở vai khi vượt ngưỡng.
+- Nhân vật: `attributes {…}`, `gender` (male/female), `role` (vai ban đầu), `child: true` (chưa có vai).
+- `talents/*.json`: `{id, role, name, tier, cost, requires[], modifiers{}, attributes{}, grants_ability}`; `rare: true` = chỉ qua kỳ ngộ.
+- `encounters/*.json`: `kind` = `coming_of_age` (kèm `role`, `talent`, `attributes`), `adult` (kỳ ngộ ngẫu nhiên trên tàu), `relic` (cổ vật trong màn); `lines` dùng `{name}`.
+- `config.nutrition`: lương thực/năm theo tuổi, giới tính, vai. `config.lifecycle`: sinh con, tuổi trưởng thành, tỉ lệ kỳ ngộ, tăng trưởng.
+- `config.growth`: hành động trong màn (kills, mined, worked, revived, healed, distance) -> thuộc tính. `levels[].relics`, `levels[].strangers`.
+- Module có thể cộng thuộc tính: `items[].attributes`.

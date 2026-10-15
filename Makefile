@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 # Mọi thao tác thường ngày đều có lệnh make. Chạy `make help` để xem danh sách.
 GODOT   := tools/godot.sh
 VERSION := $(shell cat .godot-version)
@@ -30,8 +31,10 @@ run-mission: ## Chạy thẳng một màn action (debug)
 	@$(GODOT) res://scenes/mission/mission_level.tscn
 
 test: ## Chạy toàn bộ test headless (nội dung, save, gameplay, màn action, UI)
+	@mkdir -p build
 	@$(GODOT) --headless --import >/dev/null 2>&1 || true
-	@$(GODOT) --headless res://tests/test_runner.tscn
+	@$(GODOT) --headless res://tests/test_runner.tscn 2>&1 | tee build/test.log; test $${PIPESTATUS[0]:-0} -eq 0
+	@if grep -q "SCRIPT ERROR" build/test.log; then echo "✘ Có SCRIPT ERROR trong lúc chạy test (xem build/test.log)"; exit 1; fi
 
 validate: test ## Alias của test (kiểm tra nội dung JSON)
 

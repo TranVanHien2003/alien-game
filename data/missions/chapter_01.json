@@ -38,7 +38,7 @@
 			"soldier": 1
 		},
 		"tier": 0,
-		"time_limit": 300
+		"time_limit": 480
 	},
 	{
 		"id": "msn_salvage_debris",
@@ -67,7 +67,10 @@
 			},
 			"research_points": 3,
 			"log": "Đội trục vớt mang về linh kiện và mẫu kim loại.",
-			"loot": "lt_mission_salvage"
+			"loot": "lt_mission_salvage",
+			"flags_set": [
+				"first_salvage_done"
+			]
 		},
 		"failure": {
 			"stats": {
@@ -87,7 +90,7 @@
 			"engineer": 1
 		},
 		"tier": 0,
-		"time_limit": 420
+		"time_limit": 672
 	},
 	{
 		"id": "msn_comet_ice",
@@ -129,7 +132,7 @@
 			"medic": 1
 		},
 		"tier": 0,
-		"time_limit": 480
+		"time_limit": 768
 	},
 	{
 		"id": "msn_survey_comet",
@@ -154,7 +157,7 @@
 			"count": 6,
 			"label": "Tủ tiếp tế"
 		},
-		"time_limit": 540,
+		"time_limit": 864,
 		"recommended_roles": {
 			"scout": 1,
 			"scientist": 1,
@@ -245,7 +248,7 @@
 			"medic": 1
 		},
 		"tier": 1,
-		"time_limit": 600
+		"time_limit": 960
 	},
 	{
 		"id": "msn_moon_samples",
@@ -287,7 +290,7 @@
 			"scout": 1
 		},
 		"tier": 2,
-		"time_limit": 660
+		"time_limit": 1056
 	},
 	{
 		"id": "msn_rescue",
@@ -328,6 +331,6 @@
 			"soldier": 1
 		},
 		"tier": 0,
-		"time_limit": 360
+		"time_limit": 576
 	}
 ]

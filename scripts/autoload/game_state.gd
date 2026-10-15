@@ -10,7 +10,7 @@ signal mission_resolved(report: Dictionary)
 signal game_ended(ending: Dictionary)
 signal chapter_completed(chapter: Dictionary)
 
-const MAX_LOG := 200
+const MAX_LOG := 500
 
 var year: int = 0
 var generation: int = 1
@@ -27,6 +27,10 @@ var research_bank: float = 0.0
 var known_locations: Array = []
 var active_missions: Array = []
 var completed_missions: Dictionary = {}
+## Nhân vật sinh lúc chạy (trẻ em, người lạ được thu nhận) — id -> dữ liệu nhân vật
+var custom_characters: Dictionary = {}
+## Sự kiện đặc biệt chờ người chơi quyết định: [{type: "coming_of_age"|"encounter", char_id, encounter}]
+var special_queue: Array = []
 ## Trang bị mang theo khi đổ bộ (xem Inventory)
 var loadout: Dictionary = Inventory.default_loadout()
 ## Nhiệm vụ đang chơi ở màn action (rỗng nếu đang ở hub)
@@ -56,6 +60,10 @@ func new_game(seed_value: int = -1) -> void:
 	items = {}
 	for item_id in chapter.get("starting_items", {}):
 		items[item_id] = int(chapter.starting_items[item_id])
+	for char_id in custom_characters:
+		Content.remove_runtime("characters", char_id)
+	custom_characters = {}
+	special_queue = []
 	loadout = Inventory.default_loadout()
 	loadout.merge(chapter.get("starting_loadout", {}).duplicate(true), true)
 	crew = {}
@@ -139,10 +147,21 @@ func discover_location(loc_id: String) -> void:
 	add_log("🛰 Khám phá địa điểm mới: " + Content.get_entry("locations", loc_id).get("name", loc_id))
 
 
+## Nhật ký chung: sự kiện của tàu (kind "system"), lời thoại ("dialogue"), lựa chọn ("choice").
+func add_story(speaker: String, text: String, kind: String = "dialogue") -> void:
+	if text.is_empty():
+		return
+	var entry := {"year": year, "text": text, "speaker": speaker, "kind": kind}
+	log_entries.append(entry)
+	if log_entries.size() > MAX_LOG:
+		log_entries.pop_front()
+	log_added.emit(entry)
+
+
 func add_log(text: String) -> void:
 	if text.is_empty():
 		return
-	var entry := {"year": year, "text": text}
+	var entry := {"year": year, "text": text, "kind": "system"}
 	log_entries.append(entry)
 	if log_entries.size() > MAX_LOG:
 		log_entries.pop_front()
@@ -165,9 +184,12 @@ func advance_year() -> bool:
 	generation = int(chapter.get("generation", 1)) + (year - int(chapter.get("start_year", 0))) / gen_len
 
 	Simulation.run_year(self)
+	NutritionSystem.tick_year(self)
 	ResearchSystem.tick_year(self)
 	MissionSystem.tick_year(self)
 	CrewSystem.tick_year(self)
+	AttributeSystem.yearly_training(self)
+	Lifecycle.tick_year(self)
 	if check_failures():
 		return true
 	if year >= int(chapter.get("end_year", 1 << 30)):
@@ -251,6 +273,8 @@ func to_dict() -> Dictionary:
 		"flags": flags.duplicate(),
 		"items": items.duplicate(),
 		"crew": crew.duplicate(true),
+		"custom_characters": custom_characters.duplicate(true),
+		"special_queue": special_queue.duplicate(true),
 		"loadout": loadout.duplicate(true),
 		"techs": techs.duplicate(),
 		"research_current": research_current,
@@ -281,6 +305,12 @@ func from_dict(data: Dictionary) -> void:
 	items = {}
 	for item_id in data.get("items", {}):
 		items[item_id] = int(data.items[item_id])
+	for char_id in custom_characters:
+		Content.remove_runtime("characters", char_id)
+	custom_characters = data.get("custom_characters", {})
+	for char_id in custom_characters:
+		Content.add_runtime("characters", custom_characters[char_id])
+	special_queue = data.get("special_queue", [])
 	crew = data.get("crew", {})
 	loadout = Inventory.default_loadout()
 	loadout.merge(data.get("loadout", {}), true)
@@ -313,6 +343,15 @@ func _sanitize() -> void:
 				and not active_missions.any(func(m): return char_id in m.team):
 			# Save giữa màn action: coi như đội đã quay về
 			crew[char_id].status = CrewSystem.IDLE
+	# Khách (người lạ chưa quyết định thu nhận khi thoát giữa chừng) -> bỏ
+	for char_id in crew.keys():
+		if crew[char_id].get("guest", false):
+			crew.erase(char_id)
+			custom_characters.erase(char_id)
+			Content.remove_runtime("characters", char_id)
+	for char_id in crew:
+		CrewSystem.ensure_fields(self, char_id)
+	special_queue = special_queue.filter(func(s): return crew.has(s.get("char_id", "")))
 	for key in ["skills", "xp"]:
 		for char_id in crew:
 			crew[char_id][key] = crew[char_id].get(key, {})

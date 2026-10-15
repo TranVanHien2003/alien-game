@@ -1,0 +1,168 @@
+[
+	{
+		"id": "enc_lac_dream",
+		"kind": "coming_of_age",
+		"bg": "deck7",
+		"title": "Giấc mơ của LẠC",
+		"role": "scientist",
+		"talent": "rare_lac_echo",
+		"attributes": {
+			"intellect": 12,
+			"perception": 10
+		},
+		"lines": [
+			{
+				"speaker": "",
+				"text": "Đêm trước lễ trưởng thành, {name} mơ thấy một căn phòng lạnh với trăm nhịp tim."
+			},
+			{
+				"speaker": "lac",
+				"text": "Cháu nghe được tôi, phải không? Rất ít người nghe được."
+			},
+			{
+				"speaker": "",
+				"text": "Khi tỉnh dậy, {name} vẽ lại được sơ đồ boong 7 — chính xác đến từng ống dẫn."
+			}
+		]
+	},
+	{
+		"id": "enc_van_lang_call",
+		"kind": "coming_of_age",
+		"bg": "van_lang",
+		"title": "Tiếng gọi Văn Lang",
+		"role": "medic",
+		"talent": "rare_van_lang_call",
+		"attributes": {
+			"willpower": 12,
+			"endurance": 10
+		},
+		"lines": [
+			{
+				"speaker": "",
+				"text": "{name} đứng hàng giờ trước ô cửa, nhìn về phía chấm sáng xanh của Văn Lang."
+			},
+			{
+				"speaker": "thu_ha",
+				"text": "Nhịp tim của con bé... 7,3 giây một lần khi nó ngủ. Tôi chưa từng thấy điều này."
+			},
+			{
+				"speaker": "",
+				"text": "Có thứ gì đó đang gọi {name}. Và cơ thể đang trả lời."
+			}
+		]
+	},
+	{
+		"id": "enc_captain_legacy",
+		"kind": "coming_of_age",
+		"bg": "bridge",
+		"title": "Di sản thuyền trưởng",
+		"role": "soldier",
+		"talent": "rare_captain_legacy",
+		"attributes": {
+			"strength": 10,
+			"willpower": 12
+		},
+		"lines": [
+			{
+				"speaker": "khang",
+				"text": "Lại đây. Ta có thứ này... ta đã giữ nó quá lâu rồi."
+			},
+			{
+				"speaker": "",
+				"text": "Ông trao cho {name} những trang nhật ký bị xé. Cả hai ngồi đọc đến sáng."
+			},
+			{
+				"speaker": "khang",
+				"text": "Giờ con biết chúng ta chạy trốn khỏi điều gì. Hãy bảo vệ họ."
+			}
+		]
+	},
+	{
+		"id": "enc_old_manual",
+		"kind": "adult",
+		"bg": "medbay",
+		"title": "Cuốn cẩm nang cũ",
+		"attributes": {
+			"intellect": 5
+		},
+		"talent_points": 1,
+		"lines": [
+			{
+				"speaker": "",
+				"text": "{name} tìm thấy một cuốn cẩm nang kỹ thuật viết tay trong kho cũ. Ghi chú bên lề rất lạ — như của người đã từng đi chuyến này."
+			}
+		]
+	},
+	{
+		"id": "enc_hydro_night",
+		"kind": "adult",
+		"bg": "hydroponics",
+		"title": "Đêm ở khu thủy canh",
+		"attributes": {
+			"willpower": 5,
+			"endurance": 3
+		},
+		"lines": [
+			{
+				"speaker": "",
+				"text": "Mất ngủ, {name} xuống khu thủy canh. Lúa thì thầm trong gió quạt. Sáng hôm sau, {name} thấy lòng mình vững lạ thường."
+			}
+		]
+	},
+	{
+		"id": "enc_spar",
+		"kind": "adult",
+		"bg": "corridor",
+		"title": "Trận đấu tập",
+		"attributes": {
+			"strength": 4,
+			"agility": 4
+		},
+		"lines": [
+			{
+				"speaker": "quang",
+				"text": "Đánh tôi đi. Thật lòng vào."
+			},
+			{
+				"speaker": "",
+				"text": "Sau ba hiệp, {name} nằm dài trên sàn, cười. Nhưng đòn cuối cùng thì Quang không đỡ được."
+			}
+		]
+	},
+	{
+		"id": "enc_stargazing",
+		"kind": "adult",
+		"bg": "space",
+		"title": "Ngắm sao",
+		"attributes": {
+			"perception": 6
+		},
+		"lines": [
+			{
+				"speaker": "mai",
+				"text": "Thấy ngôi sao đỏ kia không? Nó không có trong bản đồ sao của Trái Đất."
+			},
+			{
+				"speaker": "",
+				"text": "{name} không ngủ được cả đêm. Mắt như được mở ra."
+			}
+		]
+	},
+	{
+		"id": "enc_relic",
+		"kind": "relic",
+		"title": "Cổ vật lạ",
+		"attributes": {
+			"perception": 4,
+			"intellect": 4
+		},
+		"talent": "rare_relic",
+		"talent_chance": 0.25,
+		"lines": [
+			{
+				"speaker": "",
+				"text": "{name} chạm vào khối đá phát sáng. Ký ức lạ tràn vào đầu."
+			}
+		]
+	}
+]

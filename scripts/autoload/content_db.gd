@@ -15,7 +15,7 @@ const MODS_ROOT := "user://mods"
 const CATEGORIES: Array[String] = [
 	"chapters", "characters", "events", "dialogues", "items", "endings",
 	"skills", "tech", "locations", "missions", "levels", "enemies",
-	"abilities", "loot", "recipes", "resource_nodes", "roles",
+	"abilities", "loot", "recipes", "resource_nodes", "roles", "talents", "encounters",
 ]
 const ITEM_CATEGORIES := ["material", "consumable", "module", "weapon", "tool", "key"]
 const ABILITY_TYPES := ["heal", "slow_enemies", "time_slow", "aoe", "buff", "turret", "mining_blast", "heal_allies", "flare", "scan"]
@@ -53,6 +53,16 @@ func reload() -> void:
 	for err in errors:
 		push_error("[Content] " + err)
 	reloaded.emit()
+
+
+## Nội dung sinh lúc chạy (trẻ em mới sinh, người lạ được thu nhận...). Được lưu trong save
+## (Game.custom_characters) và đăng ký lại khi nạp.
+func add_runtime(category: String, entry: Dictionary) -> void:
+	_db[category][entry.id] = entry
+
+
+func remove_runtime(category: String, id: String) -> void:
+	_db[category].erase(id)
 
 
 func get_entry(category: String, id: String) -> Dictionary:
@@ -284,8 +294,38 @@ func validate() -> PackedStringArray:
 				_check_ref(problems, where, "items", role[key])
 		for skill_id in role.get("key_skills", []):
 			_check_ref(problems, where, "skills", skill_id)
+	var attr_ids: Array = config.get("attributes", {}).keys()
 	for character in all("characters"):
-		_check_ref(problems, _where("characters", character.id), "roles", character.get("role", ""))
+		if not character.get("child", false):
+			_check_ref(problems, _where("characters", character.id), "roles", character.get("role", ""))
+		for attr in character.get("attributes", {}):
+			if not attr in attr_ids:
+				problems.append("%s: thuộc tính '%s' không tồn tại" % [_where("characters", character.id), attr])
+	for role in all("roles"):
+		for attr in role.get("attribute_weights", {}):
+			if not attr in attr_ids:
+				problems.append("%s: thuộc tính '%s' không tồn tại" % [_where("roles", role.id), attr])
+	for talent in all("talents"):
+		var where := _where("talents", talent.id)
+		if talent.get("role", "") != "":
+			_check_ref(problems, where, "roles", talent.role)
+		for req in talent.get("requires", []):
+			_check_ref(problems, where, "talents", req)
+		if talent.get("grants_ability", "") != "":
+			_check_ref(problems, where, "abilities", talent.grants_ability)
+		_check_stat_keys(problems, where, talent.get("modifiers", {}), combat_stats)
+	for enc in all("encounters"):
+		var where := _where("encounters", enc.id)
+		if enc.has("talent"):
+			_check_ref(problems, where, "talents", enc.talent)
+		if enc.has("role"):
+			_check_ref(problems, where, "roles", enc.role)
+		for attr in enc.get("attributes", {}):
+			if not attr in attr_ids:
+				problems.append("%s: thuộc tính '%s' không tồn tại" % [where, attr])
+		for line in enc.get("lines", []):
+			if line.get("speaker", "") != "":
+				_check_ref(problems, where, "characters", line.speaker)
 	for mission in all("missions"):
 		for role_id in mission.get("recommended_roles", {}):
 			_check_ref(problems, _where("missions", mission.id), "roles", role_id)
@@ -294,6 +334,19 @@ func validate() -> PackedStringArray:
 			_check_ref(problems, _where("levels", level.id), "enemies", enemy_id)
 	for character in all("characters"):
 		_check_asset(problems, _where("characters", character.id), "res://assets/characters/%s_stand.png", character.get("sprite", ""))
+		_check_asset(problems, _where("characters", character.id), "res://assets/portraits/%s.png", character.get("portrait", ""))
+	for dialogue in all("dialogues"):
+		_check_asset(problems, _where("dialogues", dialogue.id), "res://assets/backgrounds/%s.jpg", dialogue.get("bg", ""))
+		for line in dialogue.get("lines", []):
+			_check_asset(problems, _where("dialogues", dialogue.id), "res://assets/backgrounds/%s.jpg", line.get("bg", ""))
+	for event in all("events"):
+		_check_asset(problems, _where("events", event.id), "res://assets/backgrounds/%s.jpg", event.get("background", ""))
+	for ending in all("endings"):
+		_check_asset(problems, _where("endings", ending.id), "res://assets/backgrounds/%s.jpg", ending.get("background", ""))
+	for chapter in all("chapters"):
+		for key in ["intro_dialogue", "outro_dialogue"]:
+			if chapter.has(key):
+				_check_ref(problems, _where("chapters", chapter.id), "dialogues", chapter[key])
 	for enemy in all("enemies"):
 		_check_asset(problems, _where("enemies", enemy.id), "res://assets/enemies/%s.png", enemy.get("sprite", ""))
 		_check_asset(problems, _where("enemies", enemy.id), "res://assets/fx/%s.png", enemy.get("projectile", ""))
@@ -310,7 +363,7 @@ func validate() -> PackedStringArray:
 
 	for dialogue in all("dialogues"):
 		for line in dialogue.get("lines", []):
-			if line.has("speaker"):
+			if line.get("speaker", "") != "":
 				_check_ref(problems, _where("dialogues", dialogue.id), "characters", line.speaker)
 
 	for event in all("events"):

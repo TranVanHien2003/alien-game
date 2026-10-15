@@ -11,7 +11,7 @@ extends Node
 signal saved(slot: String)
 signal loaded(slot: String)
 
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 ## Đổi được (ví dụ test dùng thư mục riêng để không ghi đè save thật)
 var save_dir := "user://saves"
 const AUTOSAVE_SLOT := "autosave"
@@ -21,6 +21,7 @@ var MIGRATIONS := {
 	0: _migrate_0_to_1,
 	1: _migrate_1_to_2,
 	2: _migrate_2_to_3,
+	3: _migrate_3_to_4,
 }
 
 
@@ -134,4 +135,12 @@ func _migrate_2_to_3(state: Dictionary) -> Dictionary:
 	for char_id in state.get("crew", {}):
 		if not state.crew[char_id].has("equipment"):
 			state.crew[char_id].equipment = {}
+	return state
+
+
+## v3 -> v4: hệ thuộc tính / nhiều vai trò / tài năng / vòng đời.
+## Thuộc tính, vai, tài năng của từng thành viên được CrewSystem.ensure_fields() tạo từ dữ liệu nhân vật khi nạp.
+func _migrate_3_to_4(state: Dictionary) -> Dictionary:
+	state.custom_characters = state.get("custom_characters", {})
+	state.special_queue = state.get("special_queue", [])
 	return state

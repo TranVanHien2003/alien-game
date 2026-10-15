@@ -266,5 +266,46 @@
 				"t_scanner": 1
 			}
 		}
+	},
+	{
+		"id": "r_exo_frame",
+		"name": "Khung xương ngoài",
+		"materials": {
+			"kim_loai": 12,
+			"linh_kien_du_phong": 3
+		},
+		"requires_tech": "nanofabrication",
+		"result": {
+			"items_add": {
+				"exo_frame": 1
+			}
+		}
+	},
+	{
+		"id": "r_neural_chip",
+		"name": "Chip tăng cường thần kinh",
+		"materials": {
+			"tinh_the": 5,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "neural_interface",
+		"result": {
+			"items_add": {
+				"neural_chip": 1
+			}
+		}
+	},
+	{
+		"id": "r_ration",
+		"name": "Khẩu phần dã chiến x3 (−4 Lương thực)",
+		"materials": {},
+		"result": {
+			"items_add": {
+				"ration_pack": 3
+			},
+			"stats": {
+				"food": -4
+			}
+		}
 	}
 ]

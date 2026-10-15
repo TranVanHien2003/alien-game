@@ -40,6 +40,8 @@
 				"medkit",
 				"energy_cell"
 			]
-		}
+		},
+		"intro_dialogue": "dlg_intro",
+		"outro_dialogue": "dlg_outro"
 	}
 ]

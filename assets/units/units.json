@@ -1,0 +1,16 @@
+{
+	"scale": 0.22,
+	"anims": {
+		"feet_walk": 10,
+		"feet_idle": 1,
+		"rifle_idle": 10,
+		"rifle_move": 10,
+		"rifle_shoot": 3,
+		"shotgun_idle": 10,
+		"shotgun_move": 10,
+		"shotgun_shoot": 3,
+		"handgun_idle": 10,
+		"handgun_move": 10,
+		"handgun_shoot": 3
+	}
+}

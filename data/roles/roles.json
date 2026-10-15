@@ -24,7 +24,14 @@
 			"survival",
 			"command"
 		],
-		"default_weapon": "w_assault_rifle"
+		"default_weapon": "w_assault_rifle",
+		"attribute_weights": {
+			"strength": 0.4,
+			"endurance": 0.4,
+			"willpower": 0.2
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	},
 	{
 		"id": "engineer",
@@ -51,7 +58,14 @@
 			"engineering"
 		],
 		"default_weapon": "w_pulse_pistol",
-		"default_tool": "t_repair_kit"
+		"default_tool": "t_repair_kit",
+		"attribute_weights": {
+			"intellect": 0.5,
+			"agility": 0.2,
+			"perception": 0.3
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	},
 	{
 		"id": "miner",
@@ -78,7 +92,13 @@
 			"survival"
 		],
 		"default_weapon": "w_pulse_pistol",
-		"default_tool": "t_mining_drill"
+		"default_tool": "t_mining_drill",
+		"attribute_weights": {
+			"strength": 0.5,
+			"endurance": 0.5
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	},
 	{
 		"id": "medic",
@@ -104,7 +124,14 @@
 			"medicine"
 		],
 		"default_weapon": "w_pulse_pistol",
-		"default_tool": "t_med_beam"
+		"default_tool": "t_med_beam",
+		"attribute_weights": {
+			"intellect": 0.4,
+			"willpower": 0.35,
+			"agility": 0.25
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	},
 	{
 		"id": "scout",
@@ -133,7 +160,13 @@
 			"survival"
 		],
 		"default_weapon": "w_smg",
-		"default_tool": "t_scanner"
+		"default_tool": "t_scanner",
+		"attribute_weights": {
+			"agility": 0.5,
+			"perception": 0.5
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	},
 	{
 		"id": "scientist",
@@ -160,6 +193,12 @@
 			"science"
 		],
 		"default_weapon": "w_pulse_pistol",
-		"default_tool": "t_scanner"
+		"default_tool": "t_scanner",
+		"attribute_weights": {
+			"intellect": 0.7,
+			"perception": 0.3
+		},
+		"assign_min": 25,
+		"auto_unlock": 55
 	}
 ]

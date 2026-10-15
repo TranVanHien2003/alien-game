@@ -17,6 +17,8 @@ var camera: Camera2D
 var units: Array = []
 var world_size := Vector2(4000, 3000)
 
+## Đội hình khi di chuyển: wedge (nêm), line (hàng ngang), column (hàng dọc), spread (tản ra)
+var formation := "wedge"
 var _drag_start := Vector2.INF
 var _drag_now := Vector2.ZERO
 var _markers: Array = []  # [{pos, color, t}]
@@ -69,9 +71,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("order"):
 		_give_order(get_global_mouse_position())
 	elif event.is_action_pressed("zoom_in"):
-		camera.zoom = (camera.zoom * 1.1).clamp(Vector2(0.45, 0.45), Vector2(1.6, 1.6))
+		zoom_by(1.1)
 	elif event.is_action_pressed("zoom_out"):
-		camera.zoom = (camera.zoom / 1.1).clamp(Vector2(0.45, 0.45), Vector2(1.6, 1.6))
+		zoom_by(1.0 / 1.1)
 	elif event.is_action_pressed("select_all"):
 		select_only(units.filter(func(u): return u.is_active()))
 	elif event.is_action_pressed("stop"):
@@ -97,6 +99,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				var sel := selected()
 				if not sel.is_empty():
 					level.use_consumable(sel[0], i)
+
+
+func zoom_by(factor: float) -> void:
+	camera.zoom = (camera.zoom * factor).clamp(Vector2(0.25, 0.25), Vector2(1.4, 1.4))
 
 
 func toggle_hold() -> void:
@@ -182,14 +188,94 @@ func _give_order(pos: Vector2) -> void:
 	Sfx.play("ui_click", 0.1, -16.0)
 
 
-func _move_group(group: Array, pos: Vector2) -> void:
+func _move_group(group: Array, pos: Vector2, order_type: String = "move") -> void:
+	if group.is_empty():
+		return
 	var spacing := float(Content.config.get("squad", {}).get("formation_spacing", 56))
-	for i in group.size():
+	var centroid := Vector2.ZERO
+	for u in group:
+		centroid += u.global_position
+	centroid /= group.size()
+	var dir := (pos - centroid).normalized() if pos.distance_to(centroid) > 1.0 else Vector2.RIGHT
+	var side := dir.orthogonal()
+	var n := group.size()
+	# Người gần đích nhất đi đầu để đội hình không bị đảo lộn
+	var sorted := group.duplicate()
+	sorted.sort_custom(func(a, b): return a.global_position.dot(dir) > b.global_position.dot(dir))
+	for i in n:
 		var offset := Vector2.ZERO
-		if i > 0:
-			var ring := 1 + (i - 1) / 6
-			offset = Vector2.from_angle(TAU * ((i - 1) % 6) / 6.0 + ring * 0.5) * spacing * ring
-		group[i].command({"type": "move", "pos": pos + offset})
+		match formation:
+			"line":
+				offset = side * (i - (n - 1) / 2.0) * spacing * 1.2
+			"column":
+				offset = -dir * i * spacing
+			"spread":
+				offset = Vector2.ZERO if i == 0 else Vector2.from_angle(TAU * (i - 1) / maxf(1, n - 1)) * spacing * 2.4
+			_:
+				# Nêm: người đầu ở mũi, hai cánh lùi dần về sau
+				var rank := (i + 1) / 2
+				offset = -dir * rank * spacing * 0.8 + side * rank * spacing * (1 if i % 2 == 1 else -1)
+		sorted[i].command({"type": order_type, "pos": pos + offset})
+
+
+const FORMATION_NAMES := {"wedge": "Nêm", "line": "Hàng ngang", "column": "Hàng dọc", "spread": "Tản ra"}
+
+
+## Đổi đội hình và xếp lại ngay tại chỗ.
+func set_formation(value: String) -> void:
+	formation = value
+	var sel := selected()
+	if sel.is_empty():
+		return
+	var centroid := Vector2.ZERO
+	for u in sel:
+		centroid += u.global_position
+	_move_group(sel, centroid / sel.size() + Vector2(1, 0))
+	level.hud.show_message("Đội hình: " + FORMATION_NAMES.get(value, value))
+
+
+## Tiến công / xung phong tới vị trí con trỏ.
+func advance(charge: bool) -> void:
+	var sel := selected()
+	if sel.is_empty():
+		return
+	if charge:
+		for u in sel:
+			u.add_buff({"move_speed": 90.0, "damage_mult": 0.15}, 6.0)
+	_move_group(sel, get_global_mouse_position() if _mouse_in_world() else _forward_point(sel), "advance")
+	level.hud.show_message("XUNG PHONG!" if charge else "Tiến công")
+
+
+## Lùi lại xa khỏi quái gần nhất.
+func fall_back() -> void:
+	var sel := selected()
+	if sel.is_empty():
+		return
+	var centroid := Vector2.ZERO
+	for u in sel:
+		centroid += u.global_position
+	centroid /= sel.size()
+	var threat := Vector2.ZERO
+	var count := 0
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if enemy.global_position.distance_to(centroid) < 700.0:
+			threat += enemy.global_position
+			count += 1
+	var away: Vector2 = (centroid - threat / count).normalized() if count > 0 else (level.exit_zone.global_position - centroid).normalized()
+	_move_group(sel, centroid + away * 320.0)
+	level.hud.show_message("Lùi lại!")
+
+
+func _mouse_in_world() -> bool:
+	var vp := get_viewport()
+	return Rect2(Vector2.ZERO, vp.get_visible_rect().size).has_point(vp.get_mouse_position())
+
+
+func _forward_point(sel: Array) -> Vector2:
+	var centroid := Vector2.ZERO
+	for u in sel:
+		centroid += u.global_position
+	return centroid / sel.size()
 
 
 func _target_at(pos: Vector2) -> Node:
@@ -222,7 +308,11 @@ func _process(delta: float) -> void:
 		elif mouse.y > size.y - EDGE_SCROLL: dir.y = 1
 	if dir != Vector2.ZERO:
 		camera.global_position += dir * CAMERA_SPEED * delta / camera.zoom.x
-	camera.global_position = camera.global_position.clamp(Vector2.ZERO, world_size)
+	# Không cho camera nhìn ra ngoài mép bản đồ
+	var half := size / camera.zoom / 2.0
+	var lo := half.min(world_size / 2.0)
+	var hi := (world_size - half).max(world_size / 2.0)
+	camera.global_position = camera.global_position.clamp(lo, hi)
 	for m in _markers.duplicate():
 		m.t -= delta
 		if m.t <= 0.0:

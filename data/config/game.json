@@ -228,7 +228,7 @@
 		},
 		"move_speed": {
 			"label": "Tốc độ chạy",
-			"base": 200
+			"base": 170
 		},
 		"max_energy": {
 			"label": "Năng lượng",
@@ -299,10 +299,10 @@
 		}
 	},
 	"squad": {
-		"bleed_out_time": 35,
+		"bleed_out_time": 45,
 		"revive_time": 4.0,
 		"evac_radius": 120,
-		"evac_countdown": 25,
+		"evac_countdown": 40,
 		"auto_pickup": true,
 		"formation_spacing": 56,
 		"max_team": 6,
@@ -326,5 +326,155 @@
 			"Rất khó",
 			"Ác mộng"
 		]
+	},
+	"attributes": {
+		"strength": {
+			"label": "Sức mạnh",
+			"short": "SỨC",
+			"color": "#FF5A5A"
+		},
+		"agility": {
+			"label": "Nhanh nhẹn",
+			"short": "NHANH",
+			"color": "#00E5FF"
+		},
+		"intellect": {
+			"label": "Trí tuệ",
+			"short": "TRÍ",
+			"color": "#B98CFF"
+		},
+		"endurance": {
+			"label": "Bền bỉ",
+			"short": "BỀN",
+			"color": "#FFC94D"
+		},
+		"perception": {
+			"label": "Tinh mắt",
+			"short": "MẮT",
+			"color": "#7CFFB2"
+		},
+		"willpower": {
+			"label": "Ý chí",
+			"short": "Ý CHÍ",
+			"color": "#FF8AD8"
+		}
+	},
+	"attribute_bonuses": {
+		"strength": {
+			"max_hp": 0.6,
+			"damage_mult": 0.003,
+			"mining_power": 0.01
+		},
+		"agility": {
+			"move_speed": 0.7,
+			"fire_rate_mult": 0.004
+		},
+		"intellect": {
+			"max_energy": 0.6,
+			"interact_speed": 0.008,
+			"energy_regen": 0.04
+		},
+		"endurance": {
+			"max_hp": 1.2,
+			"armor": 0.15
+		},
+		"perception": {
+			"sight_radius": 2.0,
+			"crit_chance": 0.002
+		},
+		"willpower": {
+			"heal_power": 0.006,
+			"revive_speed": 0.008,
+			"energy_regen": 0.03
+		}
+	},
+	"nutrition": {
+		"base": 0.06,
+		"age": [
+			{
+				"max": 12,
+				"mult": 0.5,
+				"label": "Trẻ em"
+			},
+			{
+				"max": 17,
+				"mult": 0.8,
+				"label": "Thiếu niên"
+			},
+			{
+				"max": 60,
+				"mult": 1.0,
+				"label": "Trưởng thành"
+			},
+			{
+				"max": 999,
+				"mult": 0.85,
+				"label": "Cao tuổi"
+			}
+		],
+		"gender": {
+			"male": 1.1,
+			"female": 0.95
+		},
+		"role": {
+			"soldier": 1.3,
+			"miner": 1.4,
+			"scout": 1.15,
+			"engineer": 1.0,
+			"medic": 0.95,
+			"scientist": 0.9
+		},
+		"hungry_below": 12,
+		"hungry_penalty": 0.85
+	},
+	"lifecycle": {
+		"birth_chance": 0.12,
+		"max_children": 6,
+		"coming_of_age": 16,
+		"encounter_chance": 0.3,
+		"child_growth": [
+			2,
+			4
+		],
+		"training_gain": [
+			2,
+			4
+		],
+		"soft_cap": 70,
+		"hard_cap": 100,
+		"adult_encounter_chance": 0.18,
+		"mission_relic_chance": 0.6,
+		"stranger_chance": 0.5
+	},
+	"talent_points": {
+		"xp_per_level": 120,
+		"mission_xp": 40,
+		"success_xp": 40,
+		"kill_xp": 3
+	},
+	"growth": {
+		"kills": {
+			"strength": 0.15,
+			"agility": 0.15
+		},
+		"mined": {
+			"strength": 0.004,
+			"endurance": 0.004
+		},
+		"worked": {
+			"intellect": 0.2
+		},
+		"revived": {
+			"willpower": 1.0,
+			"intellect": 0.5
+		},
+		"healed": {
+			"willpower": 0.01
+		},
+		"distance": {
+			"endurance": 0.0004,
+			"perception": 0.0003
+		},
+		"max_per_mission": 4
 	}
 }

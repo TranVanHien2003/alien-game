@@ -15,6 +15,8 @@ var crit := false
 var pierce := 0
 var lifetime := 2.0
 var texture_name := "laser_blue"
+## Unit bắn ra viên đạn (để tính công hạ quái / khai thác)
+var source: Node
 var _hit: Array = []
 
 
@@ -59,6 +61,8 @@ func _on_body_entered(body: Node) -> void:
 	if body.is_in_group(target_group) or (target_group == "player" and (body.is_in_group("squad_active") or body.is_in_group("allies"))):
 		_hit.append(body)
 		body.take_damage(damage)
+		if body is Enemy and body.hp <= 0.0 and is_instance_valid(source) and source is Unit:
+			source.counters.kills += 1
 		if body.has_method("show_damage"):
 			body.show_damage(damage, crit)
 		_impact()
@@ -66,7 +70,9 @@ func _on_body_entered(body: Node) -> void:
 		if pierce < 0:
 			queue_free()
 	elif body.is_in_group("minable") and target_group == "enemies":
-		body.mine(mining_damage, null)
+		body.mine(mining_damage, source)
+		if is_instance_valid(source) and source is Unit:
+			source.counters.mined += mining_damage
 		Sfx.play("mine", 0.15, -8.0)
 		_impact()
 		queue_free()

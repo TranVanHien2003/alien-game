@@ -22,7 +22,29 @@ static func add_member(game: Node, char_id: String) -> void:
 		"status": IDLE,
 		"equipment": {},
 	}
+	ensure_fields(game, char_id)
 	Roles.auto_equip(game, char_id)
+
+
+## Bổ sung các trường của hệ thuộc tính/vai trò (dùng cả khi nạp save cũ).
+static func ensure_fields(game: Node, char_id: String) -> void:
+	var member: Dictionary = game.crew[char_id]
+	var data := Content.get_entry("characters", char_id)
+	if not member.has("attributes"):
+		var attrs := {}
+		for attr in AttributeSystem.ids():
+			attrs[attr] = float(data.get("attributes", {}).get(attr, 30 + CrewSystem.skill(game, char_id, "survival") * 3))
+		member.attributes = attrs
+	for attr in member.attributes:
+		member.attributes[attr] = float(member.attributes[attr])
+	if not member.has("roles"):
+		member.roles = [data.role] if data.has("role") and not data.get("child", false) else []
+	if not member.has("active_role") or not member.active_role in member.roles:
+		member.active_role = member.roles[0] if not member.roles.is_empty() else ""
+	member.talents = member.get("talents", [])
+	member.talent_points = int(member.get("talent_points", 0))
+	member.xp_total = float(member.get("xp_total", 0))
+	member.training_focus = member.get("training_focus", "")
 
 
 static func skill(game: Node, char_id: String, skill_id: String) -> int:
@@ -43,6 +65,7 @@ static func available(game: Node) -> Array:
 		var data := Content.get_entry("characters", id)
 		return game.crew[id].status == IDLE \
 			and data.get("assignable", true) \
+			and not game.crew[id].get("roles", []).is_empty() \
 			and (data.get("ageless", false) or game.character_age(id) >= min_age))
 
 

@@ -41,6 +41,12 @@ static func card(children: Array) -> PanelContainer:
 	return panel
 
 
+## Khối nội dung có tiêu đề nhỏ phía trên (dùng cho trang Tổng quan, Nhiệm vụ...).
+static func section(title: String, children: Array) -> PanelContainer:
+	var heading := label(title.to_upper(), 13, Color("#C9A06A"))
+	return card([heading] + children)
+
+
 static func hbox(children: Array, separation: int = 8) -> HBoxContainer:
 	var box := HBoxContainer.new()
 	box.add_theme_constant_override("separation", separation)
@@ -82,6 +88,16 @@ static func portrait(char_id: String, size: int = 56) -> TextureRect:
 	return r
 
 
+## Chân dung minh họa (assets/portraits) — dùng trong nhật ký, thẻ thành viên, sự kiện.
+static func portrait_bust(char_id: String, size: int = 64) -> TextureRect:
+	var path := "res://assets/portraits/%s.png" % Content.get_entry("characters", char_id).get("portrait", "")
+	if not ResourceLoader.exists(path):
+		return portrait(char_id, size)
+	var r := icon(load(path), size)
+	r.custom_minimum_size = Vector2(size * 1.3, size)
+	return r
+
+
 static func clear(node: Node) -> void:
 	for c in node.get_children():
 		node.remove_child(c)
@@ -98,3 +114,9 @@ static func font() -> Font:
 	if theme != null and theme.default_font != null:
 		return theme.default_font
 	return ThemeDB.fallback_font
+
+
+## Icon giao diện (assets/ui/icons, màu trắng — tô màu bằng modulate nếu cần).
+static func ui_icon(name: String) -> Texture2D:
+	var path := "res://assets/ui/icons/%s.png" % name
+	return load(path) if ResourceLoader.exists(path) else null

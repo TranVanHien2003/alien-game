@@ -27,6 +27,15 @@ Người chơi là **chỉ huy** của tàu Âu Cơ. Không trực tiếp cầm 
  Về tàu: loot, nguyên liệu, XP, điểm nghiên cứu · Bỏ lại: mất tích -> Giải cứu
 ```
 
+## Nhân vật
+
+- **Thuộc tính** (Sức mạnh, Nhanh nhẹn, Trí tuệ, Bền bỉ, Tinh mắt, Ý chí) quyết định độ **thành thạo** từng vai -> hiệu quả ×0.6..×1.4.
+- Một người có **nhiều vai** (tự mở khi đủ giỏi hoặc chỉ huy giao), chọn 1 vai chính khi ra trận.
+- Tăng trưởng: huấn luyện theo năm · hành động trong màn · cây tài năng (XP -> cấp -> điểm) · trang bị · **kỳ ngộ** (cổ vật trong màn, sự kiện ngẫu nhiên).
+- **Lương thực**: mỗi người ăn khác nhau theo tuổi, giới tính, vai; đói làm giảm sức chiến đấu và dừng huấn luyện.
+- **Vòng đời**: trẻ sinh ra trên tàu thừa hưởng thuộc tính cha mẹ, lớn dần; 16 tuổi chọn vai trong Lễ trưởng thành — đôi khi gặp kỳ ngộ cho tài năng hiếm.
+- **Giải cứu trong màn**: người mất tích được tìm thấy gia nhập đội ngay trên bản đồ; người sống sót lạ có thể được thu nhận sau màn.
+
 ## Vai trò
 
 | Vai | Điểm mạnh | Vũ khí | Công cụ | Kỹ năng |
@@ -84,6 +93,12 @@ Giáp giảm sát thương theo `100 / (100 + giáp)`.
 | Sự kiện cốt truyện | `effects.items_add` / `effects.loot` |
 | Chế tạo | `recipes/` |
 | Khởi đầu chương | `chapters[].starting_items` |
+
+## Nhịp độ màn khai phá
+
+- Bản đồ ngoài trời lớn (150–160 × 100–110 ô), camera nhìn xa kiểu bàn cờ chiến thuật, có zoom và minimap.
+- Quái đứng theo bầy ở các điểm khám phá, đợt quái đầu sau 2,5 phút và cách nhau 2 phút.
+- Thời gian màn 8–17 phút; có thể chạy ×½ để chỉ huy kỹ hoặc ×2 khi di chuyển đường dài.
 
 ## Phong cách hình ảnh
 

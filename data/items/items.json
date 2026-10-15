@@ -118,6 +118,39 @@
 		]
 	},
 	{
+		"id": "exo_frame",
+		"category": "module",
+		"name": "Khung xương ngoài",
+		"description": "+8 Sức mạnh, +6 Bền bỉ.",
+		"icon": "servo_legs",
+		"attributes": {
+			"strength": 8,
+			"endurance": 6
+		}
+	},
+	{
+		"id": "neural_chip",
+		"category": "module",
+		"name": "Chip tăng cường thần kinh",
+		"description": "+10 Trí tuệ, +4 Tinh mắt.",
+		"icon": "targeting_chip",
+		"attributes": {
+			"intellect": 10,
+			"perception": 4
+		}
+	},
+	{
+		"id": "ration_pack",
+		"category": "consumable",
+		"name": "Khẩu phần dã chiến",
+		"description": "Hồi 25 máu, 30 năng lượng.",
+		"icon": "hat_giong_lua",
+		"use": {
+			"heal": 25,
+			"energy": 30
+		}
+	},
+	{
 		"id": "w_pulse_pistol",
 		"category": "weapon",
 		"name": "Súng xung K-1",

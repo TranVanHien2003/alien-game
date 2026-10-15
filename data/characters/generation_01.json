@@ -15,7 +15,17 @@
 			"command": 4,
 			"piloting": 3
 		},
-		"sprite": "man_blue"
+		"sprite": "man_blue",
+		"portrait": "vs_male17",
+		"attributes": {
+			"strength": 48,
+			"agility": 40,
+			"intellect": 55,
+			"endurance": 50,
+			"perception": 52,
+			"willpower": 72
+		},
+		"gender": "male"
 	},
 	{
 		"id": "thu_ha",
@@ -33,7 +43,17 @@
 			"medicine": 4,
 			"science": 2
 		},
-		"sprite": "woman_green"
+		"sprite": "woman_green",
+		"portrait": "vs_women28",
+		"attributes": {
+			"strength": 30,
+			"agility": 45,
+			"intellect": 72,
+			"endurance": 38,
+			"perception": 50,
+			"willpower": 60
+		},
+		"gender": "female"
 	},
 	{
 		"id": "bao",
@@ -51,7 +71,17 @@
 			"engineering": 5,
 			"survival": 1
 		},
-		"sprite": "man_brown"
+		"sprite": "man_brown",
+		"portrait": "vs_male14",
+		"attributes": {
+			"strength": 55,
+			"agility": 45,
+			"intellect": 68,
+			"endurance": 50,
+			"perception": 58,
+			"willpower": 42
+		},
+		"gender": "male"
 	},
 	{
 		"id": "lan_anh",
@@ -70,7 +100,17 @@
 			"science": 2
 		},
 		"sprite": "woman_green",
-		"tint": "#FFE0C0"
+		"tint": "#FFE0C0",
+		"portrait": "vs_women16",
+		"attributes": {
+			"strength": 32,
+			"agility": 40,
+			"intellect": 66,
+			"endurance": 45,
+			"perception": 55,
+			"willpower": 50
+		},
+		"gender": "female"
 	},
 	{
 		"id": "lac",
@@ -89,7 +129,17 @@
 			"science": 3
 		},
 		"assignable": false,
-		"sprite": "robot"
+		"sprite": "robot",
+		"portrait": "lac",
+		"attributes": {
+			"strength": 10,
+			"agility": 10,
+			"intellect": 99,
+			"endurance": 99,
+			"perception": 99,
+			"willpower": 99
+		},
+		"gender": "none"
 	},
 	{
 		"id": "huy",
@@ -106,7 +156,17 @@
 			"piloting": 4,
 			"survival": 2
 		},
-		"sprite": "hitman"
+		"sprite": "hitman",
+		"portrait": "vs_asian",
+		"attributes": {
+			"strength": 42,
+			"agility": 70,
+			"intellect": 45,
+			"endurance": 44,
+			"perception": 62,
+			"willpower": 38
+		},
+		"gender": "male"
 	},
 	{
 		"id": "mai",
@@ -124,7 +184,17 @@
 			"piloting": 1
 		},
 		"sprite": "woman_green",
-		"tint": "#C8D8FF"
+		"tint": "#C8D8FF",
+		"portrait": "vs_women24",
+		"attributes": {
+			"strength": 28,
+			"agility": 42,
+			"intellect": 75,
+			"endurance": 36,
+			"perception": 64,
+			"willpower": 48
+		},
+		"gender": "female"
 	},
 	{
 		"id": "tuan",
@@ -142,7 +212,17 @@
 			"survival": 3,
 			"piloting": 1
 		},
-		"sprite": "soldier"
+		"sprite": "soldier",
+		"portrait": "vs_male13",
+		"attributes": {
+			"strength": 62,
+			"agility": 44,
+			"intellect": 40,
+			"endurance": 66,
+			"perception": 48,
+			"willpower": 50
+		},
+		"gender": "male"
 	},
 	{
 		"id": "hai",
@@ -160,7 +240,17 @@
 			"engineering": 3,
 			"survival": 3
 		},
-		"sprite": "man_old"
+		"sprite": "man_old",
+		"portrait": "vs_male10",
+		"attributes": {
+			"strength": 66,
+			"agility": 36,
+			"intellect": 42,
+			"endurance": 64,
+			"perception": 50,
+			"willpower": 46
+		},
+		"gender": "male"
 	},
 	{
 		"id": "quang",
@@ -180,7 +270,17 @@
 			"piloting": 1
 		},
 		"sprite": "soldier",
-		"tint": "#FFD8D8"
+		"tint": "#FFD8D8",
+		"portrait": "vs_male15",
+		"attributes": {
+			"strength": 64,
+			"agility": 50,
+			"intellect": 38,
+			"endurance": 62,
+			"perception": 46,
+			"willpower": 55
+		},
+		"gender": "male"
 	},
 	{
 		"id": "thanh",
@@ -199,7 +299,17 @@
 			"survival": 2
 		},
 		"sprite": "survivor",
-		"tint": "#D8F0FF"
+		"tint": "#D8F0FF",
+		"portrait": "vs_women45",
+		"attributes": {
+			"strength": 38,
+			"agility": 66,
+			"intellect": 44,
+			"endurance": 42,
+			"perception": 64,
+			"willpower": 44
+		},
+		"gender": "female"
 	},
 	{
 		"id": "bich",
@@ -217,6 +327,16 @@
 			"science": 1
 		},
 		"sprite": "woman_green",
-		"tint": "#FFE8F0"
+		"tint": "#FFE8F0",
+		"portrait": "vs_women6",
+		"attributes": {
+			"strength": 34,
+			"agility": 50,
+			"intellect": 60,
+			"endurance": 42,
+			"perception": 48,
+			"willpower": 64
+		},
+		"gender": "female"
 	}
 ]

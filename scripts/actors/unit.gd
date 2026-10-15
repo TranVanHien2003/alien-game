@@ -27,6 +27,10 @@ var protected_hazards: Array = []
 ## Lệnh hiện tại: {type: "idle"|"move"|"attack"|"mine"|"interact"|"revive"|"evac", target, pos}
 var order: Dictionary = {"type": "idle"}
 var revive_progress := 0.0
+## Hành động trong màn -> tăng thuộc tính khi về tàu (AttributeSystem.apply_mission_growth)
+var counters := {"kills": 0, "mined": 0.0, "worked": 0.0, "revived": 0, "healed": 0.0, "distance": 0.0}
+## Người lạ / người được cứu gia nhập giữa màn
+var guest := false
 var bleed_left := 0.0
 
 var _cooldowns: Dictionary = {}
@@ -43,7 +47,8 @@ var _sprite_id := "survivor"
 var _tint := Color.WHITE
 var _role_color := Color.WHITE
 
-@onready var body: Sprite2D = $Body
+@onready var body: AnimatedSprite2D = $Body
+@onready var feet: AnimatedSprite2D = $Feet
 @onready var muzzle: Sprite2D = $Body/Muzzle
 @onready var sight_light: PointLight2D = $Sight
 @onready var agent: NavigationAgent2D = $Agent
@@ -64,12 +69,23 @@ func setup(id: String, lvl: Node, hazards_protected: Array) -> void:
 	stats = base_stats.duplicate()
 	hp = stats.max_hp
 	energy = stats.max_energy
-	var pose: String = weapon_data().get("pose", "gun")
-	var path := "res://assets/characters/%s_%s.png" % [_sprite_id, pose]
-	body.texture = load(path if ResourceLoader.exists(path) else "res://assets/characters/%s_gun.png" % _sprite_id)
-	body.modulate = _tint
+	# Sprite có hoạt ảnh: màu quân phục theo vai trò, tư thế theo loại súng
+	body.sprite_frames = UnitSprites.body_frames(Roles.role_of(id), UnitSprites.kind_for_weapon(weapon_data().get("type", "rifle")))
+	body.play("idle")
+	body.animation_finished.connect(func(): body.play("idle"))
+	feet.sprite_frames = UnitSprites.feet_frames()
+	feet.play("idle")
 	sight_light.texture_scale = float(stats.sight_radius) / 128.0
 	_think = randf() * 0.3
+
+
+## Tính lại chỉ số (sau kỳ ngộ / tài năng mới), giữ tỉ lệ máu.
+func refresh_stats() -> void:
+	var ratio := hp / maxf(1.0, stats.max_hp)
+	base_stats = CombatStats.compute(Game, char_id)
+	_recompute_stats()
+	abilities = Abilities.for_unit(Game, char_id)
+	hp = stats.max_hp * ratio
 
 
 func display_name() -> String:
@@ -100,7 +116,7 @@ func command(new_order: Dictionary) -> void:
 	order = new_order
 	_enemy = null
 	match order.type:
-		"move", "evac":
+		"move", "evac", "advance":
 			agent.target_position = order.pos
 		_:
 			if is_instance_valid(order.get("target")):
@@ -144,6 +160,14 @@ func _physics_process(delta: float) -> void:
 					order = {"type": "idle"}
 			else:
 				move_to = agent.get_next_path_position()
+		"advance":
+			# Tiến công: đi tới điểm, gặp quái trong tầm bắn thì dừng lại giao chiến
+			var engaged := is_instance_valid(_enemy) and global_position.distance_to(_enemy.global_position) <= weapon_range() * 0.9
+			if not engaged:
+				if agent.is_navigation_finished():
+					order = {"type": "idle"}
+				else:
+					move_to = agent.get_next_path_position()
 		"attack":
 			if not is_instance_valid(order.target) or order.target.hp <= 0.0:
 				order = {"type": "idle"}
@@ -173,6 +197,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, 1200.0 * delta)
 	move_and_slide()
+	counters.distance += velocity.length() * delta
 
 	# Đang khai thác/sửa thì chỉ bắn khi quái đã đến gần
 	var busy: bool = order.type in ["mine", "interact", "revive"] and work_done
@@ -183,6 +208,7 @@ func _physics_process(delta: float) -> void:
 	elif velocity.length_squared() > 100.0:
 		_face(velocity)
 	_auto_heal(delta)
+	_update_animation()
 	queue_redraw()
 
 
@@ -204,7 +230,7 @@ func _tick(delta: float) -> void:
 		_recompute_stats()
 	if is_active():
 		energy = minf(stats.max_energy, energy + stats.energy_regen * delta)
-	var tint := _tint
+	var tint := Color.WHITE
 	if state == State.DOWNED:
 		tint = Color(0.5, 0.5, 0.55)
 	elif _hurt_flash > 0.0:
@@ -221,6 +247,19 @@ func _path_to(pos: Vector2) -> Vector2:
 func _face(dir: Vector2) -> void:
 	if dir.length_squared() > 1.0:
 		body.rotation = lerp_angle(body.rotation, dir.angle(), 0.3)
+		feet.rotation = body.rotation
+
+
+func _update_animation() -> void:
+	var moving := velocity.length_squared() > 400.0
+	if body.animation != "shoot" or not body.is_playing():
+		var anim := "move" if moving else "idle"
+		if body.animation != anim:
+			body.play(anim)
+	var feet_anim := "walk" if moving else "idle"
+	if feet.animation != feet_anim:
+		feet.play(feet_anim)
+	feet.speed_scale = clampf(velocity.length() / 170.0, 0.5, 2.0)
 
 
 func _sees(target: Node2D) -> bool:
@@ -253,6 +292,7 @@ func _shoot(target_pos: Vector2) -> void:
 	var speed := float(w.get("projectile_speed", 700))
 	Sfx.play(w.get("sound", "shoot"), 0.1, -12.0)
 	_muzzle_time = 0.05
+	body.play("shoot")
 	for i in pellets:
 		var angle := randf_range(-spread, spread) * 0.5 if pellets == 1 else lerpf(-spread, spread, float(i) / (pellets - 1)) * 0.5
 		var dir := aim.rotated(angle)
@@ -267,6 +307,7 @@ func _shoot(target_pos: Vector2) -> void:
 		p.pierce = int(w.get("pierce", 0))
 		p.lifetime = float(w.get("range", 600)) / speed
 		p.mining_damage = dmg * float(w.get("mining_mult", 0.5)) * stats.mining_power
+		p.source = self
 		get_parent().add_child(p)
 
 
@@ -298,6 +339,8 @@ func is_protected(hazard: String) -> bool:
 
 func _go_down() -> void:
 	state = State.DOWNED
+	body.stop()
+	feet.visible = false
 	revive_progress = 0.0
 	bleed_left = float(Content.config.get("squad", {}).get("bleed_out_time", 30))
 	order = {"type": "idle"}
@@ -309,6 +352,7 @@ func _go_down() -> void:
 
 func _revive() -> void:
 	state = State.ACTIVE
+	feet.visible = true
 	hp = stats.max_hp * 0.35
 	revive_progress = 0.0
 	add_to_group("squad_active")
@@ -328,7 +372,9 @@ func _do_mine(delta: float) -> bool:
 	if tool_data().get("type", "") == "drill":
 		if not _in_reach(node, float(tool_data().get("range", 70)) + 20.0):
 			return false
-		node.mine(float(tool_data().get("power", 20)) * stats.mining_power * delta, self)
+		var amount: float = float(tool_data().get("power", 20)) * stats.mining_power * delta
+		node.mine(amount, self)
+		counters.mined += amount
 		_beam(node.global_position, Color("#FFC94D"))
 		_face(node.global_position - global_position)
 		return true
@@ -352,6 +398,7 @@ func _do_interact(delta: float) -> bool:
 	if tool_data().get("type", "") == "repair":
 		speed *= 1.0 + float(tool_data().get("power", 0.5))
 	obj.work(self, delta * speed)
+	counters.worked += delta * speed
 	_face(obj.global_position - global_position)
 	if obj.done:
 		order = {"type": "idle"}
@@ -371,6 +418,7 @@ func _do_revive(delta: float) -> bool:
 	_beam(ally.global_position, Color("#7CFFB2"))
 	if ally.revive_progress >= 1.0:
 		order = {"type": "idle"}
+		counters.revived += 1
 	return true
 
 
@@ -385,7 +433,9 @@ func _auto_heal(delta: float) -> void:
 			if best == null or ally.hp / ally.stats.max_hp < best.hp / best.stats.max_hp:
 				best = ally
 	if best:
-		best.heal(float(tool_data().get("power", 10)) * stats.heal_power * delta)
+		var amount: float = float(tool_data().get("power", 10)) * stats.heal_power * delta
+		best.heal(amount)
+		counters.healed += amount
 		if best != self:
 			_beam(best.global_position, Color("#7CFFB2"))
 

@@ -8,6 +8,9 @@ const MAX_ACTIVE := 3
 
 static func for_unit(game: Node, char_id: String) -> Array:
 	var result: Array = Roles.data_of(char_id).get("abilities", []).duplicate()
+	for ability_id in Talents.abilities(game, char_id, Roles.role_of(char_id)):
+		if not ability_id in result:
+			result.append(ability_id)
 	var module_id := Inventory.equipped(game, char_id, "module")
 	for ability_id in Content.get_entry("items", module_id).get("grants_abilities", []):
 		if not ability_id in result:

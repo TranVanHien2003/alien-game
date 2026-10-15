@@ -39,6 +39,8 @@ PACKS = {
     "generic-items": "Generic Items",
     "monster-builder-pack": "Monster Builder Pack",
     "particle-pack": "Particle Pack",
+    "planets": "Planets",
+    "game-icons": "Game Icons",
     "sci-fi-sounds": "Sci-Fi Sounds",
     "impact-sounds": "Impact Sounds",
 }
@@ -61,9 +63,45 @@ def pack_zip(slug: str, offline: bool) -> zipfile.ZipFile:
     return zipfile.ZipFile(path)
 
 
+# Asset ngoài Kenney (OpenGameArt) — tải trực tiếp theo URL, lưu cache theo tên file
+EXTERNAL = {
+    "vegastrike.zip": "https://opengameart.org/sites/default/files/vegastrike-portraits-640x480.zip",
+    "nichol_portraits.zip": "https://opengameart.org/sites/default/files/png.zip",
+    "survivor.zip": "https://opengameart.org/sites/default/files/Top_Down_Survivor_2.zip",
+    "ship_interior_1.jpg": "https://opengameart.org/sites/default/files/interior_of_a_fictional_spaceship_1.jpg",
+    "ship_interior_2.jpg": "https://opengameart.org/sites/default/files/interior_of_a_fictional_spaceship_2.jpg",
+    "scifi_bulkhead.jpg": "https://opengameart.org/sites/default/files/sci_fi_bg1.jpg",
+}
+
+
+def external(name: str, offline: bool) -> Path:
+    path = CACHE / name
+    if not path.exists():
+        if offline:
+            sys.exit(f"Thiếu cache {path}. Chạy lại không có --offline.")
+        print(f"↓ {name}")
+        CACHE.mkdir(parents=True, exist_ok=True)
+        req = urllib.request.Request(EXTERNAL[name], headers={"User-Agent": "Mozilla/5.0 (asset pipeline)"})
+        path.write_bytes(urllib.request.urlopen(req, timeout=180).read())
+    return path
+
+
+def zip_image(path: Path, suffix: str) -> Image.Image:
+    with zipfile.ZipFile(path) as z:
+        names = [n for n in z.namelist() if "__MACOSX" not in n and (n == suffix or n.endswith("/" + suffix.lstrip("/")))]
+        if not names:
+            sys.exit(f"Không thấy {suffix} trong {path.name}")
+        with z.open(sorted(names, key=len)[0]) as f:
+            return Image.open(io.BytesIO(f.read())).convert("RGBA")
+
+
 class Packs:
     def __init__(self, offline: bool):
+        self.offline = offline
         self.zips = {slug: pack_zip(slug, offline) for slug in PACKS}
+
+    def ext(self, name: str) -> Path:
+        return external(name, self.offline)
 
     def _find(self, slug: str, suffix: str) -> str:
         names = [n for n in self.zips[slug].namelist() if n.replace("\\", "/").endswith(suffix)]
@@ -375,6 +413,227 @@ def build_lights() -> None:
         save(Image.merge("RGBA", (img, img, img, Image.new("L", img.size, 255))), f"fx/{name}.png")
 
 
+# --- Chân dung (dẫn truyện) ------------------------------------------------------------
+
+PORTRAITS = ["male17", "male15", "male14", "male13", "male10", "women28", "women6", "asian", "women45", "women16", "women24", "women26", "male16", "male20", "women3", "male6", "male2", "male3", "male7", "male8", "male19", "women2", "women9", "women14", "women17", "women27", "women36"]
+PORTRAIT_H = 480
+
+
+def bust(img: Image.Image, height: int = PORTRAIT_H) -> Image.Image:
+    img = img.crop(img.getbbox())
+    scale = height / img.height
+    return img.resize((int(img.width * scale), height), Image.LANCZOS)
+
+
+def hologram(img: Image.Image) -> Image.Image:
+    """Hiệu ứng hologram cho LẠC: đơn sắc xanh + vạch quét + viền sáng."""
+    from PIL import ImageChops, ImageFilter
+    gray = img.convert("L")
+    alpha = img.getchannel("A")
+    r = gray.point(lambda v: int(v * 0.35))
+    g = gray.point(lambda v: min(255, int(v * 0.95 + 20)))
+    b = gray.point(lambda v: min(255, int(v * 1.05 + 40)))
+    lines = Image.new("L", img.size, 255)
+    d = ImageDraw.Draw(lines)
+    for y in range(0, img.height, 4):
+        d.line([(0, y), (img.width, y)], fill=150)
+    alpha = ImageChops.multiply(alpha, lines).point(lambda v: int(v * 0.88))
+    out = Image.merge("RGBA", (r, g, b, alpha))
+    glow = out.filter(ImageFilter.GaussianBlur(6))
+    base = Image.new("RGBA", img.size)
+    base.alpha_composite(glow)
+    base.alpha_composite(out)
+    return base
+
+
+def build_portraits(p: Packs) -> None:
+    vs = p.ext("vegastrike.zip")
+    for name in PORTRAITS:
+        save(bust(zip_image(vs, f"{name}.png")), f"portraits/vs_{name}.png")
+    husk = zip_image(p.ext("nichol_portraits.zip"), "Husk.png")
+    save(hologram(bust(husk)), "portraits/lac.png")
+
+
+# --- Nền dẫn truyện ----------------------------------------------------------------------
+
+BG_SIZE = (1280, 720)
+
+
+def cover(img: Image.Image, size=BG_SIZE, focus_y: float = 0.5) -> Image.Image:
+    img = img.convert("RGB")
+    scale = max(size[0] / img.width, size[1] / img.height)
+    img = img.resize((int(img.width * scale) + 1, int(img.height * scale) + 1), Image.LANCZOS)
+    x = (img.width - size[0]) // 2
+    y = int((img.height - size[1]) * focus_y)
+    return img.crop((x, y, x + size[0], y + size[1]))
+
+
+def grade(img: Image.Image, tint: tuple, amount: float, dark: float = 1.0) -> Image.Image:
+    overlay = Image.new("RGB", img.size, tint)
+    out = Image.blend(img, overlay, amount)
+    return out.point(lambda v: int(v * dark))
+
+
+def starfield(seed: int, planet: Image.Image | None, planet_scale: float, pos: tuple) -> Image.Image:
+    import random
+    rnd = random.Random(seed)
+    img = Image.new("RGB", BG_SIZE, (6, 8, 18))
+    d = ImageDraw.Draw(img)
+    # Tinh vân: vài đốm màu mờ lớn
+    from PIL import ImageFilter
+    neb = Image.new("RGB", BG_SIZE, (0, 0, 0))
+    nd = ImageDraw.Draw(neb)
+    for _ in range(9):
+        c = rnd.choice([(60, 20, 90), (10, 50, 90), (90, 30, 60), (20, 70, 80)])
+        x, y, r = rnd.randint(0, 1280), rnd.randint(0, 720), rnd.randint(120, 360)
+        nd.ellipse([x - r, y - r, x + r, y + r], fill=c)
+    img = Image.blend(img, neb.filter(ImageFilter.GaussianBlur(90)), 0.55)
+    d = ImageDraw.Draw(img)
+    for _ in range(900):
+        x, y = rnd.randint(0, 1279), rnd.randint(0, 719)
+        v = rnd.randint(90, 255)
+        d.point((x, y), fill=(v, v, min(255, v + 20)))
+    for _ in range(40):
+        x, y, r = rnd.randint(0, 1279), rnd.randint(0, 719), rnd.choice([1, 1, 2])
+        d.ellipse([x - r, y - r, x + r, y + r], fill=(255, 255, 255))
+    if planet is not None:
+        pl = planet.copy()
+        pl = pl.resize((int(pl.width * planet_scale), int(pl.height * planet_scale)), Image.LANCZOS)
+        img = img.convert("RGBA")
+        img.alpha_composite(pl, (pos[0] - pl.width // 2, pos[1] - pl.height // 2))
+    return img.convert("RGB")
+
+
+def build_backgrounds(p: Packs) -> None:
+    corridor = cover(Image.open(p.ext("ship_interior_1.jpg")))
+    corridor2 = cover(Image.open(p.ext("ship_interior_2.jpg")).transpose(Image.FLIP_LEFT_RIGHT))
+    bulkhead = cover(Image.open(p.ext("scifi_bulkhead.jpg")))
+    backgrounds = {
+        "corridor": corridor,
+        "bridge": grade(corridor2, (20, 60, 120), 0.25, 0.9),
+        "hydroponics": grade(corridor, (40, 140, 60), 0.3, 0.95),
+        "alarm": grade(corridor2, (180, 20, 20), 0.35, 0.75),
+        "medbay": grade(bulkhead, (220, 240, 255), 0.15, 1.0),
+        "deck7": grade(bulkhead, (10, 20, 40), 0.55, 0.6),
+        "derelict": grade(corridor2, (30, 40, 30), 0.45, 0.45),
+        "space": starfield(1, p.image("planets", "Planets/planet09.png"), 0.9, (980, 560)),
+        "jupiter": starfield(2, p.image("planets", "Planets/planet03.png"), 0.95, (1060, 560)),
+        "van_lang": starfield(3, p.image("planets", "Planets/planet00.png"), 0.45, (330, 220)),
+        "moon": starfield(4, p.image("planets", "Planets/planet06.png"), 1.6, (240, 700)),
+        "comet": starfield(5, p.image("planets", "Planets/planet08.png"), 0.7, (1050, 200)),
+    }
+    for name, img in backgrounds.items():
+        path = OUT / "backgrounds" / f"{name}.jpg"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        img.convert("RGB").save(path, quality=86)
+
+
+# --- Sprite đội có hoạt ảnh (theo vai trò) ------------------------------------------------
+
+ROLE_TINTS = {
+    # vai trò: (hue mục tiêu 0..1 hoặc None = giữ nguyên, hệ số bão hòa, hệ số sáng)
+    "soldier": (None, 1.0, 1.0),
+    "engineer": (0.07, 1.6, 1.15),
+    "miner": (0.12, 1.2, 1.0),
+    "medic": (0.55, 0.15, 1.9),
+    "scout": (0.6, 1.2, 0.85),
+    "scientist": (0.8, 1.1, 1.05),
+}
+WEAPON_KINDS = {"rifle": "rifle", "shotgun": "shotgun", "handgun": "handgun"}
+UNIT_ANIMS = {"idle": 2, "move": 2, "shoot": 1}  # bước lấy mẫu frame
+UNIT_SCALE = 0.22
+
+
+def recolor(img: Image.Image, hue, sat_mul: float, val_mul: float) -> Image.Image:
+    """Đổi màu riêng phần quân phục (dải màu xanh/olive), giữ nguyên da, súng."""
+    if hue is None:
+        return img
+    import colorsys
+    px = img.load()
+    out = img.copy()
+    po = out.load()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = px[x, y]
+            if a == 0:
+                continue
+            h, s_, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+            if 0.08 <= h <= 0.5 and s_ > 0.07 and v > 0.12:
+                nr, ng, nb = colorsys.hsv_to_rgb(hue, min(1.0, s_ * sat_mul), min(1.0, v * val_mul))
+                po[x, y] = (int(nr * 255), int(ng * 255), int(nb * 255), a)
+    return out
+
+
+def strip(frames: list) -> Image.Image:
+    w = max(f.width for f in frames)
+    h = max(f.height for f in frames)
+    out = Image.new("RGBA", (w * len(frames), h))
+    for i, f in enumerate(frames):
+        out.alpha_composite(f, (i * w + (w - f.width) // 2, (h - f.height) // 2))
+    return out
+
+
+def build_units(p: Packs) -> None:
+    zpath = p.ext("survivor.zip")
+    meta = {"scale": UNIT_SCALE, "anims": {}}
+    with zipfile.ZipFile(zpath) as z:
+        names = [n for n in z.namelist() if n.endswith(".png") and "__MACOSX" not in n]
+
+        def frames(prefix: str, step: int) -> list:
+            picked = sorted((n for n in names if f"/{prefix}/" in n), key=lambda n: int(re.findall(r"_(\d+)\.png$", n)[0]))
+            out = []
+            for n in picked[::step]:
+                with z.open(n) as f:
+                    im = Image.open(io.BytesIO(f.read())).convert("RGBA")
+                out.append(im.resize((int(im.width * UNIT_SCALE), int(im.height * UNIT_SCALE)), Image.LANCZOS))
+            return out
+
+        base = {}
+        for kind in WEAPON_KINDS:
+            for anim, step in UNIT_ANIMS.items():
+                base[(kind, anim)] = frames(f"{kind}/{anim}", step)
+        for anim in ["walk", "idle"]:
+            fr = frames(f"feet/{anim}", 2)
+            save(strip(fr), f"units/feet_{anim}.png")
+            meta["anims"][f"feet_{anim}"] = len(fr)
+        for role, (hue, sat, val) in ROLE_TINTS.items():
+            for (kind, anim), fr in base.items():
+                save(strip([recolor(f, hue, sat, val) for f in fr]), f"units/{role}_{kind}_{anim}.png")
+                meta["anims"][f"{kind}_{anim}"] = len(fr)
+    (OUT / "units" / "units.json").write_text(json.dumps(meta, indent="\t") + "\n")
+
+
+# --- Icon giao diện & texture địa hình --------------------------------------------------------
+
+UI_ICONS = ["pause", "right", "fastForward", "zoomIn", "zoomOut", "target", "exitLeft", "home", "gear", "save",
+            "information", "menuList", "star", "warning", "wrench", "multiplayer", "singleplayer", "door", "barsHorizontal",
+            "barsVertical", "arrowUp", "arrowDown", "stop", "locked", "checkmark", "cross", "next", "return", "trophy",
+            "leaderboardsComplex", "signal3", "medal1", "basket", "massiveMultiplayer", "power", "question", "rewind", "previous"]
+
+
+def build_ui(p: Packs) -> None:
+    names = p.zips["game-icons"].namelist()
+    for name in UI_ICONS:
+        for size in ("2x", "1x"):
+            if any(n.endswith(f"PNG/White/{size}/{name}.png") for n in names):
+                save(p.image("game-icons", f"PNG/White/{size}/{name}.png"), f"ui/icons/{name}.png")
+                break
+        else:
+            print(f"! bỏ qua icon {name}")
+
+
+def build_terrain(p: Packs) -> None:
+    for i, n in enumerate(["noise00", "noise08", "noise13"]):
+        save(p.image("planets", f"Parts/{n}.png").convert("L").convert("RGBA"), f"terrain/noise_{i}.png")
+    details = {
+        "debris": ("sci-fi-rts", "PNG/Default size/Tile/scifiTile_41.png"),
+        "comet": ("sci-fi-rts", "PNG/Default size/Tile/scifiTile_13.png"),
+        "moon": ("sci-fi-rts", "PNG/Default size/Tile/scifiTile_42.png"),
+    }
+    for biome, (slug, path) in details.items():
+        save(p.image(slug, path).resize((128, 128), Image.LANCZOS), f"terrain/{biome}_detail.png")
+
+
 def write_credits() -> None:
     lines = [
         "# Nguồn asset",
@@ -387,18 +646,38 @@ def write_credits() -> None:
         "|---|---|",
     ]
     lines += [f"| {name} | https://kenney.nl/assets/{slug} |" for slug, name in PACKS.items()]
-    lines += ["", "Font: Be Vietnam Pro — SIL Open Font License (assets/fonts/OFL.txt)."]
+    lines += [
+        "",
+        "## Ngoài Kenney (OpenGameArt) — giữ nguyên giấy phép gốc khi chia sẻ lại các file này",
+        "",
+        "| Asset | Tác giả | Giấy phép | Dùng cho |",
+        "|---|---|---|---|",
+        "| [VegaStrike Portraits](https://opengameart.org/content/vegastrike-portraits) | Grumbel | CC-BY-SA 3.0 / GPL | assets/portraits/vs_*.png (đã cắt, thu nhỏ) |",
+        "| [Justin Nichol's sci-fi portraits](https://opengameart.org/content/justin-nichols-sci-fi-portraits-png-psd-transparency) (Husk) | Justin Nichol (tách nền: soreCactus) | CC-BY-SA 3.0 | assets/portraits/lac.png (hiệu ứng hologram) |",
+        "| [Animated Top Down Survivor Player](https://opengameart.org/content/animated-top-down-survivor-player) | rileygombart | CC-BY 3.0 | assets/units/* (thu nhỏ, đổi màu theo vai trò) |",
+        "| [Spaceship Interior](https://opengameart.org/content/spaceship-interior) | Pixabay | CC0 | assets/backgrounds/ (nội thất tàu, đã chỉnh màu) |",
+        "| [Sci-Fi Background](https://opengameart.org/content/sci-fi-background) | ask4asset | CC0 | assets/backgrounds/medbay, deck7 |",
+        "",
+        "Nền vũ trụ (space, jupiter, van_lang, moon, comet) được tự sinh + hành tinh từ Kenney Planets.",
+        "",
+        "Font: Be Vietnam Pro — SIL Open Font License (assets/fonts/OFL.txt).",
+    ]
     (OUT / "CREDITS.md").write_text("\n".join(lines) + "\n")
 
 
 def main() -> None:
     p = Packs("--offline" in sys.argv)
-    for sub in ("characters", "enemies", "tiles", "props", "items", "fx", "audio"):
+    for sub in ("characters", "enemies", "props", "items", "fx", "audio", "portraits", "backgrounds", "units", "ui", "terrain"):
         shutil.rmtree(OUT / sub, ignore_errors=True)
     build_characters(p)
     build_enemies(p)
     build_tiles(p)
     build_misc(p)
+    build_portraits(p)
+    build_backgrounds(p)
+    build_units(p)
+    build_ui(p)
+    build_terrain(p)
     build_lights()
     write_credits()
     print(f"✓ Asset đã sinh vào {OUT}")

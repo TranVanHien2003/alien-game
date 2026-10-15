@@ -14,3 +14,10 @@
 - Xem nhanh hình ảnh: `tools/godot.sh res://tools/screenshot.tscn -- --scene=res://scenes/mission/mission_level.tscn --mission=msn_derelict --out=build/shots/x.png` (mở cửa sổ vài giây).
 - Màn khai phá là kiểu chỉ huy (RTS): `Unit` (AI + lệnh), `SquadController` (chọn/ra lệnh/camera), `MissionHud` (thẻ thành viên, minimap). Không có nhân vật do người chơi điều khiển trực tiếp.
 - Trang bị nằm ở `crew[id].equipment` (weapon/tool/module), lọc theo `Roles.can_use`; `Game.loadout` chỉ còn `consumables` của đội.
+- Dẫn truyện: `StoryPlayer` (hub dùng cho mọi sự kiện), `Backlog` đọc `Game.log_entries` (kind: system/dialogue/choice). Hub không còn cửa sổ log; sự kiện tàu hiện bằng toast.
+- Màn ngoài trời dùng `TerrainGenerator` (cùng giao diện LevelGenerator) + shader địa hình; TileMapLayer chỉ để va chạm/tìm đường (ẩn).
+- File JSON đọc lúc chạy (FileAccess) ngoài `data/` phải được thêm vào `include_filter` trong `export_presets.cfg` (ví dụ `assets/units/units.json`).
+- `make test` fail nếu log có `SCRIPT ERROR` (GDScript không tự fail test khi lỗi runtime).
+- Nhân vật sinh lúc chạy (trẻ em, người lạ) nằm ở `Game.custom_characters` và được đăng ký vào `Content` bằng `Content.add_runtime()`; khi nạp save cần đăng ký lại trước khi xử lý crew.
+- `Roles.role_of()` trả về vai chính (`crew[id].active_role`); dữ liệu nhân vật `role` chỉ là vai ban đầu.
+- Sự kiện cần người chơi quyết định ngoài data events (lễ trưởng thành, kỳ ngộ) xếp vào `Game.special_queue`, hub phát bằng StoryPlayer.

@@ -3,7 +3,11 @@ extends RefCounted
 ## Vai trò của thành viên (data/roles): quyết định loại vũ khí/công cụ được dùng, chỉ số cộng thêm và kỹ năng chủ động.
 
 
+## Vai đang dùng (vai chính) — một thành viên có thể sở hữu nhiều vai (crew[id].roles).
 static func role_of(char_id: String) -> String:
+	var active: String = Game.crew.get(char_id, {}).get("active_role", "")
+	if active != "":
+		return active
 	return Content.get_entry("characters", char_id).get("role", "soldier")
 
 
@@ -51,7 +55,7 @@ static func recommendation_met(mission: Dictionary, team: Array) -> bool:
 
 ## Trang bị mặc định theo vai trò, chỉ lấy những gì còn trong kho.
 static func auto_equip(game: Node, char_id: String) -> void:
-	if not Content.get_entry("characters", char_id).get("assignable", true):
+	if not Content.get_entry("characters", char_id).get("assignable", true) or Game.crew.get(char_id, {}).get("roles", [null]).is_empty():
 		return
 	var role := data_of(char_id)
 	for pair in [["weapon", role.get("default_weapon", "")], ["tool", role.get("default_tool", "")]]:

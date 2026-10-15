@@ -32,13 +32,17 @@
 		},
 		"caches": 5,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"crawler": 3
 			},
 			"growth": 1
-		}
+		},
+		"layout": "interior",
+		"pack_size": 2,
+		"relics": 0,
+		"strangers": 0
 	},
 	{
 		"id": "ship",
@@ -73,97 +77,152 @@
 		},
 		"caches": 4,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"crawler": 3
 			},
 			"growth": 1
-		}
+		},
+		"layout": "interior",
+		"pack_size": 2,
+		"relics": 0,
+		"strangers": 0
 	},
 	{
 		"id": "debris",
 		"grid": [
-			84,
-			60
+			150,
+			104
 		],
 		"rooms": [
-			14,
-			19
+			13,
+			17
 		],
 		"room_size": [
-			4,
-			9
+			8,
+			12
 		],
 		"enemies": {
-			"crawler": 8,
+			"crawler": 9,
 			"sentinel": 2
 		},
 		"hazard_zones": 3,
 		"accent": "#B4FF39",
 		"resource_nodes": {
-			"ore_metal": 16,
-			"salvage_crate": 10,
-			"crystal_vein": 4
+			"ore_metal": 20,
+			"salvage_crate": 13,
+			"crystal_vein": 5
 		},
 		"tileset": "debris",
-		"ambient": "#6A5E64",
+		"ambient": "#D6CCC6",
 		"lamp_color": "#FFB070",
-		"lamps": 8,
-		"decor": {
-			"deco_meteor": 20,
-			"deco_rock_b": 16
-		},
-		"caches": 6,
+		"lamps": 0,
+		"caches": 7,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"crawler": 3
 			},
 			"growth": 1
-		}
+		},
+		"palette": {
+			"ground": "#9A6E55",
+			"rough": "#7E5845",
+			"forest": "#6E6A5A",
+			"path": "#C8A07E",
+			"water": "#2E3A58",
+			"cliff": "#4A3A36"
+		},
+		"trees": [
+			"deco_meteor",
+			"deco_rock_b",
+			"deco_rock_a"
+		],
+		"rocks": [
+			"deco_meteor",
+			"deco_rock_b"
+		],
+		"tree_density": 0.18,
+		"terrain": {
+			"height_freq": 0.03,
+			"moisture_freq": 0.045,
+			"river_freq": 0.012,
+			"cliff": 0.66,
+			"forest": 0.25,
+			"river": 0.02
+		},
+		"layout": "terrain",
+		"pack_size": 4,
+		"relics": 1,
+		"strangers": 1
 	},
 	{
 		"id": "comet",
 		"grid": [
-			84,
-			60
+			150,
+			104
 		],
 		"rooms": [
 			13,
-			18
+			17
 		],
 		"room_size": [
-			6,
-			11
+			8,
+			12
 		],
 		"enemies": {
-			"crawler": 6
+			"crawler": 7
 		},
-		"hazard_zones": 6,
+		"hazard_zones": 7,
 		"accent": "#9FE8FF",
 		"resource_nodes": {
-			"ice_chunk": 20,
-			"crystal_vein": 6
+			"ice_chunk": 26,
+			"crystal_vein": 7
 		},
 		"tileset": "comet",
-		"ambient": "#6A7E98",
+		"ambient": "#C8D4E2",
 		"lamp_color": "#B0E8FF",
-		"lamps": 8,
-		"decor": {
-			"deco_rock_a": 20,
-			"deco_meteor": 12
-		},
-		"caches": 6,
+		"lamps": 0,
+		"caches": 7,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"crawler": 3
 			},
 			"growth": 1
-		}
+		},
+		"palette": {
+			"ground": "#A8C4D6",
+			"rough": "#94B2C8",
+			"forest": "#7E9EB8",
+			"path": "#CFE0EA",
+			"water": "#2A5A86",
+			"cliff": "#5A7896"
+		},
+		"trees": [
+			"deco_rock_a",
+			"ice_chunk"
+		],
+		"rocks": [
+			"deco_rock_a",
+			"deco_meteor"
+		],
+		"tree_density": 0.16,
+		"terrain": {
+			"height_freq": 0.035,
+			"moisture_freq": 0.05,
+			"river_freq": 0.016,
+			"cliff": 0.63,
+			"forest": 0.3,
+			"river": 0.035
+		},
+		"layout": "terrain",
+		"pack_size": 4,
+		"relics": 1,
+		"strangers": 1
 	},
 	{
 		"id": "derelict",
@@ -200,57 +259,87 @@
 		},
 		"caches": 7,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"infected": 3
 			},
 			"growth": 1
-		}
+		},
+		"layout": "interior",
+		"pack_size": 2,
+		"relics": 2,
+		"strangers": 1
 	},
 	{
 		"id": "moon",
 		"grid": [
-			96,
-			68
+			160,
+			110
 		],
 		"rooms": [
-			16,
-			22
+			15,
+			19
 		],
 		"room_size": [
-			6,
+			8,
 			12
 		],
 		"enemies": {
-			"crawler": 12,
-			"spore": 14,
+			"crawler": 14,
+			"spore": 16,
 			"sentinel": 2
 		},
-		"hazard_zones": 6,
+		"hazard_zones": 7,
 		"accent": "#FF2BD6",
 		"resource_nodes": {
-			"xeno_pod": 19,
-			"ice_chunk": 12,
-			"crystal_vein": 10
+			"xeno_pod": 24,
+			"ice_chunk": 15,
+			"crystal_vein": 13
 		},
 		"tileset": "moon",
-		"ambient": "#544866",
+		"ambient": "#D0C8E0",
 		"lamp_color": "#FF60E0",
-		"lamps": 8,
-		"decor": {
-			"deco_plant_a": 29,
-			"deco_plant_b": 24,
-			"deco_cactus": 14
-		},
-		"caches": 7,
+		"lamps": 0,
+		"caches": 9,
 		"waves": {
-			"interval": 55,
-			"first": 45,
+			"interval": 120,
+			"first": 150,
 			"enemies": {
 				"spore": 3
 			},
 			"growth": 1
-		}
+		},
+		"palette": {
+			"ground": "#7A5068",
+			"rough": "#6A4458",
+			"forest": "#4E3A66",
+			"path": "#A07890",
+			"water": "#3A2A6A",
+			"cliff": "#32283C"
+		},
+		"trees": [
+			"deco_plant_a",
+			"deco_plant_b",
+			"deco_cactus",
+			"xeno_pod"
+		],
+		"rocks": [
+			"deco_rock_b",
+			"deco_rock_a"
+		],
+		"tree_density": 0.38,
+		"terrain": {
+			"height_freq": 0.032,
+			"moisture_freq": 0.05,
+			"river_freq": 0.014,
+			"cliff": 0.64,
+			"forest": 0.12,
+			"river": 0.03
+		},
+		"layout": "terrain",
+		"pack_size": 4,
+		"relics": 2,
+		"strangers": 1
 	}
 ]
