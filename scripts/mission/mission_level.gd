@@ -30,6 +30,7 @@ var gen: LevelGenerator
 var map: LevelMap
 var camera: Camera2D
 var controller: SquadController
+var autopilot: AutoPilot
 var exit_zone: ExitZone
 var units: Array = []
 var run_loot: Dictionary = {}
@@ -94,6 +95,9 @@ func _ready() -> void:
 	controller = SquadController.new()
 	world.add_child(controller)
 	controller.setup(self, camera, units, map.world_size())
+	autopilot = AutoPilot.new()
+	add_child(autopilot)
+	autopilot.setup(self)
 	camera.global_position = exit_zone.global_position
 
 	hud.setup(self)

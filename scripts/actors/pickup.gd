@@ -18,6 +18,7 @@ func setup(id: String, n: int) -> void:
 
 
 func _ready() -> void:
+	add_to_group("pickups")
 	body_entered.connect(func(b):
 		if b is Unit and b.is_active():
 			Sfx.play("pickup", 0.15, -8.0)

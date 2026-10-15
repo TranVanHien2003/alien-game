@@ -36,6 +36,14 @@ Người chơi là **chỉ huy** của tàu Âu Cơ. Không trực tiếp cầm 
 - **Vòng đời**: trẻ sinh ra trên tàu thừa hưởng thuộc tính cha mẹ, lớn dần; 16 tuổi chọn vai trong Lễ trưởng thành — đôi khi gặp kỳ ngộ cho tài năng hiếm.
 - **Giải cứu trong màn**: người mất tích được tìm thấy gia nhập đội ngay trên bản đồ; người sống sót lạ có thể được thu nhận sau màn.
 
+## Tự động chơi màn
+
+- Mỗi thành viên có nút AUTO (mặc định bật). AI chỉ biết những gì đội **đã nhìn thấy**, chọn việc theo ưu tiên vai trò
+  (chiến binh săn quái/hộ tống, thợ mỏ khai thác, kỹ sư làm trạm/tủ/cổ vật, y sĩ cứu & theo người bị thương,
+  trinh sát thăm dò/đón người, nhà khoa học cổ vật/trạm), tự dùng kỹ năng, tự lùi khi yếu, tự rút khi xong mục tiêu.
+- Trí tuệ + Tinh mắt + thành thạo -> phản ứng nhanh & chọn việc chuẩn; màn càng khó AI càng chậm, dễ sai.
+- Lệnh tay của chỉ huy được ưu tiên làm xong trước (★), người khác vẫn tự động; "Dừng" giữ yên 8 giây.
+
 ## Vai trò
 
 | Vai | Điểm mạnh | Vũ khí | Công cụ | Kỹ năng |

@@ -21,3 +21,4 @@
 - Nhân vật sinh lúc chạy (trẻ em, người lạ) nằm ở `Game.custom_characters` và được đăng ký vào `Content` bằng `Content.add_runtime()`; khi nạp save cần đăng ký lại trước khi xử lý crew.
 - `Roles.role_of()` trả về vai chính (`crew[id].active_role`); dữ liệu nhân vật `role` chỉ là vai ban đầu.
 - Sự kiện cần người chơi quyết định ngoài data events (lễ trưởng thành, kỳ ngộ) xếp vào `Game.special_queue`, hub phát bằng StoryPlayer.
+- AutoPilot (`scripts/mission/auto_pilot.gd`) chỉ ra lệnh qua `Unit.command(order, false)`; lệnh của người chơi luôn `manual = true` và không bị AutoPilot ghi đè cho tới khi xong.

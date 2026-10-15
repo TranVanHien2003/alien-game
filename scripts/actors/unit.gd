@@ -31,6 +31,8 @@ var revive_progress := 0.0
 var counters := {"kills": 0, "mined": 0.0, "worked": 0.0, "revived": 0, "healed": 0.0, "distance": 0.0}
 ## Người lạ / người được cứu gia nhập giữa màn
 var guest := false
+## Chế độ tự động (AutoPilot). Lệnh thủ công của chỉ huy luôn được ưu tiên làm xong trước.
+var auto := true
 var bleed_left := 0.0
 
 var _cooldowns: Dictionary = {}
@@ -110,10 +112,12 @@ func weapon_range() -> float:
 
 # --- Lệnh từ chỉ huy ---------------------------------------------------------------
 
-func command(new_order: Dictionary) -> void:
+## manual = true: lệnh của chỉ huy (AutoPilot không ghi đè cho tới khi xong).
+func command(new_order: Dictionary, manual: bool = true) -> void:
 	if not is_active():
 		return
 	order = new_order
+	order.manual = manual
 	_enemy = null
 	match order.type:
 		"move", "evac", "advance":
@@ -123,8 +127,9 @@ func command(new_order: Dictionary) -> void:
 				agent.target_position = order.target.global_position
 
 
+## Dừng theo lệnh chỉ huy: đứng yên 8 giây (lệnh thủ công) rồi mới quay lại tự động.
 func stop() -> void:
-	order = {"type": "idle"}
+	order = {"type": "idle", "manual": true, "until": Time.get_ticks_msec() + 8000}
 	agent.target_position = global_position
 
 

@@ -325,7 +325,8 @@
 			"Khó",
 			"Rất khó",
 			"Ác mộng"
-		]
+		],
+		"auto_penalty": 0.07
 	},
 	"attributes": {
 		"strength": {
@@ -476,5 +477,18 @@
 			"perception": 0.0003
 		},
 		"max_per_mission": 4
+	},
+	"auto": {
+		"think_min": 0.5,
+		"think_max": 2.5,
+		"noise": 0.7,
+		"retreat_hp": 0.25,
+		"guard_radius": 260,
+		"engage_range": 1.4,
+		"evac_delay": 25,
+		"evac_time_left": 60,
+		"knowledge_interval": 0.4,
+		"objective_bonus": 2.2,
+		"distance_falloff": 700
 	}
 }

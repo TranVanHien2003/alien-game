@@ -36,6 +36,8 @@ var _result_panel: PanelContainer
 var _result_title: Label
 var _result_body: RichTextLabel
 var _message_time := 0.0
+var _auto_all: Button
+var _auto_evac: Button
 
 
 func _ready() -> void:
@@ -170,11 +172,22 @@ func _process(delta: float) -> void:
 			Unit.State.DOWNED: state = "GỤC %ds" % roundi(u.bleed_left)
 			Unit.State.LOST: state = "MẤT TÍCH"
 			Unit.State.EVACUATED: state = "Trên tàu"
-			_: state = {"idle": "Sẵn sàng", "move": "Di chuyển", "advance": "Tiến công", "attack": "Tấn công", "mine": "Khai thác", "interact": "Làm việc", "revive": "Cứu người", "evac": "Rút lui"}.get(u.order.type, "")
+			_:
+				if u.order.get("auto", false):
+					state = "⚙ " + u.order.get("task", "")
+				else:
+					state = {"idle": "Sẵn sàng" if not u.auto else "⚙ Đang suy nghĩ", "move": "Di chuyển", "advance": "Tiến công", "attack": "Tấn công", "mine": "Khai thác", "interact": "Làm việc", "revive": "Cứu người", "evac": "Rút lui"}.get(u.order.type, "")
+					if u.order.get("manual", false) and u.order.type != "idle":
+						state = "★ " + state
 		card.state.text = state + (" · Giữ" if u.hold_position and u.is_active() else "")
 		card.panel.modulate = Color(1, 1, 1) if u.is_active() else Color(1, 0.6, 0.7) if u.state == Unit.State.DOWNED else Color(0.5, 0.5, 0.5)
 		card.panel.self_modulate = Color("#B4FF39") if u.selected else Color.WHITE
+		card.auto.set_pressed_no_signal(u.auto)
+		card.auto.modulate = Color("#B4FF39") if u.auto else Color(1, 1, 1, 0.5)
 	_update_action_labels()
+	if _auto_all:
+		_auto_all.self_modulate = GOLD if _level.units.any(func(u): return u.auto) else Color.WHITE
+		_auto_evac.self_modulate = GOLD if _level.autopilot and _level.autopilot.auto_evac else Color.WHITE
 
 
 func _set_bar(bar: ProgressBar, value: float, max_value: float) -> void:
@@ -285,6 +298,22 @@ func _add_card(unit: Unit) -> void:
 	name.autowrap_mode = TextServer.AUTOWRAP_OFF
 	name.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(name)
+	var auto_btn := Button.new()
+	auto_btn.toggle_mode = true
+	auto_btn.button_pressed = unit.auto
+	auto_btn.text = "AUTO"
+	auto_btn.focus_mode = Control.FOCUS_NONE
+	auto_btn.add_theme_font_size_override("font_size", 9)
+	auto_btn.custom_minimum_size = Vector2(38, 20)
+	auto_btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	auto_btn.add_theme_stylebox_override("normal", _tight_style(Color(0.1, 0.13, 0.22)))
+	auto_btn.add_theme_stylebox_override("pressed", _tight_style(Color(0.1, 0.35, 0.15)))
+	auto_btn.add_theme_stylebox_override("hover", _tight_style(Color(0.12, 0.2, 0.32)))
+	auto_btn.tooltip_text = "Tự động làm việc theo vai trò"
+	auto_btn.toggled.connect(func(on):
+		unit.auto = on
+		if not on and unit.order.get("auto", false):
+			unit.stop())
 	var hp := _bar(Color("#7CFFB2"), 6, 130)
 	var energy := _bar(Color("#00E5FF"), 3, 130)
 	var state := UI.label("", 11, Color("#8FA3BF"))
@@ -293,9 +322,10 @@ func _add_card(unit: Unit) -> void:
 	box.add_child(hp)
 	box.add_child(energy)
 	box.add_child(state)
+	row.add_child(auto_btn)
 	panel.gui_input.connect(_on_card_input.bind(unit))
 	_roster.add_child(panel)
-	_cards.append({"unit": unit, "panel": panel, "hp": hp, "energy": energy, "state": state})
+	_cards.append({"unit": unit, "panel": panel, "hp": hp, "energy": energy, "state": state, "auto": auto_btn})
 
 
 func _on_card_input(e: InputEvent, unit: Unit) -> void:
@@ -313,7 +343,11 @@ func _command_button(label: String, icon_name: String, tooltip: String, callback
 	b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 	b.add_theme_constant_override("icon_max_width", 26)
 	b.add_theme_font_size_override("font_size", 10)
-	b.custom_minimum_size = Vector2(62, 54)
+	b.add_theme_constant_override("h_separation", 0)
+	b.add_theme_stylebox_override("normal", _tight_style(Color(0.1, 0.13, 0.22)))
+	b.add_theme_stylebox_override("hover", _tight_style(Color(0.12, 0.2, 0.32)))
+	b.add_theme_stylebox_override("pressed", _tight_style(Color(0, 0.45, 0.55)))
+	b.custom_minimum_size = Vector2(56, 54)
 	b.tooltip_text = tooltip
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(callback)
@@ -372,8 +406,8 @@ func _build() -> void:
 	var bottom := VBoxContainer.new()
 	bottom.anchor_top = 1.0
 	bottom.anchor_bottom = 1.0
-	bottom.offset_left = 222
-	bottom.offset_right = 1006
+	bottom.offset_left = 216
+	bottom.offset_right = 976
 	bottom.offset_bottom = -10
 	bottom.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	bottom.add_theme_constant_override("separation", 6)
@@ -399,6 +433,13 @@ func _build() -> void:
 	commands.add_child(_command_button("Lùi", "arrowDown", "Lùi xa khỏi quái gần nhất", func(): _level.controller.fall_back()))
 	commands.add_child(_command_button("Dừng", "stop", "Dừng mọi lệnh", _stop_selected))
 	commands.add_child(_command_button("Rút lui", "exitLeft", "Cả đội về tàu con thoi", func(): _level.call_evac()))
+	commands.add_child(VSeparator.new())
+	_auto_all = _command_button("Tự động", "gear", "Bật/tắt tự động cho các thành viên đang chọn (hoặc cả đội nếu không chọn ai)", _toggle_auto_all)
+	commands.add_child(_auto_all)
+	_auto_evac = _command_button("Tự rút", "return", "Tự rút lui khi xong mục tiêu / sắp hết giờ", func():
+		_level.autopilot.auto_evac = not _level.autopilot.auto_evac
+		show_message("Tự rút lui: " + ("bật" if _level.autopilot.auto_evac else "tắt")))
+	commands.add_child(_auto_evac)
 
 	# Dưới-phải: minimap + zoom + tốc độ
 	var right := VBoxContainer.new()
@@ -455,6 +496,30 @@ func _build() -> void:
 	result_box.add_child(UI.button("Về tàu Âu Cơ", func(): return_pressed.emit()))
 
 
+func _toggle_auto_all() -> void:
+	var sel: Array = _level.controller.selected()
+	var targets: Array = sel if not sel.is_empty() else _level.units
+	var on := not targets.all(func(u): return u.auto)
+	for u in targets:
+		u.auto = on
+		if not on and u.order.get("auto", false):
+			u.stop()
+	show_message("Tự động: %s (%d người)" % ["BẬT" if on else "TẮT", targets.size()])
+
+
+func _tight_style(color: Color) -> StyleBoxFlat:
+	var st := StyleBoxFlat.new()
+	st.bg_color = color
+	st.border_color = Color(0, 0.9, 1, 0.5)
+	st.set_border_width_all(1)
+	st.set_corner_radius_all(4)
+	st.content_margin_left = 4
+	st.content_margin_right = 4
+	st.content_margin_top = 4
+	st.content_margin_bottom = 4
+	return st
+
+
 func _stop_selected() -> void:
 	for u in _level.controller.selected():
 		u.stop()
@@ -466,8 +531,11 @@ func _small_button(text: String, icon_name: String, callback: Callable) -> Butto
 	if icon_name != "":
 		b.icon = UI.ui_icon(icon_name)
 		b.add_theme_constant_override("icon_max_width", 18)
-	b.add_theme_font_size_override("font_size", 13)
-	b.custom_minimum_size = Vector2(30, 28)
+	b.add_theme_font_size_override("font_size", 12)
+	b.add_theme_stylebox_override("normal", _tight_style(Color(0.1, 0.13, 0.22)))
+	b.add_theme_stylebox_override("hover", _tight_style(Color(0.12, 0.2, 0.32)))
+	b.add_theme_stylebox_override("pressed", _tight_style(Color(0, 0.45, 0.55)))
+	b.custom_minimum_size = Vector2(34, 28)
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(callback)
 	return b

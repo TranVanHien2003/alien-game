@@ -115,3 +115,62 @@ func test_squad_auto_engages_enemies(t) -> void:
 	level._finish(false, false)
 	level.queue_free()
 	await get_tree().process_frame
+
+
+func test_autopilot_plays_by_role_and_respects_manual(t) -> void:
+	seed(12345)
+	Game.new_game(8)
+	Game.pending_event = ""
+	var option: Dictionary = MissionSystem.available(Game).filter(func(o): return o.mission.id == "msn_salvage_debris")[0]
+	MissionSystem.start_action(Game, option, ["tuan", "khang", "thu_ha", "huy"])
+	var level: Node = load("res://scenes/mission/mission_level.tscn").instantiate()
+	add_child(level)
+	await get_tree().physics_frame
+	var miner: Unit = level.units[0]
+	var scout: Unit = level.units[3]
+	# Thợ mỏ thấy một mỏ ngay cạnh -> tự đi khai thác
+	var node: ResourceNode = get_tree().get_nodes_in_group("minable")[0]
+	node.global_position = miner.global_position + Vector2(90, 0)
+	# Người chỉ huy ra lệnh tay cho trinh sát đi một điểm
+	var target: Vector2 = level.exit_zone.global_position + Vector2(0, 40)
+	scout.command({"type": "move", "pos": target})
+	# Dọn quái để kiểm tra đúng hành vi khai thác (quái gần sẽ khiến AI ưu tiên chiến đấu)
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		enemy.queue_free()
+	var mined_or_mining := false
+	var took_auto_task := false
+	for i in 300:
+		await get_tree().physics_frame
+		took_auto_task = took_auto_task or miner.order.get("auto", false)
+		mined_or_mining = mined_or_mining or miner.order.type == "mine" or miner.counters.mined > 0.0
+	t.check(took_auto_task, "thợ mỏ tự nhận việc")
+	t.check(mined_or_mining, "thợ mỏ ưu tiên khai thác")
+	t.check(level.units.any(func(u): return u != scout and u.order.get("auto", false)), "các thành viên khác vẫn tự động")
+	# Sau khi xong lệnh tay, trinh sát quay lại tự động
+	t.check(not scout.order.get("manual", false), "xong việc được giao -> quay lại tự động")
+	t.check(level.autopilot.efficiency(miner) > 0.15 and level.autopilot.efficiency(miner) <= 1.0, "hiệu quả AI trong khoảng hợp lệ")
+	level._finish(false, false)
+	level.queue_free()
+	await get_tree().process_frame
+
+
+func test_autopilot_efficiency_depends_on_stats_and_difficulty(t) -> void:
+	Game.new_game(9)
+	Game.pending_event = ""
+	var option: Dictionary = MissionSystem.available(Game).filter(func(o): return o.mission.id == "msn_hull_repair")[0]
+	MissionSystem.start_action(Game, option, ["mai", "hai"])
+	var level: Node = load("res://scenes/mission/mission_level.tscn").instantiate()
+	add_child(level)
+	await get_tree().physics_frame
+	var smart: Unit = level.units[0]
+	var e1: float = level.autopilot.efficiency(smart)
+	Game.crew.mai.attributes.intellect = 20.0
+	Game.crew.mai.attributes.perception = 20.0
+	t.check(level.autopilot.efficiency(smart) < e1, "chỉ số thấp -> AI kém hơn")
+	var e2: float = level.autopilot.efficiency(smart)
+	level.difficulty = 8.0
+	t.check(level.autopilot.efficiency(smart) < e2 or e2 <= 0.15, "màn khó -> AI kém hơn")
+	t.check(level.autopilot.think_interval(smart) > float(Content.config.auto.think_min), "AI kém suy nghĩ chậm hơn")
+	level._finish(false, false)
+	level.queue_free()
+	await get_tree().process_frame

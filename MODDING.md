@@ -107,3 +107,10 @@ Loại mục tiêu nhiệm vụ: `collect` (nhặt N vật), `interact` (giữ E
 - `config.nutrition`: lương thực/năm theo tuổi, giới tính, vai. `config.lifecycle`: sinh con, tuổi trưởng thành, tỉ lệ kỳ ngộ, tăng trưởng.
 - `config.growth`: hành động trong màn (kills, mined, worked, revived, healed, distance) -> thuộc tính. `levels[].relics`, `levels[].strangers`.
 - Module có thể cộng thuộc tính: `items[].attributes`.
+
+## Tự động chơi màn (AutoPilot)
+
+- `roles[].auto_priorities`: trọng số việc theo vai — `attack, guard, revive, heal, mine, work, collect, loot, explore`.
+- `config.auto`: `think_min/think_max` (giây giữa các lần ra quyết định), `noise` (độ "chọn sai" khi kém), `retreat_hp`,
+  `guard_radius`, `objective_bonus`, `distance_falloff`, `evac_delay`, `evac_time_left`.
+- Hiệu quả AI = (Trí tuệ + Tinh mắt)/200 × 0.6 + thành thạo vai/100 × 0.4, chia cho `Difficulty.scale("auto_penalty")`.

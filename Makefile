@@ -39,17 +39,18 @@ test: ## Chạy toàn bộ test headless (nội dung, save, gameplay, màn actio
 validate: test ## Alias của test (kiểm tra nội dung JSON)
 
 export-web: ## Export bản Web vào build/web
-	@mkdir -p build/web
+	@mkdir -p build/web && touch build/.gdignore && rm -f build/web/*.import
 	@$(GODOT) --headless --import >/dev/null 2>&1 || true
 	@$(GODOT) --headless --export-release "Web" build/web/index.html
 	@touch build/web/.nojekyll
+	@python3 tools/cache_bust.py build/web
 	@echo "✓ build/web sẵn sàng. Chạy thử: make serve"
 
 serve: ## Chạy server tĩnh cho build/web tại http://localhost:$(PORT)
 	@cd build/web && python3 -m http.server $(PORT)
 
 itch-zip: export-web ## Đóng gói build/web thành zip để upload lên itch.io
-	@cd build/web && rm -f ../au-co-web.zip && zip -qr ../au-co-web.zip .
+	@cd build/web && rm -f ../au-co-web.zip && zip -qr ../au-co-web.zip . -x ".nojekyll"
 	@echo "✓ build/au-co-web.zip"
 
 screenshots: ## Chụp ảnh các màn hình chính vào build/shots (mở cửa sổ vài giây)
