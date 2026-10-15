@@ -64,6 +64,13 @@ Giáp giảm sát thương theo `100 / (100 + giáp)`.
 | Chế tạo | `recipes/` |
 | Khởi đầu chương | `chapters[].starting_items` |
 
+## Phong cách hình ảnh
+
+- Top-down 2.5D phẳng kiểu Kenney: nhân vật nhìn từ trên đầu, hướng mặt theo tầm ngắm.
+- Mỗi biome có bảng màu riêng (viền tường, ánh sáng môi trường, màu đèn) để người chơi nhận ra ngay mình đang ở đâu.
+- Ánh sáng là gameplay: phòng xa tối, đèn pin chỉ chiếu phía trước — quái có thể ẩn trong bóng tối.
+- Hiệu ứng (đạn, nổ, chớp nòng) dùng vật liệu "unshaded + add" để luôn sáng rực.
+
 ## Điều khiển (màn action)
 
 WASD di chuyển · chuột trái bắn · Shift/chuột phải lướt · 1/2/lăn chuột đổi vũ khí · Q/R kỹ năng · 3/4 vật phẩm · E tương tác · Esc tạm dừng.

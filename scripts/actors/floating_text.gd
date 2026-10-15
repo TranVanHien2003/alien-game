@@ -15,6 +15,7 @@ static func create(pos: Vector2, t: String, c: Color, font_size: int = 16) -> Fl
 	f.color = c
 	f.size = font_size
 	f.z_index = 10
+	f.material = Projectile.glow_material()
 	return f
 
 

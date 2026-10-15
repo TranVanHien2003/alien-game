@@ -45,6 +45,11 @@ static func hbox(children: Array, separation: int = 8) -> HBoxContainer:
 	var box := HBoxContainer.new()
 	box.add_theme_constant_override("separation", separation)
 	for c in children:
+		# Nhãn tự xuống dòng trong HBox sẽ bị co còn 1 ký tự -> tắt wrap cho nhãn ngắn
+		if c is Label and c.autowrap_mode != TextServer.AUTOWRAP_OFF:
+			c.autowrap_mode = TextServer.AUTOWRAP_OFF
+		if c is Button:
+			c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		box.add_child(c)
 	return box
 
@@ -58,6 +63,23 @@ static func scroll_list() -> Array:
 	list.add_theme_constant_override("separation", 10)
 	scroll.add_child(list)
 	return [scroll, list]
+
+
+static func icon(texture: Texture2D, size: int = 40) -> TextureRect:
+	var r := TextureRect.new()
+	r.texture = texture
+	r.custom_minimum_size = Vector2(size, size)
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	return r
+
+
+static func portrait(char_id: String, size: int = 56) -> TextureRect:
+	var data := Content.get_entry("characters", char_id)
+	var path := "res://assets/characters/%s_stand.png" % data.get("sprite", "survivor")
+	var r := icon(load(path) if ResourceLoader.exists(path) else null, size)
+	r.modulate = Color(data.get("tint", "#FFFFFF"))
+	return r
 
 
 static func clear(node: Node) -> void:

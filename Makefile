@@ -3,7 +3,7 @@ GODOT   := tools/godot.sh
 VERSION := $(shell cat .godot-version)
 PORT    ?= 8000
 
-.PHONY: help setup setup-templates edit run run-mission test validate export-web serve itch-zip screenshots clean
+.PHONY: help assets setup setup-templates edit run run-mission test validate export-web serve itch-zip screenshots clean
 
 help: ## Hiện danh sách lệnh
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -13,6 +13,12 @@ setup: ## Tải Godot $(VERSION) + cấu hình VS Code làm editor ngoài
 
 setup-templates: ## Tải thêm export templates (cần để export Web ở máy)
 	@bash tools/setup.sh --templates
+
+assets: ## Tải asset CC0 (Kenney) + sinh atlas/quái ghép + dựng TileSet (cần Python + Pillow)
+	@python3 tools/import_assets.py
+	@$(GODOT) --headless --import >/dev/null 2>&1 || true
+	@$(GODOT) --headless --script res://tools/build_tileset.gd
+	@$(GODOT) --headless --import >/dev/null 2>&1 || true
 
 edit: ## Mở Godot editor
 	@$(GODOT) --editor &

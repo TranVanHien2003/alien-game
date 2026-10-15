@@ -11,6 +11,13 @@ static func category(item_id: String) -> String:
 	return Content.get_entry("items", item_id).get("category", "")
 
 
+## Icon của vật phẩm: trường "icon" trong data, mặc định assets/items/<id>.png.
+static func icon(item_id: String) -> Texture2D:
+	var name: String = Content.get_entry("items", item_id).get("icon", item_id)
+	var path := "res://assets/items/%s.png" % name
+	return load(path) if ResourceLoader.exists(path) else null
+
+
 static func items_in(game: Node, item_category: String) -> Array:
 	return game.items.keys().filter(func(id): return category(id) == item_category)
 

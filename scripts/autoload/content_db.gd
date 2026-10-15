@@ -264,6 +264,22 @@ func validate() -> PackedStringArray:
 			for item_id in chapter.starting_loadout[slot]:
 				_check_ref(problems, _where("chapters", chapter.id), "items", item_id)
 
+	for character in all("characters"):
+		_check_asset(problems, _where("characters", character.id), "res://assets/characters/%s_stand.png", character.get("sprite", ""))
+	for enemy in all("enemies"):
+		_check_asset(problems, _where("enemies", enemy.id), "res://assets/enemies/%s.png", enemy.get("sprite", ""))
+		_check_asset(problems, _where("enemies", enemy.id), "res://assets/fx/%s.png", enemy.get("projectile", ""))
+	for node in all("resource_nodes"):
+		_check_asset(problems, _where("resource_nodes", node.id), "res://assets/props/%s.png", node.get("sprite", ""))
+	for item in all("items"):
+		_check_asset(problems, _where("items", item.id), "res://assets/items/%s.png", item.get("icon", ""))
+		_check_asset(problems, _where("items", item.id), "res://assets/fx/%s.png", item.get("weapon", {}).get("projectile", ""))
+	for level in all("levels"):
+		if not level.get("tileset", "ship") in LevelMap.BIOMES:
+			problems.append("%s: tileset '%s' không tồn tại (có: %s)" % [_where("levels", level.id), level.tileset, LevelMap.BIOMES])
+		for prop in level.get("decor", {}):
+			_check_asset(problems, _where("levels", level.id), "res://assets/props/%s.png", prop)
+
 	for dialogue in all("dialogues"):
 		for line in dialogue.get("lines", []):
 			if line.has("speaker"):
@@ -329,6 +345,12 @@ func _check_stat_keys(problems: PackedStringArray, where: String, mods: Dictiona
 	for stat in mods:
 		if not stat in combat_stats:
 			problems.append("%s: chỉ số chiến đấu '%s' không tồn tại" % [where, stat])
+
+
+## Bỏ qua nếu không khai báo (dùng ảnh mặc định); báo lỗi nếu khai báo mà không có file.
+func _check_asset(problems: PackedStringArray, where: String, pattern: String, name: String) -> void:
+	if name != "" and not ResourceLoader.exists(pattern % name):
+		problems.append("%s: không có file %s" % [where, pattern % name])
 
 
 func _check_ref(problems: PackedStringArray, where: String, category: String, id: String) -> void:

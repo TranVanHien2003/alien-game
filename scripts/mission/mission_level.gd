@@ -5,7 +5,6 @@ extends Node2D
 ##
 ## Chạy thẳng scene này (F6) để test: script tự tạo ván mới và chọn nhiệm vụ đầu tiên.
 
-const CELL := 40.0
 const PLAYER := preload("res://scenes/actors/player.tscn")
 const ENEMY := preload("res://scenes/actors/enemy.tscn")
 const RESOURCE_NODE := preload("res://scenes/actors/resource_node.tscn")
@@ -49,9 +48,12 @@ func _ready() -> void:
 	rng.seed = Game.rng.randi()
 
 	gen = LevelGenerator.generate(rng, params)
+	# World được y-sort: nhân vật, quái, tường, đồ trang trí che nhau theo chiều sâu (2.5D)
+	world.y_sort_enabled = true
 	map = LevelMap.new()
-	world.add_child(map)
-	map.build(gen, params, CELL)
+	add_child(map)
+	move_child(map, 0)
+	map.build(gen, params, rng, world)
 
 	_spawn_player(location)
 	_spawn_resource_nodes(params)
@@ -144,8 +146,8 @@ func _spawn_hazards(params: Dictionary, location: Dictionary) -> void:
 	for i in int(params.get("hazard_zones", 0)):
 		var room := gen.rooms[rng.randi_range(1, gen.rooms.size() - 1)]
 		var zone: HazardZone = HAZARD.instantiate()
-		zone.setup(hazards[rng.randi() % hazards.size()], Vector2(room.size) * CELL * 0.8, dps)
-		zone.position = (Vector2(room.position) + Vector2(room.size) / 2.0) * CELL
+		zone.setup(hazards[rng.randi() % hazards.size()], Vector2(room.size) * map.cell_size * 0.8, dps)
+		zone.position = (Vector2(room.position) + Vector2(room.size) / 2.0) * map.cell_size
 		world.add_child(zone)
 
 
@@ -155,7 +157,10 @@ func _spawn_objectives() -> void:
 		"collect", "interact", "rescue":
 			for i in goal:
 				var obj: Objective = OBJECTIVE.instantiate()
-				obj.setup(objective.type, objective.get("label", ""), map.accent)
+				var sprite := ""
+				if objective.type == "rescue" and entry.target != "":
+					sprite = "res://assets/characters/%s_stand.png" % Content.get_entry("characters", entry.target).get("sprite", "survivor")
+				obj.setup(objective.type, objective.get("label", ""), map.accent, sprite)
 				obj.position = map.cell_to_world(gen.random_cell_in_room(rng, far_rooms[i % far_rooms.size()]))
 				obj.completed.connect(func(_o): _add_progress(1))
 				world.add_child(obj)

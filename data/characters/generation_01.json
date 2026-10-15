@@ -13,7 +13,8 @@
 		"skills": {
 			"command": 4,
 			"piloting": 3
-		}
+		},
+		"sprite": "man_blue"
 	},
 	{
 		"id": "thu_ha",
@@ -29,7 +30,8 @@
 		"skills": {
 			"medicine": 4,
 			"science": 2
-		}
+		},
+		"sprite": "woman_green"
 	},
 	{
 		"id": "bao",
@@ -45,7 +47,8 @@
 		"skills": {
 			"engineering": 5,
 			"survival": 1
-		}
+		},
+		"sprite": "man_brown"
 	},
 	{
 		"id": "lan_anh",
@@ -61,7 +64,9 @@
 		"skills": {
 			"botany": 4,
 			"science": 2
-		}
+		},
+		"sprite": "woman_green",
+		"tint": "#FFE0C0"
 	},
 	{
 		"id": "lac",
@@ -78,7 +83,8 @@
 		"skills": {
 			"science": 3
 		},
-		"assignable": false
+		"assignable": false,
+		"sprite": "robot"
 	},
 	{
 		"id": "huy",
@@ -93,7 +99,8 @@
 		"skills": {
 			"piloting": 4,
 			"survival": 2
-		}
+		},
+		"sprite": "hitman"
 	},
 	{
 		"id": "mai",
@@ -108,7 +115,9 @@
 		"skills": {
 			"science": 4,
 			"piloting": 1
-		}
+		},
+		"sprite": "woman_green",
+		"tint": "#C8D8FF"
 	},
 	{
 		"id": "tuan",
@@ -124,6 +133,7 @@
 			"engineering": 2,
 			"survival": 3,
 			"piloting": 1
-		}
+		},
+		"sprite": "soldier"
 	}
 ]

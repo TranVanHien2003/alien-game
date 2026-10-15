@@ -6,6 +6,10 @@ và trực tiếp dẫn đội đổ bộ: **đánh quái, hạ boss, khai thác
 
 > 🎮 Chơi thử: https://tranvanhien2003.github.io/alien-game/ (sau khi bật GitHub Pages, xem bên dưới)
 
+| Mị Châu | Xác tàu Tiên Phong | Kho & trang bị |
+|---|---|---|
+| ![](design/screenshots/moon.png) | ![](design/screenshots/derelict.png) | ![](design/screenshots/hub_inventory.png) |
+
 ## Bắt đầu nhanh
 
 ```bash
@@ -13,6 +17,7 @@ make setup        # tải Godot 4.7.2 + cấu hình VS Code làm editor ngoài
 make run          # chạy game
 make test         # chạy toàn bộ test headless
 make edit         # mở Godot editor
+make assets       # tải lại asset CC0 + sinh atlas/quái ghép + dựng TileSet (cần Python + Pillow)
 make help         # xem mọi lệnh
 ```
 
@@ -34,11 +39,22 @@ scripts/
   actors/          Player, Enemy/Boss, đạn, mỏ, đồ rơi, mục tiêu, vùng nguy hiểm
   mission/         Sinh bản đồ thủ tục, điều phối màn action, HUD
   ui/              Màn hình tiêu đề, hub trên tàu
+assets/          Đồ họa, âm thanh (sinh bởi tools/import_assets.py — xem assets/CREDITS.md)
+  characters/ enemies/ props/ items/ fx/ audio/
+  tiles/           atlas autotile theo biome + world_tileset.tres
 scenes/          title/, hub/, mission/, actors/
 tests/           Test headless (chạy trong CI trước mỗi lần deploy)
-tools/           setup.sh, godot.sh (wrapper), screenshot
+tools/           setup.sh, godot.sh, import_assets.py, build_tileset.gd, screenshot
 design/          story_bible.md (bí mật cốt truyện), game_design.md
 ```
+
+## Đồ họa & bản đồ
+
+- **Asset:** 100% CC0 từ [Kenney](https://kenney.nl) (Topdown Shooter, Sci-Fi RTS, Space Shooter, Tower Defense, Generic Items, Monster Builder, Particle Pack, Sci-Fi/Impact Sounds). Danh sách đầy đủ: [assets/CREDITS.md](assets/CREDITS.md).
+- **Bản đồ:** Godot `TileMapLayer` + `TileSet` có va chạm, bóng đổ (occluder) và lưới tìm đường; tường autotile 47 biến thể theo 8 ô lân cận.
+- **2.5D:** tường có mặt trước, Y-sort giữa nhân vật / tường / đồ vật, ánh sáng 2D + bóng đổ, đèn pin hình nón theo hướng ngắm.
+- **5 biome:** tàu Âu Cơ, xác tàu Tiên Phong, bãi mảnh vỡ, sao chổi băng, mặt trăng Mị Châu (chọn qua `data/levels/*.tileset`).
+- Muốn đổi asset: sửa bảng ánh xạ trong `tools/import_assets.py` rồi `make assets`. Asset đã sinh được commit sẵn nên CI không cần tải.
 
 ## Nguyên tắc dự án
 

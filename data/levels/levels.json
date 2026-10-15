@@ -17,12 +17,18 @@
 			"crawler": 4
 		},
 		"hazard_zones": 2,
-		"floor_color": "#141A2A",
-		"wall_color": "#2B3A5C",
 		"accent": "#00E5FF",
 		"resource_nodes": {
 			"ore_metal": 4,
 			"salvage_crate": 3
+		},
+		"tileset": "ship",
+		"ambient": "#6E7484",
+		"lamp_color": "#FFC080",
+		"lamps": 6,
+		"decor": {
+			"deco_crate_small": 6,
+			"deco_barrel": 4
 		}
 	},
 	{
@@ -43,11 +49,18 @@
 			"crawler": 2
 		},
 		"hazard_zones": 1,
-		"floor_color": "#151C2C",
-		"wall_color": "#3A4D70",
 		"accent": "#00E5FF",
 		"resource_nodes": {
 			"salvage_crate": 3
+		},
+		"tileset": "ship",
+		"ambient": "#737A8A",
+		"lamp_color": "#FFD0A0",
+		"lamps": 6,
+		"decor": {
+			"deco_crate_small": 6,
+			"deco_barrel": 4,
+			"deco_debris": 3
 		}
 	},
 	{
@@ -69,13 +82,19 @@
 			"sentinel": 1
 		},
 		"hazard_zones": 2,
-		"floor_color": "#17151F",
-		"wall_color": "#4A3F5C",
 		"accent": "#B4FF39",
 		"resource_nodes": {
 			"ore_metal": 8,
 			"salvage_crate": 5,
 			"crystal_vein": 2
+		},
+		"tileset": "debris",
+		"ambient": "#6A5E64",
+		"lamp_color": "#FFB070",
+		"lamps": 6,
+		"decor": {
+			"deco_meteor": 10,
+			"deco_rock_b": 8
 		}
 	},
 	{
@@ -96,12 +115,18 @@
 			"crawler": 3
 		},
 		"hazard_zones": 4,
-		"floor_color": "#122230",
-		"wall_color": "#5C8DB0",
 		"accent": "#9FE8FF",
 		"resource_nodes": {
 			"ice_chunk": 10,
 			"crystal_vein": 3
+		},
+		"tileset": "comet",
+		"ambient": "#6A7E98",
+		"lamp_color": "#B0E8FF",
+		"lamps": 6,
+		"decor": {
+			"deco_rock_a": 10,
+			"deco_meteor": 6
 		}
 	},
 	{
@@ -119,16 +144,23 @@
 			10
 		],
 		"enemies": {
-			"crawler": 6,
+			"infected": 5,
 			"sentinel": 3
 		},
 		"hazard_zones": 3,
-		"floor_color": "#1A1414",
-		"wall_color": "#5C3A3A",
 		"accent": "#FF8A3D",
 		"resource_nodes": {
 			"salvage_crate": 8,
 			"crystal_vein": 3
+		},
+		"tileset": "derelict",
+		"ambient": "#3A3F4A",
+		"lamp_color": "#FF8A3D",
+		"lamps": 6,
+		"decor": {
+			"deco_debris": 10,
+			"deco_glass": 8,
+			"deco_barrel": 4
 		}
 	},
 	{
@@ -146,17 +178,25 @@
 			12
 		],
 		"enemies": {
-			"crawler": 8,
-			"sentinel": 2
+			"crawler": 5,
+			"spore": 6,
+			"sentinel": 1
 		},
 		"hazard_zones": 4,
-		"floor_color": "#101C18",
-		"wall_color": "#2F5C4A",
 		"accent": "#FF2BD6",
 		"resource_nodes": {
 			"xeno_pod": 8,
 			"ice_chunk": 5,
 			"crystal_vein": 4
+		},
+		"tileset": "moon",
+		"ambient": "#544866",
+		"lamp_color": "#FF60E0",
+		"lamps": 6,
+		"decor": {
+			"deco_plant_a": 12,
+			"deco_plant_b": 10,
+			"deco_cactus": 6
 		}
 	}
 ]

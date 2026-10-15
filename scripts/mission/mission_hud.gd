@@ -11,6 +11,7 @@ var _player: Player
 var _hp_bar: ProgressBar
 var _energy_bar: ProgressBar
 var _weapon_label: Label
+var _weapon_icon: TextureRect
 var _objective_label: Label
 var _loot_label: Label
 var _hotbar_label: Label
@@ -61,6 +62,7 @@ func _set_bar(value: float, max_value: float, bar: ProgressBar) -> void:
 
 func _on_weapon_changed(item_id: String) -> void:
 	_weapon_label.text = "Vũ khí: " + Content.get_entry("items", item_id).get("name", item_id)
+	_weapon_icon.texture = Inventory.icon(item_id)
 
 
 func set_objective(text: String, done: bool) -> void:
@@ -136,7 +138,8 @@ func _build() -> void:
 	status.add_child(_labeled("Máu", _hp_bar))
 	status.add_child(_labeled("Năng lượng", _energy_bar))
 	_weapon_label = Label.new()
-	status.add_child(_weapon_label)
+	_weapon_icon = UI.icon(null, 36)
+	status.add_child(UI.hbox([_weapon_icon, _weapon_label]))
 
 	_objective_label = Label.new()
 	_objective_label.set_anchors_preset(Control.PRESET_CENTER_TOP)

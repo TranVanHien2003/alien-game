@@ -23,11 +23,24 @@ func _ready() -> void:
 	shape.size = size
 	$CollisionShape2D.shape = shape
 	body_entered.connect(func(b): if b is Player: _bodies.append(b))
+	# Vài đám khói/hạt trôi lơ lửng để vùng nguy hiểm "có thật"
+	for i in 4:
+		var puff := Sprite2D.new()
+		puff.texture = preload("res://assets/fx/smoke.png")
+		puff.modulate = Color(COLORS.get(hazard, Color.RED), 0.35)
+		puff.material = Projectile.glow_material()
+		puff.position = Vector2(randf_range(-0.35, 0.35) * size.x, randf_range(-0.35, 0.35) * size.y)
+		puff.scale = Vector2.ONE * minf(size.x, size.y) / 260.0
+		add_child(puff)
 	body_exited.connect(func(b): if b is Player: _bodies.erase(b))
 
 
 func _physics_process(delta: float) -> void:
 	_t += delta
+	for i in get_child_count():
+		var c := get_child(i)
+		if c is Sprite2D:
+			c.rotation += delta * (0.2 + i * 0.05)
 	for player in _bodies:
 		if not player.is_protected(hazard):
 			player.take_hazard_damage(dps * delta)

@@ -129,7 +129,7 @@ func _build_crew() -> void:
 			skills.append("%s%s %d[/color]" % ["[color=#FF2BD6]" if skill.get("high_tech", false) else "[color=#00E5FF]", skill.get("name", skill_id), member.skills[skill_id]])
 		var age := "" if data.get("ageless", false) else " · %d tuổi" % Game.character_age(char_id)
 		var children: Array = [
-			UI.rich("[b]%s[/b] — %s%s · [i]%s[/i]" % [data.get("name", char_id), data.get("role", ""), age, status_names.get(member.status, member.status)]),
+			UI.hbox([UI.portrait(char_id), UI.rich("[b]%s[/b] — %s%s · [i]%s[/i]" % [data.get("name", char_id), data.get("role", ""), age, status_names.get(member.status, member.status)])]),
 			UI.rich(" · ".join(skills) if skills.size() > 0 else "[color=#5C6B80]Chưa có kỹ năng[/color]"),
 			UI.label(data.get("bio", ""), 14, Color("#8FA3BF")),
 		]
@@ -191,7 +191,7 @@ func _build_mission_prep(list: VBoxContainer) -> void:
 			if not _prep.leader in team:
 				_prep.leader = team[0] if team.size() > 0 else ""
 			_build_missions())
-		list.add_child(check)
+		list.add_child(UI.hbox([UI.portrait(char_id, 40), check]))
 	if team.size() > 0:
 		var leader_pick := OptionButton.new()
 		for i in team.size():
@@ -261,6 +261,7 @@ func _build_inventory() -> void:
 		var names := {"weapons": "Vũ khí", "modules": "Module", "consumables": "Vật phẩm nhanh"}
 		var row: Array = [UI.label("%s (%d/%d):" % [names[slot], Game.loadout[slot].size(), Inventory.slot_count(slot)], 16)]
 		for item_id in Game.loadout[slot]:
+			row.append(UI.icon(Inventory.icon(item_id), 32))
 			row.append(UI.button(Content.get_entry("items", item_id).name + " ✕", func():
 				Inventory.unequip(Game, slot, item_id)
 				Game.state_changed.emit()))
@@ -274,7 +275,7 @@ func _build_inventory() -> void:
 		list.add_child(UI.label(names[cat], 20))
 		for item_id in ids:
 			var item := Content.get_entry("items", item_id)
-			var row: Array = [UI.rich("[b]%s[/b] x%d — %s" % [item.name, Game.item_count(item_id), item.get("description", "")])]
+			var row: Array = [UI.icon(Inventory.icon(item_id)), UI.rich("[b]%s[/b] x%d — %s" % [item.name, Game.item_count(item_id), item.get("description", "")])]
 			if slot_for.has(cat):
 				var equip := func():
 					Inventory.equip(Game, slot_for[cat], item_id)
@@ -293,7 +294,9 @@ func _build_crafting() -> void:
 			var have := Game.item_count(item_id)
 			var need := int(recipe.materials[item_id])
 			mats.append("%s%s %d/%d[/color]" % ["[color=#B4FF39]" if have >= need else "[color=#FF2BD6]", Content.get_entry("items", item_id).name, have, need])
+		var result_items: Array = recipe.get("result", {}).get("items_add", {}).keys()
 		list.add_child(UI.hbox([
+			UI.icon(Inventory.icon(result_items[0]) if result_items.size() > 0 else null, 36),
 			UI.rich("[b]%s[/b]  ←  %s" % [recipe.name, ", ".join(mats)]),
 			UI.button("Chế tạo", func(): Crafting.craft(Game, recipe.id), not Crafting.can_craft(Game, recipe)),
 		]))

@@ -10,7 +10,7 @@ var max_hp := 40.0
 var hp := 40.0
 var _color := Color.WHITE
 var _flash := 0.0
-var _shape_points := PackedVector2Array()
+var _sprite: Sprite2D
 
 
 func setup(id: String) -> void:
@@ -19,8 +19,14 @@ func setup(id: String) -> void:
 	max_hp = float(data.get("hp", 40))
 	hp = max_hp
 	_color = Color(data.get("color", "#C9D3E0"))
-	for i in 7:
-		_shape_points.append(Vector2.from_angle(TAU * i / 7.0) * randf_range(13.0, 19.0))
+	var shape := CircleShape2D.new()
+	shape.radius = float(data.get("radius", 18))
+	$CollisionShape2D.shape = shape
+	_sprite = Sprite2D.new()
+	_sprite.texture = load("res://assets/props/%s.png" % data.get("sprite", "ore_metal"))
+	_sprite.scale = Vector2.ONE * float(data.get("sprite_scale", 1.0))
+	_sprite.rotation = randf_range(-0.3, 0.3)
+	add_child(_sprite)
 
 
 func mine(amount: float) -> void:
@@ -31,20 +37,18 @@ func mine(amount: float) -> void:
 	queue_redraw()
 	if hp <= 0.0:
 		depleted.emit(self)
+		get_parent().add_child(Explosion.create(global_position, 30.0, _color, "spark"))
 		queue_free()
 
 
 func _process(delta: float) -> void:
 	if _flash > 0.0:
 		_flash -= delta
-		queue_redraw()
+		_sprite.modulate = Color(2, 2, 2) if _flash > 0.0 else Color.WHITE
+		_sprite.position = Vector2(randf_range(-2, 2), randf_range(-2, 2)) if _flash > 0.0 else Vector2.ZERO
 
 
 func _draw() -> void:
-	var c := Color.WHITE if _flash > 0.0 else _color
-	draw_colored_polygon(_shape_points, Color(c, 0.35))
-	var outline := _shape_points.duplicate()
-	outline.append(outline[0])
-	draw_polyline(outline, c, 2.0)
 	if hp < max_hp:
-		draw_rect(Rect2(-16, -26, 32 * hp / max_hp, 3), c)
+		draw_rect(Rect2(-18, -30, 36, 4), Color(0, 0, 0, 0.6))
+		draw_rect(Rect2(-18, -30, 36 * hp / max_hp, 4), _color)

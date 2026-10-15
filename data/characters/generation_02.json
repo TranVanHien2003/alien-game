@@ -11,6 +11,7 @@
 		"bio": "Sinh ra ở boong 3, chưa từng thấy bầu trời.",
 		"skills": {
 			"science": 1
-		}
+		},
+		"sprite": "survivor"
 	}
 ]

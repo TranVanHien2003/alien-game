@@ -37,9 +37,19 @@ var _invuln := 0.0
 var _dead := false
 var _aim := Vector2.RIGHT
 var _hurt_flash := 0.0
+var _sprite_id := "survivor"
+var _tint := Color.WHITE
+var _muzzle_time := 0.0
+
+@onready var body: Sprite2D = $Body
+@onready var muzzle: Sprite2D = $Body/Muzzle
+@onready var flashlight: PointLight2D = $Flashlight
 
 
 func setup(leader: String, team: Array, loadout: Dictionary, hazards_protected: Array) -> void:
+	var character := Content.get_entry("characters", leader)
+	_sprite_id = character.get("sprite", "survivor")
+	_tint = Color(character.get("tint", "#FFFFFF"))
 	base_stats = CombatStats.compute(Game, leader, team)
 	stats = base_stats.duplicate()
 	hp = stats.max_hp
@@ -53,6 +63,16 @@ func setup(leader: String, team: Array, loadout: Dictionary, hazards_protected: 
 	hp_changed.emit(hp, stats.max_hp)
 	energy_changed.emit(energy, stats.max_energy)
 	weapon_changed.emit(current_weapon())
+	_update_sprite()
+
+
+func _update_sprite() -> void:
+	var pose: String = weapon_data().get("pose", "gun")
+	var path := "res://assets/characters/%s_%s.png" % [_sprite_id, pose]
+	if not ResourceLoader.exists(path):
+		path = "res://assets/characters/%s_gun.png" % _sprite_id
+	body.texture = load(path)
+	body.modulate = _tint
 
 
 func current_weapon() -> String:
@@ -74,6 +94,7 @@ func _physics_process(delta: float) -> void:
 		_dash_left = float(cfg.get("dash_time", 0.16))
 		_dash_timer = stats.dash_cooldown
 		_invuln = maxf(_invuln, _dash_left)
+		Sfx.play("dash")
 	if _dash_left > 0.0:
 		velocity = _dash_dir * float(Content.config.player.get("dash_speed", 720))
 	else:
@@ -83,6 +104,8 @@ func _physics_process(delta: float) -> void:
 	_aim = (get_global_mouse_position() - global_position).normalized()
 	if _aim == Vector2.ZERO:
 		_aim = Vector2.RIGHT
+	body.rotation = _aim.angle()
+	flashlight.rotation = _aim.angle()
 	if Input.is_action_pressed("fire") and _fire_timer <= 0.0 and current_weapon() != "":
 		_shoot()
 	if Input.is_action_just_pressed("weapon_next"):
@@ -98,7 +121,6 @@ func _physics_process(delta: float) -> void:
 	for i in mini(consumables.size(), 2):
 		if Input.is_action_just_pressed("item_%d" % (i + 1)):
 			use_consumable(consumables[i])
-	queue_redraw()
 
 
 func _tick_timers(delta: float) -> void:
@@ -107,6 +129,9 @@ func _tick_timers(delta: float) -> void:
 	_dash_left -= delta
 	_invuln -= delta
 	_hurt_flash = maxf(0.0, _hurt_flash - delta)
+	_muzzle_time -= delta
+	muzzle.visible = _muzzle_time > 0.0
+	body.modulate = Color(3, 1.2, 1.2) if _hurt_flash > 0.0 else (Color(_tint, 0.55) if _dash_left > 0.0 else _tint)
 	for id in _cooldowns.keys():
 		_cooldowns[id] = maxf(0.0, _cooldowns[id] - delta)
 	var buffs_changed := false
@@ -127,6 +152,9 @@ func _shoot() -> void:
 	var pellets := int(w.get("pellets", 1))
 	var spread := float(w.get("spread", 0.0))
 	var speed := float(w.get("projectile_speed", 700))
+	var projectile_texture: String = w.get("projectile", "laser_blue")
+	Sfx.play(w.get("sound", "shoot"), 0.1, -4.0)
+	_muzzle_time = 0.05
 	for i in pellets:
 		var angle := randf_range(-spread, spread) * 0.5 if pellets == 1 else lerpf(-spread, spread, float(i) / (pellets - 1)) * 0.5
 		var dir := _aim.rotated(angle)
@@ -135,7 +163,8 @@ func _shoot() -> void:
 		if crit:
 			dmg *= stats.crit_mult
 		var p := PROJECTILE.instantiate()
-		p.setup(global_position + dir * 20.0, dir * speed, dmg, "enemies", Color(w.get("color", "#00E5FF")))
+		p.setup(global_position + dir * 30.0, dir * speed, dmg, "enemies", Color(w.get("color", "#00E5FF")))
+		p.texture_name = projectile_texture
 		p.crit = crit
 		p.pierce = int(w.get("pierce", 0))
 		p.lifetime = float(w.get("range", 600)) / speed
@@ -149,6 +178,7 @@ func switch_weapon(index: int) -> void:
 	weapon_index = posmod(index, weapons.size())
 	_fire_timer = 0.15
 	weapon_changed.emit(current_weapon())
+	_update_sprite()
 
 
 func cooldown_left(ability_id: String) -> float:
@@ -163,6 +193,7 @@ func use_ability(ability_id: String) -> void:
 		message.emit("Không đủ năng lượng")
 		return
 	energy -= float(a.get("energy", 0))
+	Sfx.play("ability")
 	_cooldowns[ability_id] = float(a.get("cooldown", 10))
 	match a.get("type", ""):
 		"heal":
@@ -221,6 +252,7 @@ func take_damage(amount: float) -> void:
 	hp = maxf(0.0, hp - amount * 100.0 / (100.0 + maxf(0.0, stats.armor)))
 	_invuln = float(Content.config.get("player", {}).get("hurt_invuln", 0.35))
 	_hurt_flash = 0.15
+	Sfx.play("hurt")
 	hp_changed.emit(hp, stats.max_hp)
 	if hp <= 0.0:
 		_dead = true
@@ -245,13 +277,3 @@ func heal(amount: float) -> void:
 
 func is_protected(hazard: String) -> bool:
 	return hazard in protected_hazards
-
-
-func _draw() -> void:
-	var c := Color("#FFFFFF") if _hurt_flash > 0.0 else Color(weapon_data().get("color", "#00E5FF"))
-	if _dash_left > 0.0:
-		draw_circle(-_dash_dir * 14.0, 12.0, Color(c, 0.2))
-	draw_circle(Vector2.ZERO, 14.0, Color(c, 0.25))
-	draw_arc(Vector2.ZERO, 14.0, 0.0, TAU, 24, c, 2.0)
-	draw_line(Vector2.ZERO, _aim * 24.0, c, 3.0)
-	draw_arc(Vector2.ZERO, 70.0, 0.0, TAU, 32, Color(c, 0.04), 1.0)

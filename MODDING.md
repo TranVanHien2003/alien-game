@@ -59,3 +59,16 @@ Mỗi file (trừ `config`) là một **mảng object có `id`**.
 Đòn đánh có sẵn: `aimed_burst`, `radial`, `charge`, `summon`. Dùng boss trong nhiệm vụ: `"objective": { "type": "boss", "boss": "boss_x", "label": "..." }`.
 
 Loại mục tiêu nhiệm vụ: `collect` (nhặt N vật), `interact` (giữ E ở N điểm), `rescue` (đưa người mất tích về), `mine` (khai thác N nguyên liệu `item`), `boss`.
+
+## Sprite & bản đồ
+
+Đặt ảnh PNG vào thư mục `assets/` tương ứng rồi trỏ tên (không có đuôi) trong JSON. Tên sai sẽ bị báo lỗi lúc khởi động.
+
+| Dữ liệu | Trường | File |
+|---|---|---|
+| `characters` | `sprite`, `tint` | `assets/characters/<sprite>_<pose>.png` (pose: gun, hold, machine, reload, silencer, stand) |
+| `items` (vũ khí) | `weapon.pose`, `weapon.projectile`, `weapon.sound` | tư thế nhân vật, `assets/fx/<projectile>.png`, `assets/audio/<sound>.ogg` |
+| `items` | `icon` (mặc định = id) | `assets/items/<icon>.png` |
+| `enemies` | `sprite`, `sprite_scale`, `tint`, `projectile` | `assets/enemies/<sprite>.png` (mặt hướng sang phải) |
+| `resource_nodes` | `sprite`, `sprite_scale`, `radius` | `assets/props/<sprite>.png` |
+| `levels` | `tileset` (ship/derelict/debris/comet/moon), `ambient`, `lamp_color`, `lamps`, `decor` | `decor`: `{tên prop: số lượng}` trong `assets/props/` |

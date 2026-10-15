@@ -13,10 +13,22 @@ func _ready() -> void:
 	if scene_path.contains("hub"):
 		Game.new_game(1)
 		Game.choose(0)
+		Game.items.merge({"kim_loai": 6, "tinh_the": 3, "bang": 3, "armor_plate": 1, "w_scatter": 1})
+	if args.has("mission"):
+		# Chụp một nhiệm vụ cụ thể: --mission=msn_derelict
+		Game.new_game(int(args.get("seed", "3")))
+		Game.pending_event = ""
+		Game.known_locations = Content.ids("locations")
+		var option: Dictionary = MissionSystem.available(Game).filter(func(o): return o.mission.id == args.mission)[0]
+		MissionSystem.start_action(Game, option, ["bao", "tuan"], "bao")
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child.call_deferred(scene)
 	for i in int(args.get("frames", 90)):
 		await get_tree().process_frame
+	if args.has("tab") and scene.has_node("%Tabs"):
+		scene.get_node("%Tabs").current_tab = int(args.tab)
+		for i in 5:
+			await get_tree().process_frame
 	if scene_path.contains("mission"):
 		# Bắn vài phát cho có hiệu ứng
 		var player = scene.get("player")

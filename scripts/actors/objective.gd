@@ -14,10 +14,28 @@ var _following := false
 var _t := 0.0
 
 
-func setup(objective_kind: String, objective_label: String, accent: Color) -> void:
+var _sprite: Sprite2D
+
+
+## sprite_path: ảnh hiển thị (trạm máy tính, thùng hàng, hoặc nhân vật cần giải cứu)
+func setup(objective_kind: String, objective_label: String, accent: Color, sprite_path: String = "") -> void:
 	kind = objective_kind
 	label = objective_label
 	color = accent
+	_sprite = Sprite2D.new()
+	if sprite_path == "":
+		sprite_path = {"interact": "res://assets/props/terminal.png", "collect": "res://assets/props/salvage_crate.png"}.get(kind, "")
+	if ResourceLoader.exists(sprite_path):
+		_sprite.texture = load(sprite_path)
+	if kind == "collect":
+		_sprite.scale = Vector2.ONE * 0.6
+	add_child(_sprite)
+	var light := PointLight2D.new()
+	light.texture = preload("res://assets/fx/light.png")
+	light.texture_scale = 1.2
+	light.energy = 0.7
+	light.color = Color("#FFC94D") if kind == "rescue" else accent
+	add_child(light)
 
 
 func _ready() -> void:
@@ -49,6 +67,7 @@ func _physics_process(delta: float) -> void:
 			_progress = maxf(0.0, _progress - delta)
 	if _following and is_instance_valid(_player):
 		var to := _player.global_position - global_position
+		_sprite.rotation = lerp_angle(_sprite.rotation, to.angle(), 0.2)
 		if to.length() > 40.0:
 			global_position += to.normalized() * minf(to.length() - 40.0, float(_player.stats.get("move_speed", 220)) * 1.05 * delta)
 	queue_redraw()
@@ -66,18 +85,12 @@ func interact_progress() -> float:
 
 func _draw() -> void:
 	var pulse := 0.6 + 0.4 * sin(_t * 4.0)
-	match kind:
-		"collect":
-			var s := 9.0
-			draw_colored_polygon(PackedVector2Array([Vector2(0, -s), Vector2(s, 0), Vector2(0, s), Vector2(-s, 0)]), Color(color, pulse))
-		"interact":
-			var c := Color("#4D9DFF") if done else color
-			draw_rect(Rect2(-14, -14, 28, 28), Color(c, 0.2))
-			draw_rect(Rect2(-14, -14, 28, 28), c, false, 2.0)
-			if _progress > 0.0 and not done:
-				draw_arc(Vector2.ZERO, 22.0, -PI / 2, -PI / 2 + TAU * _progress, 32, Color.WHITE, 3.0)
-		"rescue":
-			draw_circle(Vector2.ZERO, 12.0, Color("#FFC94D", 0.35))
-			draw_arc(Vector2.ZERO, 12.0, 0.0, TAU, 20, Color("#FFC94D"), 2.0)
-			if not _following:
-				draw_arc(Vector2.ZERO, 18.0 + pulse * 6.0, 0.0, TAU, 24, Color("#FFC94D", 0.5), 1.5)
+	if kind == "interact":
+		if done:
+			draw_arc(Vector2.ZERO, 26.0, 0.0, TAU, 32, Color("#B4FF39"), 2.0)
+		elif _progress > 0.0:
+			draw_arc(Vector2.ZERO, 28.0, -PI / 2, -PI / 2 + TAU * _progress, 32, Color.WHITE, 4.0)
+		else:
+			draw_arc(Vector2.ZERO, 26.0 + pulse * 4.0, 0.0, TAU, 32, Color(color, 0.6), 1.5)
+	elif kind == "rescue" and not _following:
+		draw_arc(Vector2.ZERO, 24.0 + pulse * 6.0, 0.0, TAU, 24, Color("#FFC94D", 0.7), 2.0)

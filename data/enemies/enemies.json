@@ -9,6 +9,38 @@
 		"sight": 360,
 		"color": "#FF2BD6",
 		"radius": 14,
+		"loot": "lt_crawler",
+		"sprite": "crawler",
+		"sprite_scale": 1.0,
+		"projectile": "laser_red"
+	},
+	{
+		"id": "infected",
+		"name": "Thủy thủ nhiễm nấm",
+		"hp": 45,
+		"speed": 115,
+		"damage": 15,
+		"attack": "melee",
+		"sight": 380,
+		"color": "#B4FF39",
+		"radius": 16,
+		"sprite": "infected",
+		"sprite_scale": 1.0,
+		"tint": "#C8FFB0",
+		"loot": "lt_crawler"
+	},
+	{
+		"id": "spore",
+		"name": "Bào tử Mị Châu",
+		"hp": 18,
+		"speed": 190,
+		"damage": 8,
+		"attack": "melee",
+		"sight": 420,
+		"color": "#FF2BD6",
+		"radius": 11,
+		"sprite": "spore",
+		"sprite_scale": 1.0,
 		"loot": "lt_crawler"
 	},
 	{
@@ -23,7 +55,10 @@
 		"projectile_speed": 320,
 		"color": "#FF8A3D",
 		"radius": 16,
-		"loot": "lt_sentinel"
+		"loot": "lt_sentinel",
+		"sprite": "sentinel",
+		"sprite_scale": 0.55,
+		"projectile": "laser_red"
 	},
 	{
 		"id": "boss_warden",
@@ -57,7 +92,11 @@
 			}
 		],
 		"summon": "crawler",
-		"projectile_speed": 340
+		"projectile_speed": 340,
+		"sprite": "boss_warden",
+		"sprite_scale": 1.0,
+		"tint": "#FFB070",
+		"projectile": "laser_red"
 	},
 	{
 		"id": "boss_queen",
@@ -92,6 +131,9 @@
 			}
 		],
 		"summon": "crawler",
-		"projectile_speed": 300
+		"projectile_speed": 300,
+		"sprite": "boss_queen",
+		"sprite_scale": 1.0,
+		"projectile": "laser_green"
 	}
 ]
