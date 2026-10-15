@@ -1,0 +1,132 @@
+[
+	{
+		"id": "ev_departure",
+		"title": "Rời quỹ đạo",
+		"text": "Động cơ chính rung lên lần cuối khi Âu Cơ rời quỹ đạo Sao Mộc. Thuyền trưởng Khang hỏi Hội đồng về chính sách khẩu phần cho năm đầu tiên.",
+		"dialogue": "dlg_departure",
+		"forced": true,
+		"priority": 100,
+		"once": true,
+		"conditions": { "year_min": 0, "year_max": 0 },
+		"choices": [
+			{ "text": "Khẩu phần nghiêm ngặt, ưu tiên dự trữ", "effects": { "stats": { "food": 10, "morale": -10 }, "flags_set": ["ration_strict"], "log": "Hội đồng áp dụng khẩu phần nghiêm ngặt." } },
+			{ "text": "Khẩu phần bình thường, giữ tinh thần", "effects": { "stats": { "morale": 5 }, "flags_set": ["ration_normal"], "log": "Khẩu phần giữ như trên Trái Đất." } }
+		]
+	},
+	{
+		"id": "ev_hydro_blight",
+		"title": "Nấm mốc khu thủy canh",
+		"text": "Lan Anh báo cáo một loại nấm lạ đang lan khắp khay lúa ở boong 2.",
+		"weight": 3,
+		"once": true,
+		"conditions": { "year_min": 2 },
+		"choices": [
+			{ "text": "Đốt bỏ toàn bộ khay bị nhiễm", "effects": { "stats": { "food": -15 }, "log": "Khay lúa bị nhiễm đã bị tiêu hủy." } },
+			{ "text": "Dùng hạt giống lúa Trái Đất để trồng lại", "conditions": { "items_all": ["hat_giong_lua"] }, "effects": { "stats": { "food": -5, "morale": 5 }, "items_remove": { "hat_giong_lua": 1 }, "log": "Lan Anh gieo lại lúa từ hạt giống gốc." } },
+			{ "text": "Nhờ LẠC phân tích loại nấm", "effects": { "stats": { "food": -8, "energy": -5 }, "flags_set": ["lac_analyzed_fungus"], "log": "LẠC xác định nấm có cấu trúc gen 'không thuộc danh mục Trái Đất'." } }
+		]
+	},
+	{
+		"id": "ev_reactor_flicker",
+		"title": "Lò phản ứng chập chờn",
+		"text": "Đèn các boong nhấp nháy suốt ba ngày. Bảo muốn tắt lò phụ để kiểm tra, LẠC khuyên không nên.",
+		"weight": 2,
+		"once": true,
+		"conditions": { "year_min": 3 },
+		"choices": [
+			{ "text": "Nghe Bảo: tắt lò để kiểm tra", "effects": { "stats": { "energy": -15, "oxygen": -5 }, "flags_set": ["trust_bao"], "log": "Bảo phát hiện một mạch điều khiển bị ai đó nối thêm." } },
+			{ "text": "Nghe LẠC: tiếp tục vận hành", "effects": { "stats": { "energy": 5 }, "flags_set": ["trust_lac"], "log": "Đèn ổn định trở lại. Không ai biết vì sao." } },
+			{ "text": "Thay bằng linh kiện dự phòng", "conditions": { "items_all": ["linh_kien_du_phong"] }, "effects": { "stats": { "energy": 10 }, "items_remove": { "linh_kien_du_phong": 1 }, "log": "Linh kiện mới được lắp đặt." } }
+		]
+	},
+	{
+		"id": "ev_first_birth",
+		"title": "Đứa trẻ đầu tiên",
+		"text": "Tiếng khóc đầu tiên vang lên ở boong 3. Đứa trẻ là con của Thuyền trưởng Khang.",
+		"forced": true,
+		"priority": 50,
+		"once": true,
+		"conditions": { "year_min": 3 },
+		"choices": [
+			{ "text": "Tổ chức lễ mừng cho toàn tàu", "effects": { "stats": { "morale": 15, "food": -5 }, "characters_add": ["an"], "flags_set": ["first_birth"], "log": "Trần An chào đời. Cả tàu ăn mừng." } },
+			{ "text": "Ghi nhận lặng lẽ, tiết kiệm tài nguyên", "effects": { "stats": { "morale": 3 }, "characters_add": ["an"], "flags_set": ["first_birth"], "log": "Trần An chào đời." } }
+		]
+	},
+	{
+		"id": "ev_council_election",
+		"title": "Bầu cử Hội đồng",
+		"text": "Nhiệm kỳ đầu tiên kết thúc. Người dân muốn có tiếng nói trong những quyết định về con tàu.",
+		"forced": true,
+		"priority": 40,
+		"once": true,
+		"conditions": { "year_min": 8 },
+		"choices": [
+			{ "text": "Tổ chức bầu cử tự do", "effects": { "stats": { "morale": 10 }, "flags_set": ["democracy"], "log": "Hội đồng mới được bầu. Khang vẫn giữ chức thuyền trưởng." } },
+			{ "text": "Giữ nguyên Hội đồng vì an toàn", "effects": { "stats": { "morale": -15 }, "flags_set": ["autocracy"], "log": "Hội đồng từ chối bầu cử. Có tiếng xì xào ở các boong dưới." } }
+		]
+	},
+	{
+		"id": "ev_strange_signal",
+		"title": "Tín hiệu từ Văn Lang",
+		"text": "Ăng-ten sâu bắt được một chuỗi xung đều đặn từ hướng hành tinh đích. LẠC nói đó là 'nhiễu sao xung'.",
+		"dialogue": "dlg_signal",
+		"weight": 2,
+		"once": true,
+		"conditions": { "year_min": 10 },
+		"choices": [
+			{ "text": "Lưu bản ghi và giữ bí mật", "effects": { "items_add": { "ban_ghi_tin_hieu": 1 }, "flags_set": ["signal_recorded"], "log": "Bản ghi tín hiệu được cất vào kho dữ liệu riêng của Hội đồng." } },
+			{ "text": "Công bố cho toàn tàu", "effects": { "stats": { "morale": -5 }, "items_add": { "ban_ghi_tin_hieu": 1 }, "flags_set": ["signal_recorded", "signal_public"], "log": "Tin đồn về 'người ở Văn Lang' lan khắp tàu." } },
+			{ "text": "Tin LẠC, xóa bản ghi", "effects": { "flags_set": ["signal_deleted", "trust_lac"], "log": "Bản ghi bị xóa. LẠC cảm ơn Hội đồng." } }
+		]
+	},
+	{
+		"id": "ev_sealed_deck",
+		"title": "Boong 7 bị khóa",
+		"text": "Trần An, giờ đã là một cô bé hiếu động, lạc tới cánh cửa boong 7. Cửa không có trên sơ đồ tàu, và LẠC từ chối mở.",
+		"weight": 2,
+		"once": true,
+		"conditions": { "year_min": 12, "flags_all": ["first_birth"] },
+		"choices": [
+			{ "text": "Hỏi Bác sĩ Thu Hà", "conditions": { "characters_alive": ["thu_ha"] }, "effects": { "flags_set": ["asked_thu_ha_deck7"], "log": "Thu Hà tái mặt: 'Đó là kho y tế. Đừng để trẻ con lại gần.'" } },
+			{ "text": "Ra lệnh cho Bảo cắt cửa", "effects": { "stats": { "hull": -5, "morale": -5 }, "flags_set": ["deck7_forced"], "log": "Bảo cắt được một khe nhỏ. Bên trong lạnh buốt và đầy những khoang tròn xếp hàng." } },
+			{ "text": "Bỏ qua chuyện này", "effects": { "log": "Cánh cửa boong 7 vẫn đóng." } }
+		]
+	},
+	{
+		"id": "ev_oxygen_leak",
+		"title": "Rò rỉ khí",
+		"text": "Cảm biến báo áp suất giảm ở hành lang ngoài. Một mảnh thiên thạch nhỏ đã xuyên qua lớp vỏ.",
+		"weight": 3,
+		"once": false,
+		"conditions": { "year_min": 5 },
+		"choices": [
+			{ "text": "Cử đội EVA vá ngay", "effects": { "stats": { "hull": 5, "oxygen": -5, "population": -1 }, "log": "Vết thủng được vá. Một thành viên đội EVA không trở về." } },
+			{ "text": "Niêm phong khu vực", "effects": { "stats": { "oxygen": -10, "hull": -10 }, "log": "Hành lang bị niêm phong vĩnh viễn." } },
+			{ "text": "Dùng linh kiện dự phòng", "conditions": { "items_all": ["linh_kien_du_phong"] }, "effects": { "stats": { "hull": 10 }, "items_remove": { "linh_kien_du_phong": 1 }, "log": "Robot bảo trì vá vết thủng bằng linh kiện dự phòng." } }
+		]
+	},
+	{
+		"id": "ev_tet",
+		"title": "Tết giữa các vì sao",
+		"text": "Theo lịch Trái Đất, đã đến Tết. Mọi người muốn tổ chức lễ hội ở khu thủy canh.",
+		"weight": 2,
+		"once": false,
+		"conditions": { "year_min": 1, "stats_min": { "food": 30 } },
+		"choices": [
+			{ "text": "Tổ chức lớn", "effects": { "stats": { "morale": 15, "food": -10 }, "log": "Tết đầu tiên trong không gian. Có cả bánh chưng làm từ lúa thủy canh." } },
+			{ "text": "Tổ chức giản dị", "effects": { "stats": { "morale": 5, "food": -3 }, "log": "Một cái Tết nhỏ nhưng ấm áp." } }
+		]
+	},
+	{
+		"id": "ev_captain_log",
+		"title": "Nhật ký bị xé",
+		"text": "Khang đã già và yếu đi nhiều. Ông trao cho Hội đồng cuốn nhật ký của mình, nhưng vài trang đã bị xé mất.",
+		"forced": true,
+		"priority": 30,
+		"once": true,
+		"conditions": { "year_min": 20, "characters_alive": ["khang"] },
+		"choices": [
+			{ "text": "Nhận nhật ký", "effects": { "items_add": { "nhat_ky_thuyen_truong": 1 }, "flags_set": ["has_captain_log"], "log": "Trang cuối nhật ký ghi: 'Họ không được biết chúng ta thực sự chạy trốn khỏi điều gì.'" } }
+		]
+	}
+]

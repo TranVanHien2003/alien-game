@@ -1,0 +1,12 @@
+[
+	{ "id": "command",     "name": "Chỉ huy",    "description": "Giữ đội bình tĩnh, tăng tỉ lệ thành công khi dẫn đội." },
+	{ "id": "piloting",    "name": "Lái tàu",    "description": "Điều khiển tàu con thoi, tiếp cận mục tiêu nguy hiểm." },
+	{ "id": "engineering", "name": "Kỹ thuật",   "description": "Sửa chữa, tháo dỡ, vận hành máy móc." },
+	{ "id": "medicine",    "name": "Y học",      "description": "Cứu thương, chăm sóc người mất tích được tìm thấy." },
+	{ "id": "science",     "name": "Khoa học",   "description": "Phân tích dữ liệu, tạo điểm nghiên cứu khi ở trên tàu." },
+	{ "id": "botany",      "name": "Nông học",   "description": "Chăm sóc khu thủy canh." },
+	{ "id": "survival",    "name": "Sinh tồn",   "description": "Sống sót trong môi trường khắc nghiệt ngoài tàu." },
+	{ "id": "nano_repair",  "name": "Sửa chữa nano",       "high_tech": true, "requires_tech": "nanofabrication",  "description": "Điều khiển bầy robot nano vá vỏ tàu và máy móc." },
+	{ "id": "xenobiology",  "name": "Sinh học ngoại giới", "high_tech": true, "requires_tech": "xeno_lab",         "description": "Hiểu và chống chọi với sự sống lạ." },
+	{ "id": "neural_link",  "name": "Liên kết thần kinh",  "high_tech": true, "requires_tech": "neural_interface", "description": "Kết nối trực tiếp với LẠC. Mạnh mẽ, nhưng LẠC cũng nhìn thấy bạn." }
+]

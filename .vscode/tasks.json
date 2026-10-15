@@ -1,0 +1,9 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{ "label": "Godot: chạy game", "type": "shell", "command": "make run", "problemMatcher": [] },
+		{ "label": "Godot: mở editor", "type": "shell", "command": "make edit", "problemMatcher": [] },
+		{ "label": "Godot: test", "type": "shell", "command": "make test", "group": { "kind": "test", "isDefault": true }, "problemMatcher": [] },
+		{ "label": "Godot: export web + serve", "type": "shell", "command": "make export-web && make serve", "problemMatcher": [] }
+	]
+}

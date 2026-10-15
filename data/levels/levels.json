@@ -1,0 +1,162 @@
+[
+	{
+		"id": "default",
+		"grid": [
+			48,
+			36
+		],
+		"rooms": [
+			6,
+			9
+		],
+		"room_size": [
+			5,
+			10
+		],
+		"enemies": {
+			"crawler": 4
+		},
+		"hazard_zones": 2,
+		"floor_color": "#141A2A",
+		"wall_color": "#2B3A5C",
+		"accent": "#00E5FF",
+		"resource_nodes": {
+			"ore_metal": 4,
+			"salvage_crate": 3
+		}
+	},
+	{
+		"id": "ship",
+		"grid": [
+			40,
+			30
+		],
+		"rooms": [
+			5,
+			7
+		],
+		"room_size": [
+			5,
+			9
+		],
+		"enemies": {
+			"crawler": 2
+		},
+		"hazard_zones": 1,
+		"floor_color": "#151C2C",
+		"wall_color": "#3A4D70",
+		"accent": "#00E5FF",
+		"resource_nodes": {
+			"salvage_crate": 3
+		}
+	},
+	{
+		"id": "debris",
+		"grid": [
+			56,
+			40
+		],
+		"rooms": [
+			7,
+			10
+		],
+		"room_size": [
+			4,
+			9
+		],
+		"enemies": {
+			"crawler": 4,
+			"sentinel": 1
+		},
+		"hazard_zones": 2,
+		"floor_color": "#17151F",
+		"wall_color": "#4A3F5C",
+		"accent": "#B4FF39",
+		"resource_nodes": {
+			"ore_metal": 8,
+			"salvage_crate": 5,
+			"crystal_vein": 2
+		}
+	},
+	{
+		"id": "comet",
+		"grid": [
+			56,
+			40
+		],
+		"rooms": [
+			6,
+			9
+		],
+		"room_size": [
+			6,
+			11
+		],
+		"enemies": {
+			"crawler": 3
+		},
+		"hazard_zones": 4,
+		"floor_color": "#122230",
+		"wall_color": "#5C8DB0",
+		"accent": "#9FE8FF",
+		"resource_nodes": {
+			"ice_chunk": 10,
+			"crystal_vein": 3
+		}
+	},
+	{
+		"id": "derelict",
+		"grid": [
+			64,
+			44
+		],
+		"rooms": [
+			8,
+			12
+		],
+		"room_size": [
+			5,
+			10
+		],
+		"enemies": {
+			"crawler": 6,
+			"sentinel": 3
+		},
+		"hazard_zones": 3,
+		"floor_color": "#1A1414",
+		"wall_color": "#5C3A3A",
+		"accent": "#FF8A3D",
+		"resource_nodes": {
+			"salvage_crate": 8,
+			"crystal_vein": 3
+		}
+	},
+	{
+		"id": "moon",
+		"grid": [
+			64,
+			44
+		],
+		"rooms": [
+			8,
+			12
+		],
+		"room_size": [
+			6,
+			12
+		],
+		"enemies": {
+			"crawler": 8,
+			"sentinel": 2
+		},
+		"hazard_zones": 4,
+		"floor_color": "#101C18",
+		"wall_color": "#2F5C4A",
+		"accent": "#FF2BD6",
+		"resource_nodes": {
+			"xeno_pod": 8,
+			"ice_chunk": 5,
+			"crystal_vein": 4
+		}
+	}
+]

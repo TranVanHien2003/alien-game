@@ -1,0 +1,16 @@
+[
+	{
+		"id": "an",
+		"name": "Trần An",
+		"role": "Đứa trẻ đầu tiên của con tàu",
+		"generation": 2,
+		"birth_year": 3,
+		"traits": [
+			"tò mò"
+		],
+		"bio": "Sinh ra ở boong 3, chưa từng thấy bầu trời.",
+		"skills": {
+			"science": 1
+		}
+	}
+]

@@ -1,0 +1,247 @@
+[
+	{
+		"id": "msn_hull_repair",
+		"name": "Sửa vỏ tàu",
+		"type": "repair",
+		"location": "loc_ship",
+		"description": "Đội kỹ thuật ra ngoài vá các vết nứt nhỏ.",
+		"team_size": [
+			1,
+			2
+		],
+		"skills": {
+			"engineering": 3
+		},
+		"duration": 1,
+		"base_chance": 0.6,
+		"repeatable": true,
+		"missing_chance": 0.0,
+		"success": {
+			"stats": {
+				"hull": 15
+			},
+			"log": "Vỏ tàu được gia cố."
+		},
+		"failure": {
+			"stats": {
+				"hull": -3
+			},
+			"log": "Đội sửa chữa phải rút về giữa chừng."
+		},
+		"objective": {
+			"type": "interact",
+			"count": 3,
+			"label": "Vá vết nứt"
+		}
+	},
+	{
+		"id": "msn_salvage_debris",
+		"name": "Trục vớt mảnh vỡ",
+		"type": "salvage",
+		"location": "loc_debris",
+		"description": "Bay tàu con thoi vào bãi mảnh vỡ tìm kim loại và linh kiện.",
+		"team_size": [
+			2,
+			3
+		],
+		"skills": {
+			"piloting": 2,
+			"engineering": 2
+		},
+		"duration": 1,
+		"base_chance": 0.55,
+		"repeatable": true,
+		"missing_chance": 0.25,
+		"success": {
+			"stats": {
+				"energy": 5
+			},
+			"items_add": {
+				"linh_kien_du_phong": 1
+			},
+			"research_points": 3,
+			"log": "Đội trục vớt mang về linh kiện và mẫu kim loại.",
+			"loot": "lt_mission_salvage"
+		},
+		"failure": {
+			"stats": {
+				"energy": -3
+			},
+			"log": "Tàu con thoi bị mảnh vỡ va trúng."
+		},
+		"objective": {
+			"type": "mine",
+			"item": "kim_loai",
+			"count": 8,
+			"label": "Kim loại"
+		}
+	},
+	{
+		"id": "msn_comet_ice",
+		"name": "Khai thác băng sao chổi",
+		"type": "harvest",
+		"location": "loc_comet",
+		"description": "Khoan băng trên K-17 và kéo về tàu.",
+		"team_size": [
+			2,
+			4
+		],
+		"skills": {
+			"piloting": 2,
+			"survival": 2
+		},
+		"duration": 2,
+		"base_chance": 0.5,
+		"repeatable": true,
+		"missing_chance": 0.3,
+		"success": {
+			"stats": {
+				"water": 25,
+				"oxygen": 5
+			},
+			"log": "Hàng tấn băng được chuyển về bồn chứa."
+		},
+		"failure": {
+			"log": "Bão bụi băng buộc đội phải bỏ lại thiết bị."
+		},
+		"objective": {
+			"type": "mine",
+			"item": "bang",
+			"count": 10,
+			"label": "Lõi băng"
+		}
+	},
+	{
+		"id": "msn_deep_scan",
+		"name": "Quét không gian sâu",
+		"type": "explore",
+		"location": "loc_ship",
+		"description": "Dùng máy quét tầm xa tìm địa điểm mới quanh tuyến bay.",
+		"conditions": {
+			"tech_all": [
+				"deep_scanner"
+			]
+		},
+		"team_size": [
+			1,
+			2
+		],
+		"skills": {
+			"science": 3
+		},
+		"duration": 1,
+		"base_chance": 0.6,
+		"repeatable": true,
+		"missing_chance": 0.0,
+		"success": {
+			"discover_random_location": true,
+			"research_points": 2
+		},
+		"failure": {
+			"log": "Máy quét chỉ thu được nhiễu."
+		},
+		"auto_only": true
+	},
+	{
+		"id": "msn_derelict",
+		"name": "Thâm nhập xác tàu Tiên Phong",
+		"type": "explore",
+		"location": "loc_derelict",
+		"description": "Leo lên con tàu ma. Nhật ký của họ có thể giải thích tất cả.",
+		"team_size": [
+			2,
+			4
+		],
+		"skills": {
+			"engineering": 3,
+			"science": 2
+		},
+		"duration": 2,
+		"base_chance": 0.45,
+		"repeatable": false,
+		"missing_chance": 0.5,
+		"success": {
+			"research_points": 15,
+			"flags_set": [
+				"found_tien_phong"
+			],
+			"log": "Nhật ký Tiên Phong: 'Năm 41. LẠC đã khóa boong 7. Chúng tôi không thể...' Bản ghi dừng ở đó."
+		},
+		"failure": {
+			"log": "Hệ thống phòng vệ của xác tàu bất ngờ kích hoạt."
+		},
+		"objective": {
+			"type": "boss",
+			"boss": "boss_warden",
+			"label": "Hạ Người Gác"
+		}
+	},
+	{
+		"id": "msn_moon_samples",
+		"name": "Lấy mẫu dưới băng Mị Châu",
+		"type": "explore",
+		"location": "loc_rogue_moon",
+		"description": "Khoan xuyên lớp băng và lấy mẫu thứ đang chuyển động bên dưới.",
+		"team_size": [
+			2,
+			3
+		],
+		"skills": {
+			"science": 3,
+			"survival": 2
+		},
+		"duration": 2,
+		"base_chance": 0.4,
+		"repeatable": false,
+		"missing_chance": 0.5,
+		"success": {
+			"research_points": 20,
+			"flags_set": [
+				"xeno_samples"
+			],
+			"log": "Mẫu vật sống. Cấu trúc gen giống hệt loại nấm từng xuất hiện ở khu thủy canh."
+		},
+		"failure": {
+			"log": "Lớp băng sụp xuống dưới chân đội khảo sát."
+		},
+		"objective": {
+			"type": "boss",
+			"boss": "boss_queen",
+			"label": "Hạ Mẫu Hậu"
+		}
+	},
+	{
+		"id": "msn_rescue",
+		"name": "Giải cứu",
+		"type": "rescue",
+		"rescue": true,
+		"description": "Tìm và đưa thành viên mất tích trở về trước khi quá muộn.",
+		"team_size": [
+			2,
+			3
+		],
+		"skills": {
+			"piloting": 2,
+			"medicine": 1
+		},
+		"duration": 1,
+		"base_chance": 0.55,
+		"repeatable": true,
+		"missing_chance": 0.15,
+		"success": {
+			"stats": {
+				"morale": 8
+			}
+		},
+		"failure": {
+			"stats": {
+				"morale": -3
+			}
+		},
+		"objective": {
+			"type": "rescue",
+			"count": 1,
+			"label": "Người mất tích"
+		}
+	}
+]

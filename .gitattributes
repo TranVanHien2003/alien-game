@@ -1,0 +1,6 @@
+# Chuẩn hóa xuống dòng LF cho mọi file text (tránh diff ảo giữa Windows/Linux)
+* text=auto eol=lf
+*.ttf binary
+*.png binary
+*.wav binary
+*.ogg binary

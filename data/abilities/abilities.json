@@ -1,0 +1,8 @@
+[
+	{ "id": "nano_repair",      "name": "Bầy nano hồi phục", "energy": 40, "cooldown": 12, "requires": { "skill": "nano_repair", "level": 1 }, "type": "heal", "amount": 45, "description": "Hồi máu tức thì." },
+	{ "id": "xeno_pheromone",   "name": "Pheromone xua đuổi", "energy": 35, "cooldown": 15, "requires": { "skill": "xenobiology", "level": 1 }, "type": "slow_enemies", "factor": 0.35, "duration": 5, "description": "Làm chậm mọi kẻ địch đang thấy bạn." },
+	{ "id": "neural_overclock", "name": "Ép xung thần kinh", "energy": 50, "cooldown": 20, "requires": { "skill": "neural_link", "level": 1 }, "type": "time_slow", "time_scale": 0.4, "duration": 4, "description": "Thế giới chậm lại, bạn thì không." },
+	{ "id": "shock_grenade",    "name": "Lựu sốc", "energy": 30, "cooldown": 6, "requires": {}, "type": "aoe", "damage": 60, "radius": 130, "range": 420, "description": "Ném lựu nổ tại vị trí con trỏ. Cần module Bệ phóng lựu sốc." },
+	{ "id": "field_medic",      "name": "Sơ cứu chiến trường", "energy": 45, "cooldown": 18, "requires": { "skill": "medicine", "level": 4 }, "type": "heal", "amount": 30, "description": "Bác sĩ giỏi luôn có cách giữ đội sống sót." },
+	{ "id": "overcharge",       "name": "Quá tải vũ khí", "energy": 40, "cooldown": 14, "requires": { "skill": "engineering", "level": 4 }, "type": "buff", "buff": { "damage_mult": 0.5, "fire_rate_mult": 0.5 }, "duration": 5, "description": "+50% sát thương và tốc độ bắn trong 5 giây." }
+]

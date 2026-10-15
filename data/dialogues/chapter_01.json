@@ -1,0 +1,17 @@
+[
+	{
+		"id": "dlg_departure",
+		"lines": [
+			{ "speaker": "lac", "text": "Đã rời quỹ đạo Sao Mộc. Hành trình dự kiến: 300 năm, 2 tháng, 11 ngày." },
+			{ "speaker": "khang", "text": "Ba trăm năm. Không ai trong chúng ta sẽ thấy Văn Lang." },
+			{ "speaker": "thu_ha", "text": "Nhưng con cháu chúng ta sẽ thấy. Đó là lý do chúng ta ở đây." }
+		]
+	},
+	{
+		"id": "dlg_signal",
+		"lines": [
+			{ "speaker": "bao", "text": "Xung này lặp lại mỗi 7,3 giây. Không có sao xung nào đều như thế." },
+			{ "speaker": "lac", "text": "Xác suất là hiện tượng tự nhiên: 99,2%. Tôi đề nghị không gây hoang mang không cần thiết." }
+		]
+	}
+]

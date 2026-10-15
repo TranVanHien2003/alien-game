@@ -1,0 +1,32 @@
+[
+	{ "id": "kim_loai",           "category": "material", "name": "Kim loại phế liệu", "description": "Đào từ quặng hoặc tháo từ máy móc. Nguyên liệu chế tạo cơ bản." },
+	{ "id": "bang",               "category": "material", "name": "Lõi băng", "description": "Băng sạch từ sao chổi. Có thể tinh lọc thành nước." },
+	{ "id": "tinh_the",           "category": "material", "name": "Tinh thể năng lượng", "description": "Tinh thể phát sáng, tích trữ năng lượng." },
+	{ "id": "mau_vat_la",         "category": "material", "name": "Mẫu vật lạ", "description": "Mô sinh học không thuộc Trái Đất. Vẫn còn ấm." },
+	{ "id": "linh_kien_du_phong", "category": "material", "name": "Linh kiện dự phòng", "description": "Dùng để sửa chữa khẩn cấp hoặc chế tạo đồ cao cấp." },
+
+	{ "id": "medkit",      "category": "consumable", "name": "Bộ sơ cứu", "description": "Hồi 40 máu.", "use": { "heal": 40 } },
+	{ "id": "energy_cell", "category": "consumable", "name": "Pin năng lượng", "description": "Hồi 50 năng lượng.", "use": { "energy": 50 } },
+	{ "id": "stim",        "category": "consumable", "name": "Thuốc kích thích", "description": "+40% tốc độ bắn và +20% tốc độ chạy trong 8 giây.", "use": { "buff": { "fire_rate_mult": 0.4, "move_speed": 44 }, "duration": 8 } },
+
+	{ "id": "armor_plate",     "category": "module", "name": "Tấm giáp gốm",     "description": "+15 giáp.",               "modifiers": { "armor": 15 } },
+	{ "id": "servo_legs",      "category": "module", "name": "Servo chân",       "description": "+30 tốc độ di chuyển, lướt hồi nhanh hơn.", "modifiers": { "move_speed": 30, "dash_cooldown": -0.4 } },
+	{ "id": "targeting_chip",  "category": "module", "name": "Chip ngắm bắn",    "description": "+8% chí mạng, +25% sát thương chí mạng.", "modifiers": { "crit_chance": 0.08, "crit_mult": 0.25 } },
+	{ "id": "capacitor",       "category": "module", "name": "Tụ điện phụ",      "description": "+30 năng lượng tối đa, +3 hồi năng lượng.", "modifiers": { "max_energy": 30, "energy_regen": 3 } },
+	{ "id": "drill_head",      "category": "module", "name": "Mũi khoan kim cương", "description": "+1 sức khai thác.",     "modifiers": { "mining_power": 1 } },
+	{ "id": "shock_launcher",  "category": "module", "name": "Bệ phóng lựu sốc", "description": "Cho phép dùng kỹ năng Lựu sốc.", "grants_abilities": ["shock_grenade"] },
+
+	{ "id": "w_pulse_pistol",  "category": "weapon", "name": "Súng xung K-1", "description": "Vũ khí tiêu chuẩn của đội an ninh tàu.",
+		"weapon": { "damage": 10, "fire_interval": 0.25, "projectile_speed": 700, "pellets": 1, "spread": 0.04, "pierce": 0, "range": 600, "mining_mult": 0.5, "color": "#00E5FF" } },
+	{ "id": "w_scatter",       "category": "weapon", "name": "Súng tán xạ", "description": "Bắn 6 viên một lúc. Cực mạnh ở cự ly gần.",
+		"weapon": { "damage": 6, "fire_interval": 0.7, "projectile_speed": 620, "pellets": 6, "spread": 0.5, "pierce": 0, "range": 340, "mining_mult": 0.3, "color": "#FFC94D" } },
+	{ "id": "w_rail_rifle",    "category": "weapon", "name": "Súng trường ray", "description": "Đạn xuyên 3 mục tiêu. Chậm nhưng chí mạng cao.",
+		"weapon": { "damage": 38, "fire_interval": 0.95, "projectile_speed": 1400, "pellets": 1, "spread": 0.0, "pierce": 3, "range": 1100, "crit_bonus": 0.15, "mining_mult": 0.5, "color": "#B4FF39" } },
+	{ "id": "w_plasma_cutter", "category": "weapon", "name": "Máy cắt plasma", "description": "Tầm ngắn, bắn liên tục. Khai thác cực nhanh.",
+		"weapon": { "damage": 5, "fire_interval": 0.07, "projectile_speed": 520, "pellets": 1, "spread": 0.12, "pierce": 0, "range": 220, "mining_mult": 2.5, "color": "#FF8A3D" } },
+
+	{ "id": "hat_giong_lua",         "category": "key", "name": "Hạt giống lúa Trái Đất", "description": "Giống lúa gốc. Có thể dùng để phục hồi khu thủy canh." },
+	{ "id": "nhat_ky_thuyen_truong", "category": "key", "name": "Nhật ký thuyền trưởng", "description": "Những trang viết tay của Khang. Vài trang bị xé mất." },
+	{ "id": "ban_ghi_tin_hieu",      "category": "key", "name": "Bản ghi tín hiệu lạ", "description": "Một chuỗi xung nhịp từ hướng Văn Lang." },
+	{ "id": "loi_ai_tien_phong",     "category": "key", "name": "Lõi AI Tiên Phong", "description": "Bộ nhớ của trí tuệ nhân tạo trên xác tàu. Nó vẫn đang thì thầm." }
+]

@@ -1,0 +1,6 @@
+[
+	{ "id": "ending_suffocation", "title": "Hơi thở cuối cùng", "text": "Máy lọc khí ngừng hoạt động. Âu Cơ tiếp tục bay, nhưng không còn ai để thở." },
+	{ "id": "ending_breach",      "title": "Vết nứt",           "text": "Vỏ tàu vỡ toang. Khoảng không lặng lẽ nuốt chửng các boong tàu." },
+	{ "id": "ending_silence",     "title": "Con tàu im lặng",   "text": "Người cuối cùng đã ra đi. LẠC vẫn tiếp tục đếm năm." },
+	{ "id": "ending_mutiny",      "title": "Nổi loạn",          "text": "Niềm tin cạn kiệt. Hội đồng bị lật đổ và con tàu chìm trong hỗn loạn." }
+]

@@ -1,0 +1,6 @@
+Name game
+Tàu vũ trụ thế hệ (Sinh tồn / xây dựng thuộc địa có cốt truyện)
+Một con tàu chở loài người bay hàng trăm năm đến hành tinh mới. Bạn quản lý từng thế hệ, mỗi thế hệ có nhân vật, xung đột và bí mật riêng về con tàu. Cấu trúc “thế hệ” cho phép bạn kể chuyện dài hơi, và các bản cập nhật có thể thêm khu vực tàu, sự kiện hay thậm chí đổ bộ xuống hành tinh ở giai đoạn sau.
+
+rule 
+Hãy tách nội dung ra khỏi code ngay từ đầu: nhân vật, vật phẩm, đoạn hội thoại, sự kiện nên nằm trong file Resource (.tres) hoặc JSON để bạn và có thể cả cộng đồng modder thêm nội dung dễ dàng. Thiết kế hệ thống save có phiên bản (version) để các bản cập nhật không làm hỏng file save cũ, đây là lỗi rất nhiều game indie gặp phải. Nên bắt đầu với phạm vi nhỏ nhất có thể, ví dụ một chương hoặc một mùa hoàn chỉnh, phát hành trên itch.io để lấy phản hồi rồi mới mở rộng. Cuối cùng, viết sẵn “kinh thánh cốt truyện” (story bible) gồm lore, dòng thời gian và bí mật lớn ngay từ đầu, dù chỉ hé lộ dần, để mạch truyện nhất quán khi phát triển qua nhiều năm.

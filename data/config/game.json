@@ -1,0 +1,286 @@
+{
+	"content_version": 1,
+	"years_per_turn": 1,
+	"generation_length_years": 25,
+	"event_chance": 0.65,
+	"start_chapter": "chapter_01",
+	"stats": {
+		"population": {
+			"label": "Dân số",
+			"start": 120,
+			"min": 0,
+			"max": 100000,
+			"color": "#B4FF39"
+		},
+		"oxygen": {
+			"label": "Ô-xy",
+			"start": 85,
+			"min": 0,
+			"max": 100,
+			"color": "#00E5FF"
+		},
+		"water": {
+			"label": "Nước",
+			"start": 80,
+			"min": 0,
+			"max": 100,
+			"color": "#4D9DFF"
+		},
+		"food": {
+			"label": "Lương thực",
+			"start": 75,
+			"min": 0,
+			"max": 100,
+			"color": "#FFC94D"
+		},
+		"energy": {
+			"label": "Năng lượng",
+			"start": 90,
+			"min": 0,
+			"max": 100,
+			"color": "#FF8A3D"
+		},
+		"hull": {
+			"label": "Vỏ tàu",
+			"start": 100,
+			"min": 0,
+			"max": 100,
+			"color": "#C9D3E0"
+		},
+		"morale": {
+			"label": "Tinh thần",
+			"start": 60,
+			"min": 0,
+			"max": 100,
+			"color": "#FF2BD6"
+		}
+	},
+	"yearly": {
+		"oxygen": {
+			"base": 6.0,
+			"per_person": -0.05
+		},
+		"water": {
+			"base": 5.0,
+			"per_person": -0.045
+		},
+		"food": {
+			"base": 7.0,
+			"per_person": -0.06
+		},
+		"energy": {
+			"base": -1.0,
+			"per_person": 0.0
+		},
+		"hull": {
+			"base": -0.5,
+			"per_person": 0.0
+		},
+		"morale": {
+			"base": 0.0,
+			"per_person": 0.0,
+			"toward": 50,
+			"pull": 0.1
+		}
+	},
+	"lifespan": {
+		"min_death_age": 70,
+		"yearly_death_chance": 0.08
+	},
+	"population": {
+		"birth_rate": 0.025,
+		"death_rate": 0.015,
+		"starvation_loss": 0.1
+	},
+	"shortages": [
+		{
+			"stat": "food",
+			"at_or_below": 0,
+			"effects": {
+				"stats": {
+					"morale": -10
+				}
+			},
+			"population_loss": 0.1,
+			"log": "Nạn đói! Một phần dân số không qua khỏi."
+		},
+		{
+			"stat": "water",
+			"at_or_below": 0,
+			"effects": {
+				"stats": {
+					"morale": -10
+				}
+			},
+			"population_loss": 0.08,
+			"log": "Hệ thống nước cạn kiệt."
+		},
+		{
+			"stat": "energy",
+			"at_or_below": 10,
+			"effects": {
+				"stats": {
+					"oxygen": -5,
+					"food": -5
+				}
+			},
+			"log": "Thiếu năng lượng, máy lọc khí và khu thủy canh chạy cầm chừng."
+		}
+	],
+	"failures": [
+		{
+			"stat": "oxygen",
+			"at_or_below": 0,
+			"ending": "ending_suffocation"
+		},
+		{
+			"stat": "hull",
+			"at_or_below": 0,
+			"ending": "ending_breach"
+		},
+		{
+			"stat": "population",
+			"at_or_below": 0,
+			"ending": "ending_silence"
+		},
+		{
+			"stat": "morale",
+			"at_or_below": 0,
+			"ending": "ending_mutiny"
+		}
+	],
+	"crew": {
+		"min_mission_age": 16,
+		"xp_per_level": 3,
+		"max_skill_level": 10,
+		"missing_survival_years": 5,
+		"training_years": 1
+	},
+	"research": {
+		"base_points": 2,
+		"skill": "science",
+		"points_per_level": 0.5
+	},
+	"missions": {
+		"skill_weight": 0.08,
+		"min_chance": 0.05,
+		"max_chance": 0.95,
+		"command_bonus_per_level": 0.02
+	},
+	"hazards": {
+		"radiation": {
+			"label": "Bức xạ",
+			"penalty": 0.25
+		},
+		"extreme_cold": {
+			"label": "Lạnh cực độ",
+			"penalty": 0.15,
+			"countered_by_skill": "survival",
+			"counter_level": 3
+		},
+		"unknown_biology": {
+			"label": "Sinh vật lạ",
+			"penalty": 0.3,
+			"countered_by_skill": "xenobiology",
+			"counter_level": 1
+		}
+	},
+	"player": {
+		"interact_time": 2.0,
+		"interact_reduction_per_engineering": 0.15,
+		"hazard_dps": 8,
+		"dash_speed": 720,
+		"dash_time": 0.16,
+		"hurt_invuln": 0.35,
+		"team_bonus_share": 0.25,
+		"loadout_slots": {
+			"weapons": 2,
+			"modules": 3,
+			"consumables": 2
+		}
+	},
+	"combat_stats": {
+		"max_hp": {
+			"label": "Máu tối đa",
+			"base": 100
+		},
+		"armor": {
+			"label": "Giáp",
+			"base": 0
+		},
+		"damage_mult": {
+			"label": "Sát thương",
+			"base": 1.0,
+			"format": "pct"
+		},
+		"crit_chance": {
+			"label": "Tỉ lệ chí mạng",
+			"base": 0.05,
+			"format": "pct"
+		},
+		"crit_mult": {
+			"label": "Sát thương chí mạng",
+			"base": 1.5,
+			"format": "pct"
+		},
+		"fire_rate_mult": {
+			"label": "Tốc độ bắn",
+			"base": 1.0,
+			"format": "pct"
+		},
+		"move_speed": {
+			"label": "Tốc độ chạy",
+			"base": 220
+		},
+		"max_energy": {
+			"label": "Năng lượng",
+			"base": 100
+		},
+		"energy_regen": {
+			"label": "Hồi năng lượng/giây",
+			"base": 5
+		},
+		"mining_power": {
+			"label": "Sức khai thác",
+			"base": 1.0
+		},
+		"pickup_radius": {
+			"label": "Bán kính hút đồ",
+			"base": 70
+		},
+		"dash_cooldown": {
+			"label": "Hồi lướt (giây)",
+			"base": 2.0,
+			"min": 0.5
+		}
+	},
+	"skill_bonuses": {
+		"survival": {
+			"max_hp": 6,
+			"armor": 1
+		},
+		"piloting": {
+			"move_speed": 8,
+			"dash_cooldown": -0.08
+		},
+		"engineering": {
+			"damage_mult": 0.03,
+			"mining_power": 0.25
+		},
+		"command": {
+			"crit_chance": 0.01,
+			"damage_mult": 0.01
+		},
+		"science": {
+			"max_energy": 5,
+			"energy_regen": 0.4
+		},
+		"medicine": {
+			"max_hp": 3
+		},
+		"neural_link": {
+			"crit_chance": 0.05,
+			"fire_rate_mult": 0.1
+		}
+	}
+}

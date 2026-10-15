@@ -1,0 +1,16 @@
+# Cache của Godot 4 (tự sinh lại được)
+.godot/
+
+# Bản build (GitHub Actions tự build khi push)
+build/
+
+# File hệ điều hành
+.DS_Store
+Thumbs.db
+
+# VS Code (giữ cấu hình dùng chung)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json

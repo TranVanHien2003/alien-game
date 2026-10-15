@@ -1,0 +1,6 @@
+{
+	"godotTools.editorPath.godot4": "/home/hien/.local/share/godot-bin/4.7.2/godot",
+	"files.exclude": { "**/.godot": true, "**/*.import": true, "**/*.uid": true },
+	"[gdscript]": { "editor.insertSpaces": false, "editor.tabSize": 4 },
+	"[json]": { "editor.insertSpaces": false }
+}

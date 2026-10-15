@@ -1,0 +1,112 @@
+[
+	{
+		"id": "hydroponics_2",
+		"name": "Thủy canh thế hệ 2",
+		"cost": 12,
+		"requires": [],
+		"description": "Khay lúa xếp tầng, đèn phổ hẹp.",
+		"yearly": {
+			"food": 2
+		}
+	},
+	{
+		"id": "water_recycler",
+		"name": "Tái chế nước kín",
+		"cost": 12,
+		"requires": [],
+		"description": "Thu hồi 99,7% nước thải.",
+		"yearly": {
+			"water": 2
+		}
+	},
+	{
+		"id": "eva_suits",
+		"name": "Bộ đồ EVA cải tiến",
+		"cost": 15,
+		"requires": [],
+		"description": "Giữ nhiệt và áp suất tốt hơn.",
+		"protects": [
+			"extreme_cold"
+		],
+		"mission_bonus": 0.05,
+		"combat_modifiers": {
+			"armor": 5
+		}
+	},
+	{
+		"id": "radiation_shielding",
+		"name": "Lá chắn bức xạ",
+		"cost": 18,
+		"requires": [],
+		"description": "Lớp nước-polyme bảo vệ đội đi xa.",
+		"protects": [
+			"radiation"
+		]
+	},
+	{
+		"id": "weapon_lab",
+		"name": "Xưởng vũ khí",
+		"cost": 16,
+		"requires": [],
+		"description": "Mở công thức chế tạo vũ khí và module chiến đấu.",
+		"combat_modifiers": {
+			"damage_mult": 0.1
+		}
+	},
+	{
+		"id": "deep_scanner",
+		"name": "Máy quét tầm xa",
+		"cost": 20,
+		"requires": [],
+		"description": "Cho phép quét không gian tìm địa điểm mới."
+	},
+	{
+		"id": "nanofabrication",
+		"name": "Chế tạo nano",
+		"cost": 30,
+		"requires": [
+			"water_recycler"
+		],
+		"description": "Bầy robot nano tự vá vỏ tàu.",
+		"yearly": {
+			"hull": 1
+		},
+		"unlocks_skills": [
+			"nano_repair"
+		]
+	},
+	{
+		"id": "xeno_lab",
+		"name": "Phòng thí nghiệm ngoại sinh",
+		"cost": 30,
+		"requires": [
+			"deep_scanner"
+		],
+		"description": "Nghiên cứu mẫu vật không đến từ Trái Đất.",
+		"protects": [
+			"unknown_biology"
+		],
+		"unlocks_skills": [
+			"xenobiology"
+		]
+	},
+	{
+		"id": "neural_interface",
+		"name": "Giao diện thần kinh",
+		"cost": 40,
+		"requires": [
+			"nanofabrication"
+		],
+		"description": "Kết nối não người với LẠC.",
+		"research_bonus": 2,
+		"unlocks_skills": [
+			"neural_link"
+		],
+		"effects": {
+			"flags_set": [
+				"neural_link_online"
+			],
+			"log": "LẠC: 'Rất vui được gặp các bạn... từ bên trong.'"
+		}
+	}
+]

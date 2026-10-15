@@ -1,0 +1,97 @@
+[
+	{
+		"id": "crawler",
+		"name": "Bò sát vô định",
+		"hp": 30,
+		"speed": 140,
+		"damage": 12,
+		"attack": "melee",
+		"sight": 360,
+		"color": "#FF2BD6",
+		"radius": 14,
+		"loot": "lt_crawler"
+	},
+	{
+		"id": "sentinel",
+		"name": "Tháp canh cũ",
+		"hp": 60,
+		"speed": 0,
+		"damage": 8,
+		"attack": "ranged",
+		"sight": 420,
+		"fire_interval": 1.4,
+		"projectile_speed": 320,
+		"color": "#FF8A3D",
+		"radius": 16,
+		"loot": "lt_sentinel"
+	},
+	{
+		"id": "boss_warden",
+		"name": "Người Gác Tiên Phong",
+		"boss": true,
+		"hp": 650,
+		"speed": 90,
+		"damage": 18,
+		"armor": 10,
+		"radius": 34,
+		"sight": 700,
+		"color": "#FF8A3D",
+		"loot": "lt_boss_warden",
+		"phases": [
+			{
+				"hp_above": 0.5,
+				"patterns": [
+					"aimed_burst",
+					"radial"
+				],
+				"interval": 1.6
+			},
+			{
+				"hp_above": 0.0,
+				"patterns": [
+					"charge",
+					"radial",
+					"summon"
+				],
+				"interval": 1.1
+			}
+		],
+		"summon": "crawler",
+		"projectile_speed": 340
+	},
+	{
+		"id": "boss_queen",
+		"name": "Mẫu Hậu Dưới Băng",
+		"boss": true,
+		"hp": 900,
+		"speed": 70,
+		"damage": 22,
+		"armor": 5,
+		"radius": 40,
+		"sight": 760,
+		"color": "#FF2BD6",
+		"loot": "lt_boss_queen",
+		"phases": [
+			{
+				"hp_above": 0.6,
+				"patterns": [
+					"summon",
+					"radial"
+				],
+				"interval": 1.8
+			},
+			{
+				"hp_above": 0.0,
+				"patterns": [
+					"charge",
+					"aimed_burst",
+					"summon",
+					"radial"
+				],
+				"interval": 1.0
+			}
+		],
+		"summon": "crawler",
+		"projectile_speed": 300
+	}
+]

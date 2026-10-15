@@ -1,0 +1,8 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{ "name": "Chạy game", "type": "godot", "request": "launch", "project": "${workspaceFolder}" },
+		{ "name": "Chạy màn action (debug)", "type": "godot", "request": "launch", "project": "${workspaceFolder}", "scene": "res://scenes/mission/mission_level.tscn" },
+		{ "name": "Chạy test", "type": "godot", "request": "launch", "project": "${workspaceFolder}", "scene": "res://tests/test_runner.tscn", "additional_options": "--headless" }
+	]
+}

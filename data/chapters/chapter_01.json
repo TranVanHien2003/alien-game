@@ -1,0 +1,39 @@
+[
+	{
+		"id": "chapter_01",
+		"title": "Chương I: Thế hệ Khởi Hành",
+		"generation": 1,
+		"start_year": 0,
+		"end_year": 25,
+		"intro": "Năm 2291. Trái Đất đã ở sau lưng.\n\nTàu Âu Cơ mang theo 120 con người và một lời hứa: sau ba trăm năm, con cháu họ sẽ đặt chân lên Văn Lang, hành tinh xanh quanh sao Lạc Hồng.\n\nBạn là Hội đồng Tàu. Những quyết định của bạn sẽ được truyền lại qua từng thế hệ.",
+		"outro": "Hai mươi lăm năm đã trôi qua. Những người rời Trái Đất đang già đi, và thế hệ đầu tiên sinh ra giữa các vì sao bắt đầu cầm lái.\n\nHết Chương I. Cảm ơn bạn đã chơi bản thử nghiệm!",
+		"starting_characters": [
+			"khang",
+			"thu_ha",
+			"bao",
+			"lan_anh",
+			"huy",
+			"mai",
+			"tuan",
+			"lac"
+		],
+		"starting_items": {
+			"hat_giong_lua": 3,
+			"linh_kien_du_phong": 2,
+			"w_pulse_pistol": 1,
+			"medkit": 3,
+			"energy_cell": 1
+		},
+		"starting_flags": [],
+		"starting_loadout": {
+			"weapons": [
+				"w_pulse_pistol"
+			],
+			"modules": [],
+			"consumables": [
+				"medkit",
+				"energy_cell"
+			]
+		}
+	}
+]

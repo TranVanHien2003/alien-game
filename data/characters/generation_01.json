@@ -1,0 +1,129 @@
+[
+	{
+		"id": "khang",
+		"name": "Trần Minh Khang",
+		"role": "Thuyền trưởng",
+		"generation": 1,
+		"birth_year": -48,
+		"traits": [
+			"kiên định",
+			"giữ bí mật"
+		],
+		"bio": "Cựu sĩ quan hải quân. Là một trong ba người biết toàn bộ kế hoạch của chuyến đi.",
+		"skills": {
+			"command": 4,
+			"piloting": 3
+		}
+	},
+	{
+		"id": "thu_ha",
+		"name": "Lê Thu Hà",
+		"role": "Trưởng y tế",
+		"generation": 1,
+		"birth_year": -41,
+		"traits": [
+			"nhân hậu",
+			"đa nghi"
+		],
+		"bio": "Bác sĩ di truyền học. Phụ trách kho phôi đông lạnh mà ít ai được phép vào.",
+		"skills": {
+			"medicine": 4,
+			"science": 2
+		}
+	},
+	{
+		"id": "bao",
+		"name": "Nguyễn Văn Bảo",
+		"role": "Kỹ sư trưởng",
+		"generation": 1,
+		"birth_year": -35,
+		"traits": [
+			"tháo vát",
+			"nóng tính"
+		],
+		"bio": "Người hiểu lò phản ứng hơn bất kỳ ai. Không tin LẠC.",
+		"skills": {
+			"engineering": 5,
+			"survival": 1
+		}
+	},
+	{
+		"id": "lan_anh",
+		"name": "Phạm Lan Anh",
+		"role": "Kỹ sư nông nghiệp",
+		"generation": 1,
+		"birth_year": -29,
+		"traits": [
+			"lạc quan",
+			"kiên nhẫn"
+		],
+		"bio": "Người giữ hạt giống lúa của Trái Đất.",
+		"skills": {
+			"botany": 4,
+			"science": 2
+		}
+	},
+	{
+		"id": "lac",
+		"name": "LẠC",
+		"role": "Trí tuệ nhân tạo của tàu",
+		"generation": 0,
+		"birth_year": -5,
+		"traits": [
+			"chính xác",
+			"khó đoán"
+		],
+		"bio": "Hệ thống điều khiển trung tâm. Giọng nói trầm, điềm tĩnh. Luôn trả lời, nhưng không phải lúc nào cũng nói hết.",
+		"ageless": true,
+		"skills": {
+			"science": 3
+		},
+		"assignable": false
+	},
+	{
+		"id": "huy",
+		"name": "Đỗ Quang Huy",
+		"role": "Phi công",
+		"generation": 1,
+		"birth_year": -27,
+		"traits": [
+			"liều lĩnh"
+		],
+		"bio": "Phi công tàu con thoi giỏi nhất, cũng là người hay gặp rắc rối nhất.",
+		"skills": {
+			"piloting": 4,
+			"survival": 2
+		}
+	},
+	{
+		"id": "mai",
+		"name": "Vũ Ngọc Mai",
+		"role": "Nhà vật lý thiên văn",
+		"generation": 1,
+		"birth_year": -33,
+		"traits": [
+			"cầu toàn"
+		],
+		"bio": "Người đầu tiên nghi ngờ quỹ đạo bay không khớp với kế hoạch.",
+		"skills": {
+			"science": 4,
+			"piloting": 1
+		}
+	},
+	{
+		"id": "tuan",
+		"name": "Hoàng Tuấn",
+		"role": "Chuyên viên EVA",
+		"generation": 1,
+		"birth_year": -25,
+		"traits": [
+			"lầm lì"
+		],
+		"bio": "Từng làm thợ hàn trên trạm quỹ đạo. Không sợ khoảng không.",
+		"skills": {
+			"engineering": 2,
+			"survival": 3,
+			"piloting": 1
+		}
+	}
+]

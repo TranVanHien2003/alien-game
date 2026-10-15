@@ -1,0 +1,7 @@
+[
+	{ "id": "loc_ship",     "name": "Tàu Âu Cơ",              "type": "ship",     "known": true,  "distance": 0, "hazards": [], "description": "Nhà của bạn. 7 boong, 1 boong không có trên bản đồ." },
+	{ "id": "loc_debris",   "name": "Bãi mảnh vỡ Kuiper",     "type": "debris",   "known": true,  "distance": 1, "hazards": [], "description": "Đá và kim loại trôi nổi. Nguồn linh kiện tốt." },
+	{ "id": "loc_comet",    "name": "Sao chổi băng K-17",     "type": "comet",    "known": true,  "distance": 1, "hazards": ["extreme_cold"], "description": "Một khối băng khổng lồ, chứa đủ nước cho cả thế hệ." },
+	{ "id": "loc_derelict", "name": "Xác tàu Tiên Phong",     "type": "derelict", "known": false, "distance": 2, "hazards": ["radiation"], "description": "Một con tàu... cùng thiết kế với Âu Cơ. Không có trong bất kỳ hồ sơ nào." },
+	{ "id": "loc_rogue_moon","name": "Vệ tinh lang thang Mị Châu", "type": "moon", "known": false, "distance": 3, "hazards": ["unknown_biology", "extreme_cold"], "description": "Một mặt trăng không có hành tinh mẹ. Dưới lớp băng có thứ gì đó đang chuyển động." }
+]
