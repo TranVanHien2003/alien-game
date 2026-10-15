@@ -56,7 +56,7 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node) -> void:
 	if body in _hit:
 		return
-	if body.is_in_group(target_group):
+	if body.is_in_group(target_group) or (target_group == "player" and (body.is_in_group("squad_active") or body.is_in_group("allies"))):
 		_hit.append(body)
 		body.take_damage(damage)
 		if body.has_method("show_damage"):
@@ -66,7 +66,7 @@ func _on_body_entered(body: Node) -> void:
 		if pierce < 0:
 			queue_free()
 	elif body.is_in_group("minable") and target_group == "enemies":
-		body.mine(mining_damage)
+		body.mine(mining_damage, null)
 		Sfx.play("mine", 0.15, -8.0)
 		_impact()
 		queue_free()

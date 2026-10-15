@@ -20,7 +20,9 @@ static func add_member(game: Node, char_id: String) -> void:
 		"skills": skills,
 		"xp": {},
 		"status": IDLE,
+		"equipment": {},
 	}
+	Roles.auto_equip(game, char_id)
 
 
 static func skill(game: Node, char_id: String, skill_id: String) -> int:
@@ -134,7 +136,7 @@ static func tick_year(game: Node) -> void:
 					continue
 		if not data.get("ageless", false) and game.character_age(char_id) >= min_age and game.rng.randf() < death_chance:
 			game.crew.erase(char_id)
-			game.add_log("✝ %s (%s) đã qua đời ở tuổi %d." % [data.get("name", char_id), data.get("role", ""), game.character_age(char_id)])
+			game.add_log("✝ %s (%s) đã qua đời ở tuổi %d." % [data.get("name", char_id), data.get("title", ""), game.character_age(char_id)])
 
 
 static func display_name(char_id: String) -> String:

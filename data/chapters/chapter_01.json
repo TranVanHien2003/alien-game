@@ -15,21 +15,27 @@
 			"huy",
 			"mai",
 			"tuan",
+			"hai",
+			"quang",
+			"thanh",
+			"bich",
 			"lac"
 		],
 		"starting_items": {
 			"hat_giong_lua": 3,
 			"linh_kien_du_phong": 2,
-			"w_pulse_pistol": 1,
-			"medkit": 3,
-			"energy_cell": 1
+			"w_pulse_pistol": 8,
+			"w_assault_rifle": 2,
+			"w_smg": 2,
+			"t_mining_drill": 2,
+			"t_repair_kit": 1,
+			"t_med_beam": 2,
+			"t_scanner": 2,
+			"medkit": 4,
+			"energy_cell": 2
 		},
 		"starting_flags": [],
 		"starting_loadout": {
-			"weapons": [
-				"w_pulse_pistol"
-			],
-			"modules": [],
 			"consumables": [
 				"medkit",
 				"energy_cell"

@@ -2,201 +2,255 @@
 	{
 		"id": "default",
 		"grid": [
-			48,
-			36
+			64,
+			48
 		],
 		"rooms": [
-			6,
-			9
+			10,
+			14
 		],
 		"room_size": [
 			5,
 			10
 		],
 		"enemies": {
-			"crawler": 4
+			"crawler": 6
 		},
-		"hazard_zones": 2,
+		"hazard_zones": 3,
 		"accent": "#00E5FF",
 		"resource_nodes": {
-			"ore_metal": 4,
-			"salvage_crate": 3
+			"ore_metal": 6,
+			"salvage_crate": 5
 		},
 		"tileset": "ship",
 		"ambient": "#6E7484",
 		"lamp_color": "#FFC080",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_crate_small": 6,
-			"deco_barrel": 4
+			"deco_crate_small": 10,
+			"deco_barrel": 6
+		},
+		"caches": 5,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"crawler": 3
+			},
+			"growth": 1
 		}
 	},
 	{
 		"id": "ship",
 		"grid": [
-			40,
-			30
+			60,
+			44
 		],
 		"rooms": [
-			5,
-			7
+			9,
+			13
 		],
 		"room_size": [
 			5,
 			9
 		],
 		"enemies": {
-			"crawler": 2
+			"crawler": 3
 		},
-		"hazard_zones": 1,
+		"hazard_zones": 2,
 		"accent": "#00E5FF",
 		"resource_nodes": {
-			"salvage_crate": 3
+			"salvage_crate": 4
 		},
 		"tileset": "ship",
 		"ambient": "#737A8A",
 		"lamp_color": "#FFD0A0",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_crate_small": 6,
-			"deco_barrel": 4,
-			"deco_debris": 3
+			"deco_crate_small": 8,
+			"deco_barrel": 6,
+			"deco_debris": 4
+		},
+		"caches": 4,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"crawler": 3
+			},
+			"growth": 1
 		}
 	},
 	{
 		"id": "debris",
 		"grid": [
-			56,
-			40
+			84,
+			60
 		],
 		"rooms": [
-			7,
-			10
+			14,
+			19
 		],
 		"room_size": [
 			4,
 			9
 		],
 		"enemies": {
-			"crawler": 4,
-			"sentinel": 1
+			"crawler": 8,
+			"sentinel": 2
 		},
-		"hazard_zones": 2,
+		"hazard_zones": 3,
 		"accent": "#B4FF39",
 		"resource_nodes": {
-			"ore_metal": 8,
-			"salvage_crate": 5,
-			"crystal_vein": 2
+			"ore_metal": 16,
+			"salvage_crate": 10,
+			"crystal_vein": 4
 		},
 		"tileset": "debris",
 		"ambient": "#6A5E64",
 		"lamp_color": "#FFB070",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_meteor": 10,
-			"deco_rock_b": 8
+			"deco_meteor": 20,
+			"deco_rock_b": 16
+		},
+		"caches": 6,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"crawler": 3
+			},
+			"growth": 1
 		}
 	},
 	{
 		"id": "comet",
 		"grid": [
-			56,
-			40
+			84,
+			60
 		],
 		"rooms": [
-			6,
-			9
+			13,
+			18
 		],
 		"room_size": [
 			6,
 			11
 		],
 		"enemies": {
-			"crawler": 3
+			"crawler": 6
 		},
-		"hazard_zones": 4,
+		"hazard_zones": 6,
 		"accent": "#9FE8FF",
 		"resource_nodes": {
-			"ice_chunk": 10,
-			"crystal_vein": 3
+			"ice_chunk": 20,
+			"crystal_vein": 6
 		},
 		"tileset": "comet",
 		"ambient": "#6A7E98",
 		"lamp_color": "#B0E8FF",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_rock_a": 10,
-			"deco_meteor": 6
+			"deco_rock_a": 20,
+			"deco_meteor": 12
+		},
+		"caches": 6,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"crawler": 3
+			},
+			"growth": 1
 		}
 	},
 	{
 		"id": "derelict",
 		"grid": [
-			64,
-			44
+			92,
+			64
 		],
 		"rooms": [
-			8,
-			12
+			16,
+			22
 		],
 		"room_size": [
 			5,
 			10
 		],
 		"enemies": {
-			"infected": 5,
-			"sentinel": 3
+			"infected": 11,
+			"sentinel": 7
 		},
-		"hazard_zones": 3,
+		"hazard_zones": 4,
 		"accent": "#FF8A3D",
 		"resource_nodes": {
-			"salvage_crate": 8,
-			"crystal_vein": 3
+			"salvage_crate": 18,
+			"crystal_vein": 7
 		},
 		"tileset": "derelict",
 		"ambient": "#3A3F4A",
 		"lamp_color": "#FF8A3D",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_debris": 10,
-			"deco_glass": 8,
-			"deco_barrel": 4
+			"deco_debris": 22,
+			"deco_glass": 18,
+			"deco_barrel": 9
+		},
+		"caches": 7,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"infected": 3
+			},
+			"growth": 1
 		}
 	},
 	{
 		"id": "moon",
 		"grid": [
-			64,
-			44
+			96,
+			68
 		],
 		"rooms": [
-			8,
-			12
+			16,
+			22
 		],
 		"room_size": [
 			6,
 			12
 		],
 		"enemies": {
-			"crawler": 5,
-			"spore": 6,
-			"sentinel": 1
+			"crawler": 12,
+			"spore": 14,
+			"sentinel": 2
 		},
-		"hazard_zones": 4,
+		"hazard_zones": 6,
 		"accent": "#FF2BD6",
 		"resource_nodes": {
-			"xeno_pod": 8,
-			"ice_chunk": 5,
-			"crystal_vein": 4
+			"xeno_pod": 19,
+			"ice_chunk": 12,
+			"crystal_vein": 10
 		},
 		"tileset": "moon",
 		"ambient": "#544866",
 		"lamp_color": "#FF60E0",
-		"lamps": 6,
+		"lamps": 8,
 		"decor": {
-			"deco_plant_a": 12,
-			"deco_plant_b": 10,
-			"deco_cactus": 6
+			"deco_plant_a": 29,
+			"deco_plant_b": 24,
+			"deco_cactus": 14
+		},
+		"caches": 7,
+		"waves": {
+			"interval": 55,
+			"first": 45,
+			"enemies": {
+				"spore": 3
+			},
+			"growth": 1
 		}
 	}
 ]

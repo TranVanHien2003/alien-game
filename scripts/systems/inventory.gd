@@ -1,10 +1,11 @@
 class_name Inventory
 extends RefCounted
-## Kho đồ + trang bị (loadout) của đội đổ bộ.
-## Mọi vật phẩm (nguyên liệu, tiêu hao, module, vũ khí, đồ cốt truyện) dùng chung game.items {id: số lượng}.
-## loadout = {weapons: [id], modules: [id], consumables: [id]} — số ô ở config.player.loadout_slots.
+## Kho đồ + trang bị.
+## Mọi vật phẩm (nguyên liệu, tiêu hao, module, vũ khí, công cụ, đồ cốt truyện) dùng chung game.items {id: số lượng}.
+## Mỗi thành viên có game.crew[id].equipment = {weapon, tool, module} (theo vai trò, xem Roles.can_use).
+## Vật phẩm tiêu hao mang theo cả đội: game.loadout.consumables (config.player.consumable_slots ô).
 
-const SLOT_CATEGORY := {"weapons": "weapon", "modules": "module", "consumables": "consumable"}
+const MEMBER_SLOTS := ["weapon", "tool", "module"]
 
 
 static func category(item_id: String) -> String:
@@ -22,46 +23,81 @@ static func items_in(game: Node, item_category: String) -> Array:
 	return game.items.keys().filter(func(id): return category(id) == item_category)
 
 
-static func slot_count(slot: String) -> int:
-	return int(Content.config.get("player", {}).get("loadout_slots", {}).get(slot, 1))
+# --- Trang bị từng thành viên ------------------------------------------------------
+
+static func equipped(game: Node, char_id: String, slot: String) -> String:
+	return game.crew.get(char_id, {}).get("equipment", {}).get(slot, "")
 
 
-static func equip(game: Node, slot: String, item_id: String) -> bool:
-	if SLOT_CATEGORY.get(slot, "") != category(item_id) or game.item_count(item_id) <= 0:
+## Số lượng còn lại trong kho chưa bị ai trang bị.
+static func available(game: Node, item_id: String) -> int:
+	var used := 0
+	for char_id in game.crew:
+		for slot in MEMBER_SLOTS:
+			if equipped(game, char_id, slot) == item_id:
+				used += 1
+	return game.item_count(item_id) - used
+
+
+static func equip_member(game: Node, char_id: String, slot: String, item_id: String) -> bool:
+	if not game.crew.has(char_id) or not slot in MEMBER_SLOTS or category(item_id) != slot:
 		return false
-	var list: Array = game.loadout.get(slot, [])
-	# Module/vũ khí không trang bị trùng nhiều hơn số đang có
-	if list.count(item_id) >= game.item_count(item_id) and slot != "consumables":
+	if not Roles.can_use(char_id, item_id) or available(game, item_id) <= 0:
 		return false
-	if item_id in list and slot == "consumables":
-		return false
-	if list.size() >= slot_count(slot):
-		return false
-	list.append(item_id)
-	game.loadout[slot] = list
+	var equipment: Dictionary = game.crew[char_id].get("equipment", {})
+	equipment[slot] = item_id
+	game.crew[char_id].equipment = equipment
 	return true
 
 
-static func unequip(game: Node, slot: String, item_id: String) -> void:
-	var list: Array = game.loadout.get(slot, [])
-	list.erase(item_id)
-	# Luôn giữ ít nhất 1 vũ khí
-	if slot == "weapons" and list.is_empty():
-		list.append(item_id)
-	game.loadout[slot] = list
+static func unequip_member(game: Node, char_id: String, slot: String) -> void:
+	if game.crew.has(char_id):
+		game.crew[char_id].get("equipment", {}).erase(slot)
 
 
-## Gỡ khỏi loadout những thứ không còn trong kho (đã dùng hết, bị xóa ở bản cập nhật...).
-static func sanitize_loadout(game: Node) -> void:
-	for slot in SLOT_CATEGORY:
-		var list: Array = game.loadout.get(slot, [])
-		game.loadout[slot] = list.filter(func(id):
-			return Content.has_entry("items", id) and game.item_count(id) > 0 and category(id) == SLOT_CATEGORY[slot])
-	if game.loadout.weapons.is_empty():
-		var weapons := items_in(game, "weapon")
-		if not weapons.is_empty():
-			game.loadout.weapons = [weapons[0]]
+# --- Vật phẩm tiêu hao của đội ----------------------------------------------------------
+
+static func consumable_slots() -> int:
+	return int(Content.config.get("player", {}).get("consumable_slots", 2))
+
+
+static func equip_consumable(game: Node, item_id: String) -> bool:
+	var list: Array = game.loadout.get("consumables", [])
+	if category(item_id) != "consumable" or item_id in list or list.size() >= consumable_slots():
+		return false
+	list.append(item_id)
+	game.loadout.consumables = list
+	return true
+
+
+static func unequip_consumable(game: Node, item_id: String) -> void:
+	game.loadout.get("consumables", []).erase(item_id)
+
+
+## Gỡ những thứ không hợp lệ (đã dùng hết, bị xóa ở bản cập nhật, sai vai trò...).
+static func sanitize(game: Node) -> void:
+	game.loadout.consumables = game.loadout.get("consumables", []).filter(func(id):
+		return Content.has_entry("items", id) and category(id) == "consumable")
+	for char_id in game.crew:
+		var equipment: Dictionary = game.crew[char_id].get("equipment", {})
+		for slot in equipment.keys():
+			var item_id: String = equipment[slot]
+			if not Content.has_entry("items", item_id) or category(item_id) != slot or not Roles.can_use(char_id, item_id):
+				equipment.erase(slot)
+		game.crew[char_id].equipment = equipment
+	# Trang bị vượt quá số lượng trong kho -> gỡ bớt
+	for item_id in game.items.keys() + []:
+		while available(game, item_id) < 0:
+			for char_id in game.crew:
+				for slot in MEMBER_SLOTS:
+					if available(game, item_id) < 0 and equipped(game, char_id, slot) == item_id:
+						unequip_member(game, char_id, slot)
+	for char_id in game.crew:
+		for slot in MEMBER_SLOTS:
+			var item_id := equipped(game, char_id, slot)
+			if item_id != "" and game.item_count(item_id) <= 0:
+				unequip_member(game, char_id, slot)
 
 
 static func default_loadout() -> Dictionary:
-	return {"weapons": [], "modules": [], "consumables": []}
+	return {"consumables": []}

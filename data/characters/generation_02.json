@@ -2,7 +2,8 @@
 	{
 		"id": "an",
 		"name": "Trần An",
-		"role": "Đứa trẻ đầu tiên của con tàu",
+		"title": "Đứa trẻ đầu tiên của con tàu",
+		"role": "scout",
 		"generation": 2,
 		"birth_year": 3,
 		"traits": [

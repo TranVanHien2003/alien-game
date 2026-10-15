@@ -8,7 +8,7 @@ const COLORS := {"radiation": Color("#B4FF39"), "extreme_cold": Color("#9FE8FF")
 var hazard := "radiation"
 var size := Vector2(160, 160)
 var dps := 8.0
-var _bodies: Array[Player] = []
+var _bodies: Array[Unit] = []
 var _t := 0.0
 
 
@@ -22,7 +22,7 @@ func _ready() -> void:
 	var shape := RectangleShape2D.new()
 	shape.size = size
 	$CollisionShape2D.shape = shape
-	body_entered.connect(func(b): if b is Player: _bodies.append(b))
+	body_entered.connect(func(b): if b is Unit: _bodies.append(b))
 	# Vài đám khói/hạt trôi lơ lửng để vùng nguy hiểm "có thật"
 	for i in 4:
 		var puff := Sprite2D.new()
@@ -32,7 +32,7 @@ func _ready() -> void:
 		puff.position = Vector2(randf_range(-0.35, 0.35) * size.x, randf_range(-0.35, 0.35) * size.y)
 		puff.scale = Vector2.ONE * minf(size.x, size.y) / 260.0
 		add_child(puff)
-	body_exited.connect(func(b): if b is Player: _bodies.erase(b))
+	body_exited.connect(func(b): if b is Unit: _bodies.erase(b))
 
 
 func _physics_process(delta: float) -> void:
@@ -41,9 +41,9 @@ func _physics_process(delta: float) -> void:
 		var c := get_child(i)
 		if c is Sprite2D:
 			c.rotation += delta * (0.2 + i * 0.05)
-	for player in _bodies:
-		if not player.is_protected(hazard):
-			player.take_hazard_damage(dps * delta)
+	for unit in _bodies:
+		if not unit.is_protected(hazard):
+			unit.take_hazard_damage(dps * delta)
 	queue_redraw()
 
 

@@ -8,20 +8,18 @@ const RARE := ["module", "weapon", "key"]
 
 var item_id := ""
 var count := 1
-var _player: Player
 var _t := 0.0
 var _sprite: Sprite2D
 
 
-func setup(id: String, n: int, player: Player) -> void:
+func setup(id: String, n: int) -> void:
 	item_id = id
 	count = n
-	_player = player
 
 
 func _ready() -> void:
 	body_entered.connect(func(b):
-		if b is Player:
+		if b is Unit and b.is_active():
 			Sfx.play("pickup", 0.15, -8.0)
 			picked.emit(item_id, count)
 			queue_free())
@@ -42,7 +40,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_t += delta
 	_sprite.position.y = sin(_t * 4.0) * 3.0
-	if is_instance_valid(_player):
-		var to := _player.global_position - global_position
-		if to.length() < float(_player.stats.get("pickup_radius", 70)):
+	# Bị hút về thành viên gần nhất trong bán kính hút đồ của người đó
+	for unit in get_tree().get_nodes_in_group("squad_active"):
+		var to: Vector2 = unit.global_position - global_position
+		if to.length() < float(unit.stats.get("pickup_radius", 70)):
 			global_position += to.normalized() * minf(to.length(), 420.0 * delta)
+			break

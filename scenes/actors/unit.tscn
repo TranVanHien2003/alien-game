@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/actors/unit.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/characters/survivor_gun.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/fx/muzzle.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/fx/light.png" id="4"]
+
+[sub_resource type="CircleShape2D" id="shape"]
+radius = 15.0
+
+[node name="Unit" type="CharacterBody2D" groups=["squad", "squad_active"]]
+collision_layer = 2
+collision_mask = 1
+motion_mode = 1
+script = ExtResource("1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("shape")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+
+[node name="Muzzle" type="Sprite2D" parent="Body"]
+visible = false
+position = Vector2(38, 10)
+rotation = 1.5708
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("3")
+
+[node name="Sight" type="PointLight2D" parent="."]
+color = Color(1, 0.96, 0.9, 1)
+energy = 0.35
+texture = ExtResource("4")
+texture_scale = 3.0
+
+[node name="Agent" type="NavigationAgent2D" parent="."]
+path_desired_distance = 20.0
+target_desired_distance = 16.0
+radius = 16.0

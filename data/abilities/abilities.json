@@ -1,8 +1,180 @@
 [
-	{ "id": "nano_repair",      "name": "Bầy nano hồi phục", "energy": 40, "cooldown": 12, "requires": { "skill": "nano_repair", "level": 1 }, "type": "heal", "amount": 45, "description": "Hồi máu tức thì." },
-	{ "id": "xeno_pheromone",   "name": "Pheromone xua đuổi", "energy": 35, "cooldown": 15, "requires": { "skill": "xenobiology", "level": 1 }, "type": "slow_enemies", "factor": 0.35, "duration": 5, "description": "Làm chậm mọi kẻ địch đang thấy bạn." },
-	{ "id": "neural_overclock", "name": "Ép xung thần kinh", "energy": 50, "cooldown": 20, "requires": { "skill": "neural_link", "level": 1 }, "type": "time_slow", "time_scale": 0.4, "duration": 4, "description": "Thế giới chậm lại, bạn thì không." },
-	{ "id": "shock_grenade",    "name": "Lựu sốc", "energy": 30, "cooldown": 6, "requires": {}, "type": "aoe", "damage": 60, "radius": 130, "range": 420, "description": "Ném lựu nổ tại vị trí con trỏ. Cần module Bệ phóng lựu sốc." },
-	{ "id": "field_medic",      "name": "Sơ cứu chiến trường", "energy": 45, "cooldown": 18, "requires": { "skill": "medicine", "level": 4 }, "type": "heal", "amount": 30, "description": "Bác sĩ giỏi luôn có cách giữ đội sống sót." },
-	{ "id": "overcharge",       "name": "Quá tải vũ khí", "energy": 40, "cooldown": 14, "requires": { "skill": "engineering", "level": 4 }, "type": "buff", "buff": { "damage_mult": 0.5, "fire_rate_mult": 0.5 }, "duration": 5, "description": "+50% sát thương và tốc độ bắn trong 5 giây." }
+	{
+		"id": "nano_repair",
+		"name": "Bầy nano hồi phục",
+		"energy": 40,
+		"cooldown": 12,
+		"requires": {
+			"skill": "nano_repair",
+			"level": 1
+		},
+		"type": "heal",
+		"amount": 45,
+		"description": "Hồi máu tức thì."
+	},
+	{
+		"id": "xeno_pheromone",
+		"name": "Pheromone xua đuổi",
+		"energy": 35,
+		"cooldown": 15,
+		"requires": {},
+		"type": "slow_enemies",
+		"factor": 0.35,
+		"duration": 5,
+		"description": "Làm chậm mọi kẻ địch đang thấy bạn."
+	},
+	{
+		"id": "neural_overclock",
+		"name": "Ép xung thần kinh",
+		"energy": 50,
+		"cooldown": 20,
+		"requires": {
+			"skill": "neural_link",
+			"level": 1
+		},
+		"type": "time_slow",
+		"time_scale": 0.4,
+		"duration": 4,
+		"description": "Thế giới chậm lại, bạn thì không."
+	},
+	{
+		"id": "shock_grenade",
+		"name": "Lựu sốc",
+		"energy": 30,
+		"cooldown": 6,
+		"requires": {},
+		"type": "aoe",
+		"damage": 60,
+		"radius": 130,
+		"range": 420,
+		"description": "Ném lựu nổ tại vị trí con trỏ. Cần module Bệ phóng lựu sốc."
+	},
+	{
+		"id": "field_medic",
+		"name": "Sơ cứu chiến trường",
+		"energy": 45,
+		"cooldown": 18,
+		"requires": {
+			"skill": "medicine",
+			"level": 4
+		},
+		"type": "heal",
+		"amount": 30,
+		"description": "Bác sĩ giỏi luôn có cách giữ đội sống sót."
+	},
+	{
+		"id": "overcharge",
+		"name": "Quá tải vũ khí",
+		"energy": 40,
+		"cooldown": 14,
+		"requires": {
+			"skill": "engineering",
+			"level": 4
+		},
+		"type": "buff",
+		"buff": {
+			"damage_mult": 0.5,
+			"fire_rate_mult": 0.5
+		},
+		"duration": 5,
+		"description": "+50% sát thương và tốc độ bắn trong 5 giây."
+	},
+	{
+		"id": "frag_grenade",
+		"name": "Lựu đạn phân mảnh",
+		"energy": 30,
+		"cooldown": 8,
+		"requires": {},
+		"type": "aoe",
+		"damage": 70,
+		"radius": 140,
+		"range": 450,
+		"description": "Ném lựu đạn vào vị trí con trỏ."
+	},
+	{
+		"id": "suppress",
+		"name": "Hỏa lực áp chế",
+		"energy": 35,
+		"cooldown": 16,
+		"requires": {},
+		"type": "buff",
+		"buff": {
+			"fire_rate_mult": 0.7,
+			"armor": 20
+		},
+		"duration": 6,
+		"description": "+70% tốc độ bắn, +20 giáp trong 6 giây."
+	},
+	{
+		"id": "deploy_turret",
+		"name": "Dựng tháp pháo",
+		"energy": 50,
+		"cooldown": 25,
+		"requires": {},
+		"type": "turret",
+		"duration": 25,
+		"damage": 12,
+		"fire_interval": 0.35,
+		"range": 420,
+		"description": "Dựng tháp pháo tự động tại con trỏ."
+	},
+	{
+		"id": "seismic_charge",
+		"name": "Mìn địa chấn",
+		"energy": 40,
+		"cooldown": 14,
+		"requires": {},
+		"type": "mining_blast",
+		"damage": 40,
+		"mining": 120,
+		"radius": 170,
+		"range": 380,
+		"description": "Nổ phá mọi mỏ và gây sát thương quái trong vùng."
+	},
+	{
+		"id": "heal_pulse",
+		"name": "Xung hồi phục",
+		"energy": 40,
+		"cooldown": 14,
+		"requires": {},
+		"type": "heal_allies",
+		"amount": 45,
+		"radius": 260,
+		"description": "Hồi máu mọi đồng đội gần đó."
+	},
+	{
+		"id": "flare",
+		"name": "Pháo sáng",
+		"energy": 20,
+		"cooldown": 10,
+		"requires": {},
+		"type": "flare",
+		"radius": 600,
+		"duration": 20,
+		"range": 700,
+		"description": "Soi sáng một vùng lớn trong 20 giây."
+	},
+	{
+		"id": "sprint",
+		"name": "Chạy nước rút",
+		"energy": 25,
+		"cooldown": 12,
+		"requires": {},
+		"type": "buff",
+		"buff": {
+			"move_speed": 140
+		},
+		"duration": 5,
+		"description": "+140 tốc độ trong 5 giây."
+	},
+	{
+		"id": "scan",
+		"name": "Quét địa hình",
+		"energy": 35,
+		"cooldown": 20,
+		"requires": {},
+		"type": "scan",
+		"duration": 15,
+		"description": "Hiện mọi quái, mỏ và vật phẩm lên minimap trong 15 giây."
+	}
 ]

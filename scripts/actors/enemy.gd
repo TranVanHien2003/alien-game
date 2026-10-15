@@ -33,12 +33,17 @@ var _base_tint := Color.WHITE
 @onready var agent: NavigationAgent2D = $Agent
 
 
-func setup(id: String, player: Node2D) -> void:
+var _damage_mult := 1.0
+var _retarget := 0.0
+
+
+## difficulty: độ khó của màn (Difficulty.level) — nhân máu và sát thương.
+func setup(id: String, difficulty: float = 1.0) -> void:
 	enemy_id = id
 	data = Content.get_entry("enemies", id)
-	max_hp = float(data.get("hp", 30))
+	max_hp = float(data.get("hp", 30)) * Difficulty.scale("enemy_hp", difficulty)
 	hp = max_hp
-	target = player
+	_damage_mult = Difficulty.scale("enemy_damage", difficulty)
 	is_boss = data.get("boss", false)
 	_color = Color(data.get("color", "#FF2BD6"))
 	_radius = float(data.get("radius", 14))
@@ -61,7 +66,13 @@ func _physics_process(delta: float) -> void:
 	_slow_timer -= delta
 	if _slow_timer <= 0.0:
 		_slow = 1.0
-	if not is_instance_valid(target):
+	_retarget -= delta
+	if _retarget <= 0.0 or not _target_alive():
+		_retarget = 0.4
+		target = _pick_target()
+	if not _target_alive():
+		velocity = velocity.move_toward(Vector2.ZERO, 400 * delta)
+		move_and_slide()
 		return
 	var to_target := target.global_position - global_position
 	var sees := to_target.length() <= float(data.get("sight", 360)) and _has_line_of_sight()
@@ -100,15 +111,34 @@ func _face(dir: Vector2) -> void:
 		body.rotation = lerp_angle(body.rotation, dir.angle(), 0.25)
 
 
+func _target_alive() -> bool:
+	return is_instance_valid(target) and (not target is Unit or target.is_active())
+
+
+## Mục tiêu: thành viên hoặc tháp pháo gần nhất (ưu tiên thứ đang nhìn thấy).
+func _pick_target() -> Node2D:
+	var best: Node2D = null
+	var best_d := INF
+	var sight := float(data.get("sight", 360))
+	for candidate in get_tree().get_nodes_in_group("squad_active") + get_tree().get_nodes_in_group("allies"):
+		var d := global_position.distance_to(candidate.global_position)
+		if not _awake and d > sight:
+			continue
+		if d < best_d:
+			best = candidate
+			best_d = d
+	return best
+
+
 func _try_melee(to_target: Vector2) -> void:
-	if to_target.length() < _radius + 18.0 and _attack_timer <= 0.0:
-		target.take_damage(float(data.get("damage", 10)))
+	if to_target.length() < _radius + 20.0 and _attack_timer <= 0.0:
+		target.take_damage(float(data.get("damage", 10)) * _damage_mult)
 		_attack_timer = 0.8
 
 
 func _fire(dir: Vector2, speed: float) -> void:
 	var p := PROJECTILE.instantiate()
-	p.setup(global_position + dir * (_radius + 6.0), dir * speed, float(data.get("damage", 8)), "player", _color)
+	p.setup(global_position + dir * (_radius + 6.0), dir * speed, float(data.get("damage", 8)) * _damage_mult, "player", _color)
 	p.texture_name = data.get("projectile", "laser_red")
 	p.lifetime = 3.0
 	Sfx.play("shoot_enemy", 0.1, -10.0)
@@ -164,6 +194,8 @@ func _boss_process(delta: float, to_target: Vector2) -> void:
 
 func _has_line_of_sight() -> bool:
 	var query := PhysicsRayQueryParameters2D.create(global_position, target.global_position, 1)
+	if target is CollisionObject2D and target.collision_layer & 1:
+		query.exclude = [target.get_rid()]
 	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
 
 

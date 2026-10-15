@@ -72,3 +72,12 @@ Loại mục tiêu nhiệm vụ: `collect` (nhặt N vật), `interact` (giữ E
 | `enemies` | `sprite`, `sprite_scale`, `tint`, `projectile` | `assets/enemies/<sprite>.png` (mặt hướng sang phải) |
 | `resource_nodes` | `sprite`, `sprite_scale`, `radius` | `assets/props/<sprite>.png` |
 | `levels` | `tileset` (ship/derelict/debris/comet/moon), `ambient`, `lamp_color`, `lamps`, `decor` | `decor`: `{tên prop: số lượng}` trong `assets/props/` |
+
+## Vai trò, công cụ, nhiệm vụ
+
+- `roles/*.json`: `{id, name, color, modifiers: {chỉ_số: +n}, weapon_types: [...], tool_types: [...], abilities: [...], default_weapon, default_tool}`.
+- Nhân vật: `"role": "<id vai trò>"`, `"title"` là chức danh hiển thị.
+- Vũ khí: `weapon.type` (pistol, rifle, smg, shotgun, sniper, heavy...). Công cụ: `"category": "tool"`, `tool: {type: drill|repair|turret|med|scanner, power, range}`.
+- Kỹ năng (`abilities`): `type` ∈ heal, heal_allies, aoe, buff, slow_enemies, time_slow, turret, mining_blast, flare, scan.
+- Nhiệm vụ: `team_size: [min, max]`, `time_limit` (giây), `recommended_roles: {vai: số}`, `tier` (cộng thêm độ khó).
+- Bản đồ (`levels`): `grid`, `rooms`, `enemies`, `resource_nodes`, `caches` (tủ tiếp tế), `waves: {first, interval, enemies, growth}`.

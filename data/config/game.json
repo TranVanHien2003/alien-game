@@ -186,18 +186,16 @@
 		}
 	},
 	"player": {
-		"interact_time": 2.0,
-		"interact_reduction_per_engineering": 0.15,
+		"interact_time": 3.0,
+		"interact_reduction_per_engineering": 0.08,
 		"hazard_dps": 8,
-		"dash_speed": 720,
-		"dash_time": 0.16,
-		"hurt_invuln": 0.35,
-		"team_bonus_share": 0.25,
-		"loadout_slots": {
-			"weapons": 2,
-			"modules": 3,
-			"consumables": 2
-		}
+		"hurt_invuln": 0.0,
+		"slots": [
+			"weapon",
+			"tool",
+			"module"
+		],
+		"consumable_slots": 2
 	},
 	"combat_stats": {
 		"max_hp": {
@@ -230,7 +228,7 @@
 		},
 		"move_speed": {
 			"label": "Tốc độ chạy",
-			"base": 220
+			"base": 200
 		},
 		"max_energy": {
 			"label": "Năng lượng",
@@ -248,10 +246,24 @@
 			"label": "Bán kính hút đồ",
 			"base": 70
 		},
-		"dash_cooldown": {
-			"label": "Hồi lướt (giây)",
-			"base": 2.0,
-			"min": 0.5
+		"sight_radius": {
+			"label": "Tầm nhìn",
+			"base": 360
+		},
+		"interact_speed": {
+			"label": "Tốc độ tương tác",
+			"base": 1.0,
+			"format": "pct"
+		},
+		"heal_power": {
+			"label": "Hiệu quả hồi máu",
+			"base": 1.0,
+			"format": "pct"
+		},
+		"revive_speed": {
+			"label": "Tốc độ cứu người",
+			"base": 1.0,
+			"format": "pct"
 		}
 	},
 	"skill_bonuses": {
@@ -261,11 +273,12 @@
 		},
 		"piloting": {
 			"move_speed": 8,
-			"dash_cooldown": -0.08
+			"sight_radius": 10
 		},
 		"engineering": {
 			"damage_mult": 0.03,
-			"mining_power": 0.25
+			"mining_power": 0.25,
+			"interact_speed": 0.1
 		},
 		"command": {
 			"crit_chance": 0.01,
@@ -276,11 +289,42 @@
 			"energy_regen": 0.4
 		},
 		"medicine": {
-			"max_hp": 3
+			"max_hp": 3,
+			"heal_power": 0.1,
+			"revive_speed": 0.1
 		},
 		"neural_link": {
 			"crit_chance": 0.05,
 			"fire_rate_mult": 0.1
 		}
+	},
+	"squad": {
+		"bleed_out_time": 35,
+		"revive_time": 4.0,
+		"evac_radius": 120,
+		"evac_countdown": 25,
+		"auto_pickup": true,
+		"formation_spacing": 56,
+		"max_team": 6,
+		"engage_range_bonus": 0
+	},
+	"difficulty": {
+		"base": 1.0,
+		"per_distance": 0.6,
+		"per_year": 0.06,
+		"per_completion": 0.25,
+		"max": 10,
+		"enemy_hp": 0.18,
+		"enemy_damage": 0.12,
+		"enemy_count": 0.2,
+		"wave_size": 0.25,
+		"reward": 0.12,
+		"labels": [
+			"Dễ",
+			"Vừa",
+			"Khó",
+			"Rất khó",
+			"Ác mộng"
+		]
 	}
 }

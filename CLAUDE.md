@@ -12,3 +12,5 @@
 - Asset: `make assets` = `tools/import_assets.py` (tải Kenney CC0, chọn file, sinh atlas tường/quái ghép/ánh sáng) + `tools/build_tileset.gd` (dựng `assets/tiles/world_tileset.tres`). Asset sinh ra được commit; `build/asset_cache` thì không.
 - Bit lân cận autotile trong `import_assets.py` và `scripts/mission/level_map.gd` phải khớp nhau (test `test_autotile_covers_all_masks`).
 - Xem nhanh hình ảnh: `tools/godot.sh res://tools/screenshot.tscn -- --scene=res://scenes/mission/mission_level.tscn --mission=msn_derelict --out=build/shots/x.png` (mở cửa sổ vài giây).
+- Màn khai phá là kiểu chỉ huy (RTS): `Unit` (AI + lệnh), `SquadController` (chọn/ra lệnh/camera), `MissionHud` (thẻ thành viên, minimap). Không có nhân vật do người chơi điều khiển trực tiếp.
+- Trang bị nằm ở `crew[id].equipment` (weapon/tool/module), lọc theo `Roles.can_use`; `Game.loadout` chỉ còn `consumables` của đội.

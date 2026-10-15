@@ -16,7 +16,7 @@ const TITLE_SCENE := "res://scenes/title/title.tscn"
 
 var _lists: Dictionary = {}
 var _log_label: RichTextLabel
-## Màn hình chuẩn bị nhiệm vụ đang mở: {option, team: [], leader}
+## Màn hình chuẩn bị nhiệm vụ đang mở: {option, team: []}
 var _prep: Dictionary = {}
 var _dialogue_queue: Array = []
 
@@ -129,7 +129,7 @@ func _build_crew() -> void:
 			skills.append("%s%s %d[/color]" % ["[color=#FF2BD6]" if skill.get("high_tech", false) else "[color=#00E5FF]", skill.get("name", skill_id), member.skills[skill_id]])
 		var age := "" if data.get("ageless", false) else " · %d tuổi" % Game.character_age(char_id)
 		var children: Array = [
-			UI.hbox([UI.portrait(char_id), UI.rich("[b]%s[/b] — %s%s · [i]%s[/i]" % [data.get("name", char_id), data.get("role", ""), age, status_names.get(member.status, member.status)])]),
+			UI.hbox([UI.portrait(char_id), UI.rich("[b]%s[/b] — [color=%s]%s[/color] · %s%s · [i]%s[/i]" % [data.get("name", char_id), Roles.color_of(Roles.role_of(char_id)).to_html(false), Roles.name_of(Roles.role_of(char_id)), _role_title(data), age, status_names.get(member.status, member.status)])]),
 			UI.rich(" · ".join(skills) if skills.size() > 0 else "[color=#5C6B80]Chưa có kỹ năng[/color]"),
 			UI.label(data.get("bio", ""), 14, Color("#8FA3BF")),
 		]
@@ -139,6 +139,10 @@ func _build_crew() -> void:
 					CrewSystem.start_training(Game, char_id, skill_id)
 					Game.state_changed.emit()))
 		list.add_child(UI.card(children))
+
+
+func _role_title(data: Dictionary) -> String:
+	return data.get("title", "")
 
 
 func _build_missions() -> void:
@@ -158,12 +162,15 @@ func _build_missions() -> void:
 		var req := PackedStringArray()
 		for skill_id in m.get("skills", {}):
 			req.append("%s %d" % [Content.get_entry("skills", skill_id).get("name", skill_id), m.skills[skill_id]])
+		var d := Difficulty.level(Game, m, option.location)
+		var roles: Array = m.get("recommended_roles", {}).keys().map(func(r): return "%s×%d" % [Roles.name_of(r), m.recommended_roles[r]])
 		list.add_child(UI.card([
-			UI.rich("[b]%s[/b] · %s · Đội %d–%d người" % [title, location.get("name", ""), m.team_size[0], m.team_size[1]]),
+			UI.rich("[b]%s[/b] · %s · Đội %d–%d người · [color=#FFC94D]%s %s[/color]%s" % [title, location.get("name", ""), m.team_size[0], m.team_size[1], Difficulty.stars(d), Difficulty.label(d), (" · %d phút" % roundi(float(m.time_limit) / 60.0)) if m.has("time_limit") else ""]),
+			UI.rich("[color=#8FA3BF]Đề cử: %s[/color]" % ", ".join(roles)) if roles.size() > 0 else UI.label(""),
 			UI.label(m.get("description", ""), 15, Color("#8FA3BF")),
 			UI.rich("Kỹ năng khuyến nghị: %s%s" % [", ".join(req), ("   [color=#FF8A3D]Nguy hiểm: %s[/color]" % ", ".join(hazards)) if hazards.size() > 0 else ""]),
 			UI.button("Chuẩn bị đội", func():
-				_prep = {"option": option, "team": [], "leader": ""}
+				_prep = {"option": option, "team": []}
 				_build_missions()),
 		]))
 
@@ -171,57 +178,59 @@ func _build_missions() -> void:
 func _build_mission_prep(list: VBoxContainer) -> void:
 	var option: Dictionary = _prep.option
 	var m: Dictionary = option.mission
+	var team: Array = _prep.team
+	var d := Difficulty.level(Game, m, option.location)
+	var size: Array = m.get("team_size", [1, 1])
 	list.add_child(UI.label("Chuẩn bị: " + m.name, 22))
 	var objective: Dictionary = m.get("objective", {})
+	var info := "Độ khó %s %s · Đội %d–%d người" % [Difficulty.stars(d), Difficulty.label(d), size[0], size[1]]
+	if m.has("time_limit"):
+		info += " · Thời gian %d phút" % roundi(float(m.time_limit) / 60.0)
 	if not objective.is_empty():
-		list.add_child(UI.label("Mục tiêu màn chơi: %s (%d)" % [objective.get("label", ""), int(objective.get("count", 1))], 15))
-	var team: Array = _prep.team
+		info += " · Mục tiêu: %s (%d)" % [objective.get("label", ""), int(objective.get("count", 1))]
+	list.add_child(UI.label(info, 15, Color("#FFC94D")))
+
+	# Vai trò đề cử
+	var rec := Roles.recommendation(m, team)
+	if not rec.is_empty():
+		var parts := PackedStringArray()
+		for r in rec:
+			parts.append("%s%s %d/%d[/color]" % ["[color=#B4FF39]✔ " if r.have >= r.need else "[color=#FF5A5A]✘ ", Roles.name_of(r.role), r.have, r.need])
+		list.add_child(UI.rich("Vai trò đề cử: " + "   ".join(parts)))
+
 	for char_id in CrewSystem.available(Game):
 		var check := CheckBox.new()
-		var skills := PackedStringArray()
-		for skill_id in Game.crew[char_id].skills:
-			skills.append("%s %d" % [Content.get_entry("skills", skill_id).get("name", skill_id), Game.crew[char_id].skills[skill_id]])
-		check.text = "%s — %s" % [CrewSystem.display_name(char_id), ", ".join(skills)]
+		var role := Roles.role_of(char_id)
+		var gear := PackedStringArray()
+		for slot in Inventory.MEMBER_SLOTS:
+			var item_id := Inventory.equipped(Game, char_id, slot)
+			if item_id != "":
+				gear.append(Content.get_entry("items", item_id).get("name", item_id))
+		check.text = "%s — %s · %s" % [CrewSystem.display_name(char_id), Roles.name_of(role), ", ".join(gear) if gear.size() > 0 else "không trang bị"]
 		check.button_pressed = char_id in team
+		check.disabled = not char_id in team and team.size() >= int(size[1])
+		check.add_theme_color_override("font_color", Roles.color_of(role))
 		check.toggled.connect(func(on):
 			if on and not char_id in team:
 				team.append(char_id)
 			elif not on:
 				team.erase(char_id)
-			if not _prep.leader in team:
-				_prep.leader = team[0] if team.size() > 0 else ""
 			_build_missions())
 		list.add_child(UI.hbox([UI.portrait(char_id, 40), check]))
-	if team.size() > 0:
-		var leader_pick := OptionButton.new()
-		for i in team.size():
-			leader_pick.add_item("Đội trưởng (bạn điều khiển): " + CrewSystem.display_name(team[i]), i)
-			if team[i] == _prep.leader:
-				leader_pick.select(i)
-		leader_pick.item_selected.connect(func(i):
-			_prep.leader = team[i]
-			_build_missions())
-		list.add_child(leader_pick)
-		var stats := CombatStats.compute(Game, _prep.leader, team)
-		list.add_child(UI.label("Chỉ số đội trưởng: Máu %d · Giáp %d · Sát thương %s · Chí mạng %s · Tốc độ %d" % [
-			stats.max_hp, stats.armor, CombatStats.format("damage_mult", stats.damage_mult),
-			CombatStats.format("crit_chance", stats.crit_chance), stats.move_speed], 15, Color("#B4FF39")))
-		var abilities := Abilities.for_leader(Game, _prep.leader).map(func(id): return Content.get_entry("abilities", id).name)
-		if abilities.size() > 0:
-			list.add_child(UI.label("Kỹ năng chủ động: " + ", ".join(abilities), 15, Color("#FF2BD6")))
-		var unprotected := MissionSystem.unprotected_hazards(Game, option.location, team)
-		if unprotected.size() > 0:
-			list.add_child(UI.label("⚠ Chưa được bảo vệ khỏi: " + ", ".join(unprotected.map(func(h): return Content.config.hazards[h].label)), 15, Color("#FF8A3D")))
+
+	var unprotected := MissionSystem.unprotected_hazards(Game, option.location, team) if team.size() > 0 else []
+	if unprotected.size() > 0:
+		list.add_child(UI.label("⚠ Chưa được bảo vệ khỏi: " + ", ".join(unprotected.map(func(h): return Content.config.hazards[h].label)), 15, Color("#FF8A3D")))
 	var valid := MissionSystem.valid_team(Game, m, team)
 	var chance := MissionSystem.chance(Game, m, team, option.location) if team.size() > 0 else 0.0
 	var buttons: Array = []
 	if not m.get("auto_only", false):
 		var deploy := func():
-			if MissionSystem.start_action(Game, option, team, _prep.leader):
+			if MissionSystem.start_action(Game, option, team):
 				_prep = {}
 				SaveManager.save_game()
 				get_tree().change_scene_to_file(MISSION_SCENE)
-		buttons.append(UI.button("▶ Đổ bộ (chơi màn action)", deploy, not valid))
+		buttons.append(UI.button("▶ Đổ bộ (chỉ huy trên bản đồ)", deploy, not valid))
 	var send_auto := func():
 		if MissionSystem.launch_auto(Game, option, team):
 			_prep = {}
@@ -231,6 +240,8 @@ func _build_mission_prep(list: VBoxContainer) -> void:
 		_prep = {}
 		_build_missions()))
 	list.add_child(UI.hbox(buttons))
+	if not valid and team.size() > 0:
+		list.add_child(UI.label("Cần %d–%d thành viên." % [size[0], size[1]], 14, Color("#FF5A5A")))
 
 
 func _build_research() -> void:
@@ -256,18 +267,29 @@ func _build_research() -> void:
 func _build_inventory() -> void:
 	var list: VBoxContainer = _lists["Kho & Trang bị"]
 	UI.clear(list)
-	list.add_child(UI.label("Trang bị đổ bộ", 20))
-	for slot in Inventory.SLOT_CATEGORY:
-		var names := {"weapons": "Vũ khí", "modules": "Module", "consumables": "Vật phẩm nhanh"}
-		var row: Array = [UI.label("%s (%d/%d):" % [names[slot], Game.loadout[slot].size(), Inventory.slot_count(slot)], 16)]
-		for item_id in Game.loadout[slot]:
-			row.append(UI.icon(Inventory.icon(item_id), 32))
-			row.append(UI.button(Content.get_entry("items", item_id).name + " ✕", func():
-				Inventory.unequip(Game, slot, item_id)
-				Game.state_changed.emit()))
+	list.add_child(UI.label("Trang bị từng thành viên (theo vai trò)", 20))
+	for char_id in Game.crew:
+		if not Content.get_entry("characters", char_id).get("assignable", true):
+			continue
+		var role := Roles.role_of(char_id)
+		var row: Array = [UI.portrait(char_id, 36), UI.label("%s\n%s" % [CrewSystem.display_name(char_id), Roles.name_of(role)], 14, Roles.color_of(role))]
+		row[1].custom_minimum_size = Vector2(170, 0)
+		for slot in Inventory.MEMBER_SLOTS:
+			row.append(_equip_picker(char_id, slot))
+		var stats := CombatStats.compute(Game, char_id)
+		row.append(UI.label("Máu %d · Giáp %d · ST %s · Tầm %d" % [stats.max_hp, stats.armor, CombatStats.format("damage_mult", stats.damage_mult), stats.sight_radius], 13, Color("#8FA3BF")))
 		list.add_child(UI.hbox(row))
-	var names := {"weapon": "Vũ khí", "module": "Module", "consumable": "Vật phẩm tiêu hao", "material": "Nguyên liệu", "key": "Vật phẩm cốt truyện"}
-	var slot_for := {"weapon": "weapons", "module": "modules", "consumable": "consumables"}
+
+	var consumables: Array = Game.loadout.get("consumables", [])
+	var row: Array = [UI.label("Vật phẩm nhanh của đội (%d/%d):" % [consumables.size(), Inventory.consumable_slots()], 16)]
+	for item_id in consumables:
+		row.append(UI.icon(Inventory.icon(item_id), 32))
+		row.append(UI.button(Content.get_entry("items", item_id).name + " ✕", func():
+			Inventory.unequip_consumable(Game, item_id)
+			Game.state_changed.emit()))
+	list.add_child(UI.hbox(row))
+
+	var names := {"weapon": "Vũ khí", "tool": "Công cụ", "module": "Module", "consumable": "Vật phẩm tiêu hao", "material": "Nguyên liệu", "key": "Vật phẩm cốt truyện"}
 	for cat in names:
 		var ids := Inventory.items_in(Game, cat)
 		if ids.is_empty():
@@ -275,13 +297,48 @@ func _build_inventory() -> void:
 		list.add_child(UI.label(names[cat], 20))
 		for item_id in ids:
 			var item := Content.get_entry("items", item_id)
-			var row: Array = [UI.icon(Inventory.icon(item_id)), UI.rich("[b]%s[/b] x%d — %s" % [item.name, Game.item_count(item_id), item.get("description", "")])]
-			if slot_for.has(cat):
+			var extra := ""
+			if cat in ["weapon", "tool"]:
+				var type: String = item.get(cat, {}).get("type", "")
+				var roles: Array = Content.all("roles").filter(func(r): return type in r.get(cat + "_types", [])).map(func(r): return r.name)
+				extra = " · Dùng được: " + ", ".join(roles) + " · Còn trống %d" % Inventory.available(Game, item_id)
+			var item_row: Array = [UI.icon(Inventory.icon(item_id)), UI.rich("[b]%s[/b] x%d — %s[color=#8FA3BF]%s[/color]" % [item.name, Game.item_count(item_id), item.get("description", ""), extra])]
+			if cat == "consumable":
 				var equip := func():
-					Inventory.equip(Game, slot_for[cat], item_id)
+					Inventory.equip_consumable(Game, item_id)
 					Game.state_changed.emit()
-				row.append(UI.button("Trang bị", equip, Game.loadout[slot_for[cat]].size() >= Inventory.slot_count(slot_for[cat])))
-			list.add_child(UI.hbox(row))
+				item_row.append(UI.button("Mang theo", equip, item_id in consumables or consumables.size() >= Inventory.consumable_slots()))
+			list.add_child(UI.hbox(item_row))
+
+
+## Ô chọn trang bị: chỉ liệt kê đồ vai trò dùng được và còn trong kho.
+func _equip_picker(char_id: String, slot: String) -> OptionButton:
+	var pick := OptionButton.new()
+	pick.custom_minimum_size = Vector2(190, 0)
+	pick.add_theme_constant_override("icon_max_width", 24)
+	pick.get_popup().add_theme_constant_override("icon_max_width", 24)
+	var current := Inventory.equipped(Game, char_id, slot)
+	var labels := {"weapon": "— vũ khí —", "tool": "— công cụ —", "module": "— module —"}
+	pick.add_item(labels[slot])
+	pick.set_item_metadata(0, "")
+	for item_id in Inventory.items_in(Game, slot):
+		if not Roles.can_use(char_id, item_id):
+			continue
+		if item_id != current and Inventory.available(Game, item_id) <= 0:
+			continue
+		pick.add_icon_item(Inventory.icon(item_id), Content.get_entry("items", item_id).name)
+		var idx := pick.item_count - 1
+		pick.set_item_metadata(idx, item_id)
+		if item_id == current:
+			pick.select(idx)
+	pick.disabled = pick.item_count <= 1
+	pick.item_selected.connect(func(i):
+		var item_id: String = pick.get_item_metadata(i)
+		Inventory.unequip_member(Game, char_id, slot)
+		if item_id != "":
+			Inventory.equip_member(Game, char_id, slot, item_id)
+		Game.state_changed.emit())
+	return pick
 
 
 func _build_crafting() -> void:

@@ -42,3 +42,14 @@ func test_sanitize_removed_content(t) -> void:
 	t.check(not Game.crew.has("nhan_vat_da_xoa"), "bỏ nhân vật không còn")
 	t.check(not Game.items.has("vat_pham_da_xoa"), "bỏ vật phẩm không còn")
 	t.check(not "tech_da_xoa" in Game.techs, "bỏ công nghệ không còn")
+
+
+func test_migrate_v2_loadout_to_equipment(t) -> void:
+	var old := {"save_version": 2, "state": {"year": 2, "crew": {"bao": {"skills": {"engineering": 5}, "xp": {}, "status": "idle"}},
+		"items": {"w_pulse_pistol": 1, "t_repair_kit": 1, "medkit": 2},
+		"loadout": {"weapons": ["w_pulse_pistol"], "modules": [], "consumables": ["medkit"]}}}
+	var result := SaveManager.migrate(old)
+	t.check(not result.state.loadout.has("weapons"), "bỏ loadout vũ khí chung")
+	Game.from_dict(result.state)
+	t.equal(Inventory.equipped(Game, "bao", "tool"), "t_repair_kit", "tự trang bị lại theo vai trò")
+	t.equal(Game.loadout.consumables, ["medkit"], "giữ vật phẩm nhanh")

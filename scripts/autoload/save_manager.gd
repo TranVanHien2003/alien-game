@@ -11,7 +11,7 @@ extends Node
 signal saved(slot: String)
 signal loaded(slot: String)
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 ## Đổi được (ví dụ test dùng thư mục riêng để không ghi đè save thật)
 var save_dir := "user://saves"
 const AUTOSAVE_SLOT := "autosave"
@@ -20,6 +20,7 @@ const AUTOSAVE_SLOT := "autosave"
 var MIGRATIONS := {
 	0: _migrate_0_to_1,
 	1: _migrate_1_to_2,
+	2: _migrate_2_to_3,
 }
 
 
@@ -122,4 +123,15 @@ func _migrate_1_to_2(state: Dictionary) -> Dictionary:
 			}
 		state.crew = crew
 		state.erase("characters")
+	return state
+
+
+## v2 -> v3: trang bị chuyển từ loadout chung (weapons/modules) sang từng thành viên (crew[id].equipment).
+## Vật phẩm vẫn còn trong kho; Game.from_dict() sẽ tự trang bị lại theo vai trò.
+func _migrate_2_to_3(state: Dictionary) -> Dictionary:
+	var loadout: Dictionary = state.get("loadout", {})
+	state.loadout = {"consumables": loadout.get("consumables", [])}
+	for char_id in state.get("crew", {}):
+		if not state.crew[char_id].has("equipment"):
+			state.crew[char_id].equipment = {}
 	return state

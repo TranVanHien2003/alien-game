@@ -13,7 +13,7 @@ func test_new_game_initial_state(t) -> void:
 	t.equal(Game.year, 0, "bắt đầu từ năm 0")
 	t.equal(Game.pending_event, "ev_departure", "sự kiện mở đầu bắt buộc")
 	t.check(Game.crew.has("khang"), "thuyền trưởng có trong đoàn")
-	t.check(Game.loadout.weapons.size() == 1, "có vũ khí khởi đầu")
+	t.check(Inventory.equipped(Game, "khang", "weapon") != "", "có vũ khí khởi đầu")
 	t.check(not Game.advance_year(), "không qua năm khi đang chờ lựa chọn")
 
 
@@ -42,7 +42,7 @@ func test_auto_mission_and_rescue(t) -> void:
 	Game.new_game(3)
 	_answer_events()
 	var option: Dictionary = MissionSystem.available(Game).filter(func(o): return o.mission.id == "msn_salvage_debris")[0]
-	t.check(MissionSystem.launch_auto(Game, option, ["huy", "tuan"]), "giao được nhiệm vụ")
+	t.check(MissionSystem.launch_auto(Game, option, ["huy", "tuan", "hai"]), "giao được nhiệm vụ")
 	t.equal(Game.crew.huy.status, CrewSystem.MISSION, "thành viên đang làm nhiệm vụ")
 	# Ép thất bại có người mất tích
 	var entry: Dictionary = Game.active_missions.pop_back()
@@ -74,14 +74,47 @@ func test_crafting_consumes_materials(t) -> void:
 	t.check(not Crafting.craft(Game, "r_scatter"), "công thức khóa cần công nghệ")
 
 
-func test_combat_stats_from_skills_and_modules(t) -> void:
+func test_combat_stats_from_role_skills_modules(t) -> void:
 	Game.new_game(1)
-	var base := CombatStats.compute(Game, "bao", ["bao"])
+	var miner := CombatStats.compute(Game, "tuan")
+	var scout := CombatStats.compute(Game, "huy")
+	t.check(miner.mining_power > scout.mining_power, "thợ mỏ khai thác mạnh hơn trinh sát")
+	t.check(scout.move_speed > miner.move_speed, "trinh sát nhanh hơn")
 	Game.items["armor_plate"] = 1
-	t.check(Inventory.equip(Game, "modules", "armor_plate"), "trang bị module")
-	var geared := CombatStats.compute(Game, "bao", ["bao"])
-	t.equal(geared.armor, base.armor + 15.0, "module cộng giáp")
-	t.check(base.damage_mult > 1.0, "kỹ thuật tăng sát thương")
+	var before: float = CombatStats.compute(Game, "khang").armor
+	t.check(Inventory.equip_member(Game, "khang", "module", "armor_plate"), "trang bị module")
+	t.equal(CombatStats.compute(Game, "khang").armor, before + 15.0, "module cộng giáp")
+
+
+func test_role_equipment_rules(t) -> void:
+	Game.new_game(1)
+	t.equal(Inventory.equipped(Game, "tuan", "tool"), "t_mining_drill", "thợ mỏ được phát máy khoan")
+	t.equal(Inventory.equipped(Game, "thu_ha", "tool"), "t_med_beam", "y sĩ được phát súng hồi máu")
+	t.check(not Inventory.equip_member(Game, "huy", "tool", "t_mining_drill"), "trinh sát không dùng được máy khoan")
+	Game.items["w_sniper"] = 1
+	t.check(not Inventory.equip_member(Game, "tuan", "weapon", "w_sniper"), "thợ mỏ không dùng được súng bắn tỉa")
+	t.check(Inventory.equip_member(Game, "huy", "weapon", "w_sniper"), "trinh sát dùng được súng bắn tỉa")
+	t.equal(Inventory.available(Game, "w_sniper"), 0, "không trang bị trùng quá số lượng")
+	t.check(not Inventory.equip_member(Game, "thanh", "weapon", "w_sniper"), "hết hàng trong kho")
+	for char_id in Game.crew:
+		t.check(Inventory.equipped(Game, char_id, "weapon") != "" or not Content.get_entry("characters", char_id).get("assignable", true), char_id + " có vũ khí")
+
+
+func test_difficulty_scales_evenly(t) -> void:
+	Game.new_game(1)
+	var near := Difficulty.level(Game, Content.get_entry("missions", "msn_salvage_debris"), "loc_debris")
+	var far := Difficulty.level(Game, Content.get_entry("missions", "msn_moon_samples"), "loc_rogue_moon")
+	t.check(far > near, "địa điểm xa khó hơn")
+	Game.year += 10
+	t.check(Difficulty.level(Game, Content.get_entry("missions", "msn_salvage_debris"), "loc_debris") > near, "càng về sau càng khó")
+	Game.completed_missions["msn_salvage_debris"] = 3
+	t.check(Difficulty.scale("enemy_hp", 3.0) > Difficulty.scale("enemy_hp", 2.0), "máu quái tăng theo độ khó")
+
+
+func test_recommended_roles(t) -> void:
+	var m := Content.get_entry("missions", "msn_derelict")
+	t.check(not Roles.recommendation_met(m, ["huy"]), "thiếu vai đề cử")
+	t.check(Roles.recommendation_met(m, ["khang", "quang", "bao", "thu_ha"]), "đủ vai đề cử")
 
 
 func test_loot_tables(t) -> void:

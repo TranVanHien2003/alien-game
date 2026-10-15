@@ -6,8 +6,8 @@
 		"location": "loc_ship",
 		"description": "Đội kỹ thuật ra ngoài vá các vết nứt nhỏ.",
 		"team_size": [
-			1,
-			2
+			2,
+			4
 		],
 		"skills": {
 			"engineering": 3
@@ -30,9 +30,15 @@
 		},
 		"objective": {
 			"type": "interact",
-			"count": 3,
+			"count": 5,
 			"label": "Vá vết nứt"
-		}
+		},
+		"recommended_roles": {
+			"engineer": 1,
+			"soldier": 1
+		},
+		"tier": 0,
+		"time_limit": 300
 	},
 	{
 		"id": "msn_salvage_debris",
@@ -41,8 +47,8 @@
 		"location": "loc_debris",
 		"description": "Bay tàu con thoi vào bãi mảnh vỡ tìm kim loại và linh kiện.",
 		"team_size": [
-			2,
-			3
+			3,
+			5
 		],
 		"skills": {
 			"piloting": 2,
@@ -72,9 +78,16 @@
 		"objective": {
 			"type": "mine",
 			"item": "kim_loai",
-			"count": 8,
+			"count": 25,
 			"label": "Kim loại"
-		}
+		},
+		"recommended_roles": {
+			"miner": 1,
+			"soldier": 1,
+			"engineer": 1
+		},
+		"tier": 0,
+		"time_limit": 420
 	},
 	{
 		"id": "msn_comet_ice",
@@ -83,8 +96,8 @@
 		"location": "loc_comet",
 		"description": "Khoan băng trên K-17 và kéo về tàu.",
 		"team_size": [
-			2,
-			4
+			3,
+			6
 		],
 		"skills": {
 			"piloting": 2,
@@ -107,8 +120,55 @@
 		"objective": {
 			"type": "mine",
 			"item": "bang",
-			"count": 10,
+			"count": 30,
 			"label": "Lõi băng"
+		},
+		"recommended_roles": {
+			"miner": 2,
+			"soldier": 1,
+			"medic": 1
+		},
+		"tier": 0,
+		"time_limit": 480
+	},
+	{
+		"id": "msn_survey_comet",
+		"name": "Khảo sát sao chổi",
+		"type": "explore",
+		"location": "loc_comet",
+		"description": "Thăm dò các hang băng sâu, thu hồi tủ tiếp tế và mẫu tinh thể.",
+		"team_size": [
+			3,
+			6
+		],
+		"skills": {
+			"piloting": 2,
+			"science": 2
+		},
+		"duration": 2,
+		"base_chance": 0.5,
+		"repeatable": true,
+		"missing_chance": 0.25,
+		"objective": {
+			"type": "collect",
+			"count": 6,
+			"label": "Tủ tiếp tế"
+		},
+		"time_limit": 540,
+		"recommended_roles": {
+			"scout": 1,
+			"scientist": 1,
+			"soldier": 1,
+			"miner": 1
+		},
+		"tier": 1,
+		"success": {
+			"research_points": 8,
+			"loot": "lt_crate",
+			"log": "Đội khảo sát mang về bản đồ hang băng chi tiết."
+		},
+		"failure": {
+			"log": "Đội khảo sát lạc trong bão băng."
 		}
 	},
 	{
@@ -140,7 +200,11 @@
 		"failure": {
 			"log": "Máy quét chỉ thu được nhiễu."
 		},
-		"auto_only": true
+		"auto_only": true,
+		"recommended_roles": {
+			"scientist": 1
+		},
+		"tier": 0
 	},
 	{
 		"id": "msn_derelict",
@@ -149,8 +213,8 @@
 		"location": "loc_derelict",
 		"description": "Leo lên con tàu ma. Nhật ký của họ có thể giải thích tất cả.",
 		"team_size": [
-			2,
-			4
+			4,
+			6
 		],
 		"skills": {
 			"engineering": 3,
@@ -174,7 +238,14 @@
 			"type": "boss",
 			"boss": "boss_warden",
 			"label": "Hạ Người Gác"
-		}
+		},
+		"recommended_roles": {
+			"soldier": 2,
+			"engineer": 1,
+			"medic": 1
+		},
+		"tier": 1,
+		"time_limit": 600
 	},
 	{
 		"id": "msn_moon_samples",
@@ -183,8 +254,8 @@
 		"location": "loc_rogue_moon",
 		"description": "Khoan xuyên lớp băng và lấy mẫu thứ đang chuyển động bên dưới.",
 		"team_size": [
-			2,
-			3
+			4,
+			6
 		],
 		"skills": {
 			"science": 3,
@@ -208,7 +279,15 @@
 			"type": "boss",
 			"boss": "boss_queen",
 			"label": "Hạ Mẫu Hậu"
-		}
+		},
+		"recommended_roles": {
+			"soldier": 2,
+			"scientist": 1,
+			"medic": 1,
+			"scout": 1
+		},
+		"tier": 2,
+		"time_limit": 660
 	},
 	{
 		"id": "msn_rescue",
@@ -218,7 +297,7 @@
 		"description": "Tìm và đưa thành viên mất tích trở về trước khi quá muộn.",
 		"team_size": [
 			2,
-			3
+			5
 		],
 		"skills": {
 			"piloting": 2,
@@ -242,6 +321,13 @@
 			"type": "rescue",
 			"count": 1,
 			"label": "Người mất tích"
-		}
+		},
+		"recommended_roles": {
+			"medic": 1,
+			"scout": 1,
+			"soldier": 1
+		},
+		"tier": 0,
+		"time_limit": 360
 	}
 ]

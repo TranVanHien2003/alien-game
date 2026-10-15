@@ -1,13 +1,270 @@
 [
-	{ "id": "r_medkit",        "name": "Bộ sơ cứu x2",        "materials": { "kim_loai": 1, "tinh_the": 1 }, "result": { "items_add": { "medkit": 2 } } },
-	{ "id": "r_energy_cell",   "name": "Pin năng lượng x2",   "materials": { "tinh_the": 2 }, "result": { "items_add": { "energy_cell": 2 } } },
-	{ "id": "r_stim",          "name": "Thuốc kích thích x2", "materials": { "mau_vat_la": 2 }, "requires_tech": "xeno_lab", "result": { "items_add": { "stim": 2 } } },
-	{ "id": "r_armor_plate",   "name": "Tấm giáp gốm",        "materials": { "kim_loai": 6, "linh_kien_du_phong": 1 }, "result": { "items_add": { "armor_plate": 1 } } },
-	{ "id": "r_drill_head",    "name": "Mũi khoan kim cương", "materials": { "kim_loai": 4, "tinh_the": 2 }, "result": { "items_add": { "drill_head": 1 } } },
-	{ "id": "r_scatter",       "name": "Súng tán xạ",         "materials": { "kim_loai": 8, "linh_kien_du_phong": 2 }, "requires_tech": "weapon_lab", "result": { "items_add": { "w_scatter": 1 } } },
-	{ "id": "r_plasma_cutter", "name": "Máy cắt plasma",      "materials": { "kim_loai": 6, "tinh_the": 3 }, "requires_tech": "nanofabrication", "result": { "items_add": { "w_plasma_cutter": 1 } } },
-	{ "id": "r_shock_launcher","name": "Bệ phóng lựu sốc",    "materials": { "kim_loai": 5, "tinh_the": 2, "linh_kien_du_phong": 1 }, "requires_tech": "weapon_lab", "result": { "items_add": { "shock_launcher": 1 } } },
-	{ "id": "r_water",         "name": "Tinh lọc băng → +10 Nước", "materials": { "bang": 3 }, "result": { "stats": { "water": 10 } } },
-	{ "id": "r_hull_patch",    "name": "Vá vỏ tàu → +8 Vỏ tàu",    "materials": { "kim_loai": 4 }, "result": { "stats": { "hull": 8 } } },
-	{ "id": "r_power",         "name": "Nạp lò → +10 Năng lượng",  "materials": { "tinh_the": 2 }, "result": { "stats": { "energy": 10 } } }
+	{
+		"id": "r_medkit",
+		"name": "Bộ sơ cứu x2",
+		"materials": {
+			"kim_loai": 1,
+			"tinh_the": 1
+		},
+		"result": {
+			"items_add": {
+				"medkit": 2
+			}
+		}
+	},
+	{
+		"id": "r_energy_cell",
+		"name": "Pin năng lượng x2",
+		"materials": {
+			"tinh_the": 2
+		},
+		"result": {
+			"items_add": {
+				"energy_cell": 2
+			}
+		}
+	},
+	{
+		"id": "r_stim",
+		"name": "Thuốc kích thích x2",
+		"materials": {
+			"mau_vat_la": 2
+		},
+		"requires_tech": "xeno_lab",
+		"result": {
+			"items_add": {
+				"stim": 2
+			}
+		}
+	},
+	{
+		"id": "r_armor_plate",
+		"name": "Tấm giáp gốm",
+		"materials": {
+			"kim_loai": 6,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"armor_plate": 1
+			}
+		}
+	},
+	{
+		"id": "r_drill_head",
+		"name": "Mũi khoan kim cương",
+		"materials": {
+			"kim_loai": 4,
+			"tinh_the": 2
+		},
+		"result": {
+			"items_add": {
+				"drill_head": 1
+			}
+		}
+	},
+	{
+		"id": "r_scatter",
+		"name": "Súng tán xạ",
+		"materials": {
+			"kim_loai": 8,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "weapon_lab",
+		"result": {
+			"items_add": {
+				"w_scatter": 1
+			}
+		}
+	},
+	{
+		"id": "r_plasma_cutter",
+		"name": "Máy cắt plasma",
+		"materials": {
+			"kim_loai": 6,
+			"tinh_the": 3
+		},
+		"requires_tech": "nanofabrication",
+		"result": {
+			"items_add": {
+				"w_plasma_cutter": 1
+			}
+		}
+	},
+	{
+		"id": "r_shock_launcher",
+		"name": "Bệ phóng lựu sốc",
+		"materials": {
+			"kim_loai": 5,
+			"tinh_the": 2,
+			"linh_kien_du_phong": 1
+		},
+		"requires_tech": "weapon_lab",
+		"result": {
+			"items_add": {
+				"shock_launcher": 1
+			}
+		}
+	},
+	{
+		"id": "r_water",
+		"name": "Tinh lọc băng → +10 Nước",
+		"materials": {
+			"bang": 3
+		},
+		"result": {
+			"stats": {
+				"water": 10
+			}
+		}
+	},
+	{
+		"id": "r_hull_patch",
+		"name": "Vá vỏ tàu → +8 Vỏ tàu",
+		"materials": {
+			"kim_loai": 4
+		},
+		"result": {
+			"stats": {
+				"hull": 8
+			}
+		}
+	},
+	{
+		"id": "r_power",
+		"name": "Nạp lò → +10 Năng lượng",
+		"materials": {
+			"tinh_the": 2
+		},
+		"result": {
+			"stats": {
+				"energy": 10
+			}
+		}
+	},
+	{
+		"id": "r_heavy_drill",
+		"name": "Khoan plasma hạng nặng",
+		"materials": {
+			"kim_loai": 10,
+			"tinh_the": 4,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "nanofabrication",
+		"result": {
+			"items_add": {
+				"t_heavy_drill": 1
+			}
+		}
+	},
+	{
+		"id": "r_turret_kit",
+		"name": "Bộ tháp pháo gấp",
+		"materials": {
+			"kim_loai": 8,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "weapon_lab",
+		"result": {
+			"items_add": {
+				"t_turret_kit": 1
+			}
+		}
+	},
+	{
+		"id": "r_med_beam",
+		"name": "Súng tia hồi phục",
+		"materials": {
+			"tinh_the": 3,
+			"mau_vat_la": 2,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"t_med_beam": 1
+			}
+		}
+	},
+	{
+		"id": "r_smg",
+		"name": "Tiểu liên SMG-2",
+		"materials": {
+			"kim_loai": 6,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"w_smg": 1
+			}
+		}
+	},
+	{
+		"id": "r_assault_rifle",
+		"name": "Súng trường xung AR-7",
+		"materials": {
+			"kim_loai": 8,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"w_assault_rifle": 1
+			}
+		}
+	},
+	{
+		"id": "r_heavy_mg",
+		"name": "Súng máy hạng nặng",
+		"materials": {
+			"kim_loai": 14,
+			"tinh_the": 3,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "weapon_lab",
+		"result": {
+			"items_add": {
+				"w_heavy_mg": 1
+			}
+		}
+	},
+	{
+		"id": "r_sniper",
+		"name": "Súng bắn tỉa Ly-9",
+		"materials": {
+			"kim_loai": 10,
+			"tinh_the": 4,
+			"linh_kien_du_phong": 2
+		},
+		"requires_tech": "weapon_lab",
+		"result": {
+			"items_add": {
+				"w_sniper": 1
+			}
+		}
+	},
+	{
+		"id": "r_mining_drill",
+		"name": "Máy khoan cầm tay",
+		"materials": {
+			"kim_loai": 5,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"t_mining_drill": 1
+			}
+		}
+	},
+	{
+		"id": "r_scanner",
+		"name": "Máy quét đa phổ",
+		"materials": {
+			"tinh_the": 2,
+			"linh_kien_du_phong": 1
+		},
+		"result": {
+			"items_add": {
+				"t_scanner": 1
+			}
+		}
+	}
 ]

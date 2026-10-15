@@ -76,7 +76,7 @@
 		"description": "+30 tốc độ di chuyển, lướt hồi nhanh hơn.",
 		"modifiers": {
 			"move_speed": 30,
-			"dash_cooldown": -0.4
+			"sight_radius": 40
 		}
 	},
 	{
@@ -134,7 +134,8 @@
 			"color": "#00E5FF",
 			"pose": "gun",
 			"projectile": "laser_blue",
-			"sound": "shoot"
+			"sound": "shoot",
+			"type": "pistol"
 		}
 	},
 	{
@@ -154,7 +155,8 @@
 			"color": "#FFC94D",
 			"pose": "hold",
 			"projectile": "laser_yellow",
-			"sound": "shoot_heavy"
+			"sound": "shoot_heavy",
+			"type": "shotgun"
 		}
 	},
 	{
@@ -175,14 +177,15 @@
 			"color": "#B4FF39",
 			"pose": "machine",
 			"projectile": "laser_green",
-			"sound": "shoot_heavy"
+			"sound": "shoot_heavy",
+			"type": "sniper"
 		}
 	},
 	{
 		"id": "w_plasma_cutter",
 		"category": "weapon",
 		"name": "Máy cắt plasma",
-		"description": "Tầm ngắn, bắn liên tục. Khai thác cực nhanh.",
+		"description": "Tầm ngắn, bắn liên tục, cắt quặng cực nhanh.",
 		"weapon": {
 			"damage": 5,
 			"fire_interval": 0.07,
@@ -195,7 +198,172 @@
 			"color": "#FF8A3D",
 			"pose": "silencer",
 			"projectile": "laser_red",
+			"sound": "shoot",
+			"type": "smg"
+		}
+	},
+	{
+		"id": "w_assault_rifle",
+		"category": "weapon",
+		"name": "Súng trường xung AR-7",
+		"description": "Vũ khí tiêu chuẩn của chiến binh. Cân bằng tầm, tốc độ và sát thương.",
+		"icon": "w_rail_rifle",
+		"weapon": {
+			"type": "rifle",
+			"damage": 13,
+			"fire_interval": 0.18,
+			"projectile_speed": 900,
+			"pellets": 1,
+			"spread": 0.06,
+			"pierce": 0,
+			"range": 560,
+			"mining_mult": 0.4,
+			"color": "#FF8A3D",
+			"pose": "machine",
+			"projectile": "laser_red",
 			"sound": "shoot"
+		}
+	},
+	{
+		"id": "w_smg",
+		"category": "weapon",
+		"name": "Tiểu liên SMG-2",
+		"description": "Bắn rất nhanh, tầm trung.",
+		"icon": "w_plasma_cutter",
+		"weapon": {
+			"type": "smg",
+			"damage": 6,
+			"fire_interval": 0.08,
+			"projectile_speed": 800,
+			"pellets": 1,
+			"spread": 0.14,
+			"pierce": 0,
+			"range": 420,
+			"mining_mult": 0.4,
+			"color": "#00E5FF",
+			"pose": "silencer",
+			"projectile": "laser_blue",
+			"sound": "shoot"
+		}
+	},
+	{
+		"id": "w_heavy_mg",
+		"category": "weapon",
+		"name": "Súng máy hạng nặng",
+		"description": "Hỏa lực áp đảo, xuyên 1 mục tiêu.",
+		"icon": "w_rail_rifle",
+		"weapon": {
+			"type": "heavy",
+			"damage": 11,
+			"fire_interval": 0.09,
+			"projectile_speed": 850,
+			"pellets": 1,
+			"spread": 0.12,
+			"pierce": 1,
+			"range": 520,
+			"mining_mult": 0.3,
+			"color": "#FFC94D",
+			"pose": "machine",
+			"projectile": "laser_yellow",
+			"sound": "shoot_heavy"
+		}
+	},
+	{
+		"id": "w_sniper",
+		"category": "weapon",
+		"name": "Súng bắn tỉa Ly-9",
+		"description": "Tầm cực xa, sát thương lớn, xuyên 2.",
+		"icon": "w_rail_rifle",
+		"weapon": {
+			"type": "sniper",
+			"damage": 55,
+			"fire_interval": 1.3,
+			"projectile_speed": 1600,
+			"pellets": 1,
+			"spread": 0.0,
+			"pierce": 2,
+			"range": 1100,
+			"crit_bonus": 0.2,
+			"mining_mult": 0.3,
+			"color": "#B4FF39",
+			"pose": "machine",
+			"projectile": "laser_green",
+			"sound": "shoot_heavy"
+		}
+	},
+	{
+		"id": "t_mining_drill",
+		"category": "tool",
+		"name": "Máy khoan cầm tay",
+		"description": "Khai thác 25 điểm/giây.",
+		"icon": "drill_head",
+		"tool": {
+			"type": "drill",
+			"power": 25,
+			"range": 70
+		}
+	},
+	{
+		"id": "t_heavy_drill",
+		"category": "tool",
+		"name": "Khoan plasma hạng nặng",
+		"description": "Khai thác 50 điểm/giây.",
+		"icon": "drill_head",
+		"tool": {
+			"type": "drill",
+			"power": 50,
+			"range": 80
+		}
+	},
+	{
+		"id": "t_repair_kit",
+		"category": "tool",
+		"name": "Bộ sửa chữa",
+		"description": "Tương tác/sửa chữa nhanh hơn 60%.",
+		"icon": "linh_kien_du_phong",
+		"tool": {
+			"type": "repair",
+			"power": 0.6,
+			"range": 60
+		}
+	},
+	{
+		"id": "t_turret_kit",
+		"category": "tool",
+		"name": "Bộ tháp pháo gấp",
+		"description": "Tháp pháo tạm thời bắn mạnh và lâu hơn.",
+		"icon": "shock_launcher",
+		"tool": {
+			"type": "turret",
+			"power": 1.5,
+			"range": 60
+		}
+	},
+	{
+		"id": "t_med_beam",
+		"category": "tool",
+		"name": "Súng tia hồi phục",
+		"description": "Tự động hồi 12 máu/giây cho đồng đội trong tầm.",
+		"icon": "medkit",
+		"tool": {
+			"type": "med",
+			"power": 12,
+			"range": 220
+		}
+	},
+	{
+		"id": "t_scanner",
+		"category": "tool",
+		"name": "Máy quét đa phổ",
+		"description": "Mở rộng tầm nhìn, khai thác mẫu lạ cho thêm điểm nghiên cứu.",
+		"icon": "ban_ghi_tin_hieu",
+		"tool": {
+			"type": "scanner",
+			"power": 1,
+			"range": 0
+		},
+		"modifiers": {
+			"sight_radius": 120
 		}
 	},
 	{

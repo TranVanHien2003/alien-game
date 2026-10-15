@@ -20,7 +20,7 @@ func _ready() -> void:
 		Game.pending_event = ""
 		Game.known_locations = Content.ids("locations")
 		var option: Dictionary = MissionSystem.available(Game).filter(func(o): return o.mission.id == args.mission)[0]
-		MissionSystem.start_action(Game, option, ["bao", "tuan"], "bao")
+		MissionSystem.start_action(Game, option, ["khang", "tuan", "bao", "thu_ha", "huy"].slice(0, int(option.mission.team_size[1])))
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child.call_deferred(scene)
 	for i in int(args.get("frames", 90)):

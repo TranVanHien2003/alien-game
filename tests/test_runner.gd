@@ -26,6 +26,10 @@ func _ready() -> void:
 		if not (file.begins_with("test_") and file.ends_with(".gd")) or file == "test_runner.gd":
 			continue
 		var script: GDScript = load("res://tests/" + file)
+		if script == null or not script.can_instantiate():
+			ctx.failures.append("%s: không biên dịch được (xem SCRIPT ERROR phía trên)" % file)
+			total += 1
+			continue
 		var suite = script.new()
 		if suite is Node:
 			add_child(suite)

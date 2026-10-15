@@ -15,9 +15,10 @@ const MODS_ROOT := "user://mods"
 const CATEGORIES: Array[String] = [
 	"chapters", "characters", "events", "dialogues", "items", "endings",
 	"skills", "tech", "locations", "missions", "levels", "enemies",
-	"abilities", "loot", "recipes", "resource_nodes",
+	"abilities", "loot", "recipes", "resource_nodes", "roles",
 ]
-const ITEM_CATEGORIES := ["material", "consumable", "module", "weapon", "key"]
+const ITEM_CATEGORIES := ["material", "consumable", "module", "weapon", "tool", "key"]
+const ABILITY_TYPES := ["heal", "slow_enemies", "time_slow", "aoe", "buff", "turret", "mining_blast", "heal_allies", "flare", "scan"]
 const OBJECTIVE_TYPES := ["collect", "interact", "rescue", "mine", "boss"]
 
 var config: Dictionary = {}
@@ -233,7 +234,7 @@ func validate() -> PackedStringArray:
 		if ability.get("requires", {}).has("skill"):
 			_check_ref(problems, where, "skills", ability.requires.skill)
 		_check_stat_keys(problems, where, ability.get("buff", {}), combat_stats)
-		if not ability.get("type", "") in ["heal", "slow_enemies", "time_slow", "aoe", "buff"]:
+		if not ability.get("type", "") in ABILITY_TYPES:
 			problems.append("%s: type không hợp lệ" % where)
 	for table in all("loot"):
 		for entry in table.get("entries", []) + table.get("guaranteed", []):
@@ -264,6 +265,33 @@ func validate() -> PackedStringArray:
 			for item_id in chapter.starting_loadout[slot]:
 				_check_ref(problems, _where("chapters", chapter.id), "items", item_id)
 
+	var weapon_types := {}
+	var tool_types := {}
+	for item in all("items"):
+		if item.has("weapon"):
+			weapon_types[item.weapon.get("type", "")] = true
+		if item.has("tool"):
+			tool_types[item.tool.get("type", "")] = true
+			if not item.tool.get("type", "") in ["drill", "repair", "turret", "med", "scanner"]:
+				problems.append("%s: tool.type không hợp lệ" % _where("items", item.id))
+	for role in all("roles"):
+		var where := _where("roles", role.id)
+		_check_stat_keys(problems, where, role.get("modifiers", {}), combat_stats)
+		for ability_id in role.get("abilities", []):
+			_check_ref(problems, where, "abilities", ability_id)
+		for key in ["default_weapon", "default_tool"]:
+			if role.has(key):
+				_check_ref(problems, where, "items", role[key])
+		for skill_id in role.get("key_skills", []):
+			_check_ref(problems, where, "skills", skill_id)
+	for character in all("characters"):
+		_check_ref(problems, _where("characters", character.id), "roles", character.get("role", ""))
+	for mission in all("missions"):
+		for role_id in mission.get("recommended_roles", {}):
+			_check_ref(problems, _where("missions", mission.id), "roles", role_id)
+	for level in all("levels"):
+		for enemy_id in level.get("waves", {}).get("enemies", {}):
+			_check_ref(problems, _where("levels", level.id), "enemies", enemy_id)
 	for character in all("characters"):
 		_check_asset(problems, _where("characters", character.id), "res://assets/characters/%s_stand.png", character.get("sprite", ""))
 	for enemy in all("enemies"):

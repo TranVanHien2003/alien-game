@@ -2,7 +2,7 @@ class_name ResourceNode
 extends StaticBody2D
 ## Mỏ tài nguyên / thùng hàng: bắn (hoặc dùng máy cắt plasma) để khai thác, vỡ ra rơi nguyên liệu.
 
-signal depleted(node: ResourceNode)
+signal depleted(node: ResourceNode, by: Node)
 
 var node_id := ""
 var data: Dictionary = {}
@@ -29,14 +29,15 @@ func setup(id: String) -> void:
 	add_child(_sprite)
 
 
-func mine(amount: float) -> void:
+## by: Unit đang khai thác (null nếu do đạn) — dùng để biết ai lấy được thưởng nghiên cứu.
+func mine(amount: float, by: Node = null) -> void:
 	if hp <= 0.0:
 		return
 	hp -= amount
 	_flash = 0.06
 	queue_redraw()
 	if hp <= 0.0:
-		depleted.emit(self)
+		depleted.emit(self, by)
 		get_parent().add_child(Explosion.create(global_position, 30.0, _color, "spark"))
 		queue_free()
 

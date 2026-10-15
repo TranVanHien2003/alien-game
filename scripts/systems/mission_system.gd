@@ -79,21 +79,23 @@ static func launch_auto(game: Node, option: Dictionary, team: Array) -> bool:
 
 
 ## Bắt đầu màn action. Màn chơi đọc game.action_mission và gọi finish_action() khi xong.
-static func start_action(game: Node, option: Dictionary, team: Array, leader: String) -> bool:
-	if option.mission.get("auto_only", false) or not valid_team(game, option.mission, team) or not leader in team:
+static func start_action(game: Node, option: Dictionary, team: Array) -> bool:
+	if option.mission.get("auto_only", false) or not valid_team(game, option.mission, team):
 		return false
-	game.action_mission = _make_entry(game, option, team, leader)
+	game.action_mission = _make_entry(game, option, team, team[0])
+	game.action_mission.difficulty = Difficulty.level(game, option.mission, option.location)
 	return true
 
 
-static func finish_action(game: Node, success: bool, leader_down: bool) -> Dictionary:
+## missing: các thành viên bị bỏ lại trên bản đồ (gục không ai cứu, không kịp về tàu).
+static func finish_action(game: Node, success: bool, missing: Array) -> Dictionary:
 	var entry: Dictionary = game.action_mission
 	if entry.is_empty():
 		return {}
 	game.action_mission = {}
-	var missing := []
-	if leader_down and float(Content.get_entry("missions", entry.mission).get("missing_chance", 0.0)) > 0.0:
-		missing.append(entry.leader)
+	# Trên tàu mẹ thì không ai "mất tích" cả
+	if float(Content.get_entry("missions", entry.mission).get("missing_chance", 0.0)) <= 0.0:
+		missing = []
 	return resolve(game, entry, success, missing)
 
 
@@ -130,7 +132,7 @@ static func resolve(game: Node, entry: Dictionary, success: bool, missing: Array
 			CrewSystem.rescue(game, entry.target)
 	for char_id in missing:
 		CrewSystem.set_missing(game, char_id, entry.location)
-	var report := {"title": title, "success": success, "missing": missing}
+	var report := {"title": title, "success": success, "missing": missing, "difficulty": entry.get("difficulty", 1.0)}
 	game.mission_resolved.emit(report)
 	game.state_changed.emit()
 	return report

@@ -58,10 +58,10 @@ func new_game(seed_value: int = -1) -> void:
 		items[item_id] = int(chapter.starting_items[item_id])
 	loadout = Inventory.default_loadout()
 	loadout.merge(chapter.get("starting_loadout", {}).duplicate(true), true)
-	Inventory.sanitize_loadout(self)
 	crew = {}
 	for char_id in chapter.get("starting_characters", []):
 		CrewSystem.add_member(self, char_id)
+	Inventory.sanitize(self)
 	techs = []
 	research_current = ""
 	research_progress = {}
@@ -322,7 +322,9 @@ func _sanitize() -> void:
 	for item_id in items.keys():
 		if not Content.has_entry("items", item_id):
 			items.erase(item_id)
-	Inventory.sanitize_loadout(self)
+	Inventory.sanitize(self)
+	for char_id in crew:
+		Roles.auto_equip(self, char_id)
 	techs = techs.filter(func(id): return Content.has_entry("tech", id))
 	known_locations = known_locations.filter(func(id): return Content.has_entry("locations", id))
 	active_missions = active_missions.filter(func(m): return Content.has_entry("missions", m.get("mission", "")))

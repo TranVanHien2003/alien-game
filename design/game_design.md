@@ -6,25 +6,43 @@
 
 ## Vòng lặp chính
 
+Người chơi là **chỉ huy** của tàu Âu Cơ. Không trực tiếp cầm súng — mà chọn đội, trang bị theo vai trò và ra lệnh cho từng người trên bản đồ khai phá.
+
 ```
- ┌──────────── HUB (tàu Âu Cơ) ─────────────┐
- │ Sự kiện cốt truyện → lựa chọn              │
- │ Nghiên cứu công nghệ · Chế tạo · Trang bị  │
- │ Huấn luyện kỹ năng công nghệ cao           │
- │ Chọn nhiệm vụ + đội + đội trưởng           │
- └──────┬──────────────────────────┬────────┘
-        │ Đổ bộ (action)            │ Gửi tự động (tung xúc xắc theo kỹ năng)
-        ▼                           ▼
- ┌──────────── MÀN ACTION ──────────┐   Kết quả sau N năm
- │ Đánh quái · Boss · Khai thác mỏ   │
- │ Vùng nguy hiểm · Mục tiêu         │
- │ Về tàu con thoi = mang đồ về      │
- └──────┬────────────────────────────┘
+ ┌──────────────── HUB (tàu Âu Cơ) ────────────────┐
+ │ Sự kiện cốt truyện · Nghiên cứu · Chế tạo         │
+ │ Trang bị từng thành viên theo vai trò              │
+ │ Chọn nhiệm vụ: độ khó ★, thời gian, vai đề cử ✔/✘ │
+ └──────┬───────────────────────────────┬──────────┘
+        │ Đổ bộ (chỉ huy trên bản đồ)    │ Gửi tự động (tung xúc xắc)
+        ▼                                ▼
+ ┌──────────── MÀN KHAI PHÁ (2–6 người) ────────────┐
+ │ Khám phá bản đồ lớn trong bóng tối                 │
+ │ Chiến đấu: quái tại chỗ + đợt quái mạnh dần        │
+ │ Khai thác: thợ mỏ khoan, người khác bắn mỏ         │
+ │ Tủ tiếp tế, mục tiêu, boss                         │
+ │ ⏱ Hết giờ -> buộc rút lui về tàu con thoi          │
+ └──────┬─────────────────────────────────────────────┘
         ▼
- Loot / nguyên liệu / XP / mất tích → nhiệm vụ Giải cứu
-        ▼
- Qua năm: tài nguyên tàu, dân số, tuổi tác, nghiên cứu, sự kiện mới
+ Về tàu: loot, nguyên liệu, XP, điểm nghiên cứu · Bỏ lại: mất tích -> Giải cứu
 ```
+
+## Vai trò
+
+| Vai | Điểm mạnh | Vũ khí | Công cụ | Kỹ năng |
+|---|---|---|---|---|
+| Chiến binh | +40 máu, +10 giáp, +15% sát thương | súng ngắn, trường, tán xạ, súng máy | — | Lựu đạn, Áp chế |
+| Kỹ sư | tương tác ×2 | súng ngắn, tiểu liên | sửa chữa, tháp pháo | Dựng tháp pháo, Quá tải |
+| Thợ mỏ | +150% khai thác, hút đồ xa | súng ngắn, tán xạ | máy khoan | Mìn địa chấn |
+| Y sĩ | hồi máu ×2, cứu nhanh | súng ngắn, tiểu liên | tia hồi phục (tự động) | Xung hồi phục, Sơ cứu |
+| Trinh sát | +60 tốc độ, tầm nhìn xa, chí mạng | súng ngắn, tiểu liên, bắn tỉa | máy quét | Pháo sáng, Chạy nước rút |
+| Nhà khoa học | năng lượng lớn | súng ngắn | máy quét, tia hồi phục | Quét địa hình, Pheromone |
+
+## Độ khó (đồng đều cho mọi màn)
+
+`độ khó = 1 + khoảng_cách × 0.6 + năm × 0.06 + số_lần_đã_làm × 0.25 + tier`
+
+Mỗi điểm độ khó: +18% máu quái, +12% sát thương, +20% số quái, +25% quái mỗi đợt, +12% phần thưởng (mỏ, tủ, loot). Hệ số ở `config.difficulty`.
 
 ## Hệ thống & file dữ liệu
 
@@ -35,7 +53,10 @@
 | Phi hành đoàn, kỹ năng, XP, mất tích | `systems/crew_system.gd` | `characters/`, `skills/` |
 | Nghiên cứu | `systems/research_system.gd` | `tech/` |
 | Nhiệm vụ & giải cứu | `systems/mission_system.gd` | `missions/`, `locations/` |
-| Chỉ số chiến đấu | `systems/combat_stats.gd` | `config.combat_stats`, `config.skill_bonuses` |
+| Chỉ số chiến đấu | `systems/combat_stats.gd` | `config.combat_stats`, `config.skill_bonuses`, `roles[].modifiers` |
+| Vai trò | `systems/roles.gd` | `roles/` |
+| Độ khó | `systems/difficulty.gd` | `config.difficulty`, `missions[].tier` |
+| Đội trên bản đồ | `actors/unit.gd`, `mission/squad_controller.gd` | `config.squad` |
 | Vũ khí, module, vật phẩm | `systems/inventory.gd` | `items/` (category: weapon/module/consumable/material/key) |
 | Kỹ năng chủ động | `systems/abilities.gd`, `actors/player.gd` | `abilities/` |
 | Loot (quái, boss, mỏ, nhiệm vụ, sự kiện) | `systems/loot.gd` | `loot/` |
@@ -71,9 +92,12 @@ Giáp giảm sát thương theo `100 / (100 + giáp)`.
 - Ánh sáng là gameplay: phòng xa tối, đèn pin chỉ chiếu phía trước — quái có thể ẩn trong bóng tối.
 - Hiệu ứng (đạn, nổ, chớp nòng) dùng vật liệu "unshaded + add" để luôn sáng rực.
 
-## Điều khiển (màn action)
+## Điều khiển (màn khai phá)
 
-WASD di chuyển · chuột trái bắn · Shift/chuột phải lướt · 1/2/lăn chuột đổi vũ khí · Q/R kỹ năng · 3/4 vật phẩm · E tương tác · Esc tạm dừng.
+- Chuột trái: chọn / kéo khung (Shift thêm) · 1–6 chọn từng người · Ctrl+A cả đội · bấm thẻ thành viên ở HUD.
+- Chuột phải: lệnh theo ngữ cảnh — sàn: di chuyển theo đội hình · quái: tấn công · mỏ: khai thác · trạm/tủ: tương tác · đồng đội gục: cứu.
+- Q/E/R: kỹ năng của người được chọn đầu tiên (nhắm theo con trỏ) · Z/X: vật phẩm nhanh.
+- H dừng · G giữ vị trí · B rút lui · Space về camera · WASD / mép màn hình / lăn chuột: camera · minimap bấm để nhảy.
 
 ## Lộ trình gợi ý
 

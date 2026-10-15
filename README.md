@@ -1,8 +1,11 @@
 # Âu Cơ: Con Tàu Thế Hệ
 
-Game **action 2D top-down + quản lý tàu thế hệ** làm bằng **Godot 4.7** (GDScript), chạy trên web.
-Một con tàu chở 120 người bay 300 năm đến hành tinh Văn Lang. Bạn điều hành từng thế hệ trên tàu,
-và trực tiếp dẫn đội đổ bộ: **đánh quái, hạ boss, khai thác tài nguyên, giải cứu đồng đội, khai phá vũ trụ**.
+Game **chỉ huy đội khai phá 2D top-down (kiểu RTS chiến thuật) + quản lý tàu thế hệ** làm bằng **Godot 4.7**, chạy trên web.
+Một con tàu chở 120 người bay 300 năm đến hành tinh Văn Lang. Bạn là chỉ huy: chọn đội 2–6 người theo 6 vai trò
+(Chiến binh, Kỹ sư, Thợ mỏ, Y sĩ, Trinh sát, Nhà khoa học), trang bị vũ khí/công cụ, rồi ra lệnh cho họ trên những bản đồ lớn:
+**khám phá, chiến đấu với quái và boss, khai thác tài nguyên, giải cứu đồng đội — và rút lui trước khi hết giờ**.
+
+**Điều khiển:** chuột trái chọn/kéo khung · chuột phải ra lệnh theo ngữ cảnh · 1–6 chọn người · Q/E/R kỹ năng · Z/X vật phẩm · B rút lui · WASD/mép màn hình camera · minimap.
 
 > 🎮 Chơi thử: https://tranvanhien2003.github.io/alien-game/ (sau khi bật GitHub Pages, xem bên dưới)
 

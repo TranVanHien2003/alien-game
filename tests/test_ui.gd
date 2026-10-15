@@ -20,7 +20,7 @@ func test_hub_flow(t) -> void:
 	hub._close_overlay()
 	# Mở màn chuẩn bị nhiệm vụ và chọn đội
 	var option: Dictionary = MissionSystem.available(Game)[0]
-	hub._prep = {"option": option, "team": ["bao", "tuan"], "leader": "bao"}
+	hub._prep = {"option": option, "team": ["bao", "tuan"]}
 	hub._build_missions()
 	t.check(hub._lists["Nhiệm vụ"].get_child_count() > 3, "màn chuẩn bị có nội dung")
 	hub._prep = {}

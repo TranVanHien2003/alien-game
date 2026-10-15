@@ -1,11 +1,13 @@
 extends Node2D
-## Màn action của một nhiệm vụ. Đọc Game.action_mission, sinh bản đồ, quái, mỏ, mục tiêu.
-## Kết thúc khi: về tàu con thoi (thành công nếu xong mục tiêu, rút lui nếu chưa),
-## đội trưởng gục (mất đồ đã nhặt, có thể mất tích), hoặc bỏ nhiệm vụ từ menu tạm dừng.
+## Màn khai phá của một nhiệm vụ. Người chơi là chỉ huy, ra lệnh cho đội (SquadController).
+## Luồng: đổ bộ -> khám phá / chiến đấu / khai thác / làm mục tiêu -> rút lui về tàu con thoi.
+##   - Giới hạn thời gian (missions[].time_limit): hết giờ thì tự động rút lui với đồng hồ đếm ngược.
+##   - Quái kéo đến theo đợt (levels[].waves), mạnh dần theo thời gian và độ khó.
+##   - Ai gục mà không được cứu, hoặc không về kịp tàu khi rút lui -> mất tích (sinh nhiệm vụ Giải cứu).
 ##
 ## Chạy thẳng scene này (F6) để test: script tự tạo ván mới và chọn nhiệm vụ đầu tiên.
 
-const PLAYER := preload("res://scenes/actors/player.tscn")
+const UNIT := preload("res://scenes/actors/unit.tscn")
 const ENEMY := preload("res://scenes/actors/enemy.tscn")
 const RESOURCE_NODE := preload("res://scenes/actors/resource_node.tscn")
 const PICKUP := preload("res://scenes/actors/pickup.tscn")
@@ -20,17 +22,27 @@ const HUB_SCENE := "res://scenes/hub/hub.tscn"
 var entry: Dictionary
 var mission: Dictionary
 var objective: Dictionary
+var params: Dictionary
+var location: Dictionary
+var difficulty := 1.0
 var rng := RandomNumberGenerator.new()
 var gen: LevelGenerator
 var map: LevelMap
-var player: Player
+var camera: Camera2D
+var controller: SquadController
 var exit_zone: ExitZone
+var units: Array = []
 var run_loot: Dictionary = {}
+var run_research := 0.0
 var progress := 0
 var goal := 1
-var _in_exit := false
-## Người chơi xuất phát trong vùng tàu con thoi: chỉ cho rút lui sau khi đã rời khỏi đó một lần
-var _left_spawn := false
+var elapsed := 0.0
+var time_limit := 0.0
+var evac_active := false
+var evac_left := 0.0
+var wave_index := 0
+var next_wave := 0.0
+var _revealed_until := 0.0
 var _finished := false
 
 
@@ -40,30 +52,45 @@ func _ready() -> void:
 	entry = Game.action_mission
 	mission = Content.get_entry("missions", entry.mission)
 	objective = mission.get("objective", {})
-	goal = int(objective.get("count", 1))
-	var location := Content.get_entry("locations", entry.location)
-	var params := Content.get_entry("levels", location.get("type", ""))
+	location = Content.get_entry("locations", entry.location)
+	difficulty = float(entry.get("difficulty", 1.0))
+	params = Content.get_entry("levels", location.get("type", ""))
 	if params.is_empty():
 		params = Content.get_entry("levels", "default")
+	goal = int(objective.get("count", 1))
+	time_limit = float(mission.get("time_limit", 480))
+	var waves: Dictionary = params.get("waves", {})
+	next_wave = float(waves.get("first", 60))
 	rng.seed = Game.rng.randi()
 
 	gen = LevelGenerator.generate(rng, params)
-	# World được y-sort: nhân vật, quái, tường, đồ trang trí che nhau theo chiều sâu (2.5D)
 	world.y_sort_enabled = true
 	map = LevelMap.new()
 	add_child(map)
 	move_child(map, 0)
 	map.build(gen, params, rng, world)
 
-	_spawn_player(location)
-	_spawn_resource_nodes(params)
-	_spawn_enemies(params)
-	_spawn_hazards(params, location)
+	camera = Camera2D.new()
+	camera.position_smoothing_enabled = true
+	camera.position_smoothing_speed = 10.0
+	add_child(camera)
+
+	_spawn_exit()
+	_spawn_squad()
+	_spawn_resource_nodes()
+	_spawn_enemies()
+	_spawn_hazards()
+	_spawn_caches()
 	_spawn_objectives()
 
-	hud.setup(self, player, mission, entry)
+	controller = SquadController.new()
+	world.add_child(controller)
+	controller.setup(self, camera, units, map.world_size())
+	camera.global_position = exit_zone.global_position
+
+	hud.setup(self)
 	hud.resume_pressed.connect(_toggle_pause)
-	hud.abort_pressed.connect(func(): _finish(false, false, false))
+	hud.abort_pressed.connect(_abort)
 	hud.return_pressed.connect(func(): get_tree().change_scene_to_file(HUB_SCENE))
 	_update_objective()
 
@@ -76,79 +103,96 @@ func _debug_setup() -> void:
 		if option.mission.get("auto_only", false):
 			continue
 		var free := CrewSystem.available(Game)
-		var size := int(option.mission.team_size[0])
-		if free.size() >= size and MissionSystem.start_action(Game, option, free.slice(0, size), free[0]):
+		var size := mini(free.size(), int(option.mission.team_size[1]))
+		if size >= int(option.mission.team_size[0]) and MissionSystem.start_action(Game, option, free.slice(0, size)):
 			return
 
 
-# --- Sinh màn -------------------------------------------------------------------
+# --- Sinh màn -----------------------------------------------------------------------
 
-func _spawn_player(location: Dictionary) -> void:
+func _random_room(exclude_spawn: bool = true) -> int:
+	return rng.randi_range(1 if exclude_spawn and gen.rooms.size() > 1 else 0, gen.rooms.size() - 1)
+
+
+func _spawn_exit() -> void:
+	exit_zone = EXIT.instantiate()
+	exit_zone.position = map.cell_to_world(gen.room_center(0))
+	world.add_child(exit_zone)
+
+
+func _spawn_squad() -> void:
 	var protected := []
 	for hazard in location.get("hazards", []):
 		if MissionSystem.is_protected(Game, hazard, entry.team):
 			protected.append(hazard)
-	player = PLAYER.instantiate()
-	player.position = map.cell_to_world(gen.room_center(0))
-	world.add_child(player)
-	player.count_item = func(id): return Game.item_count(id) + int(run_loot.get(id, 0))
-	player.consume_item = _consume_item
-	player.setup(entry.leader, entry.team, Game.loadout, protected)
-	player.died.connect(func(): _finish(false, true, false))
-
-	exit_zone = EXIT.instantiate()
-	exit_zone.position = player.position
-	world.add_child(exit_zone)
-	exit_zone.body_entered.connect(func(b): if b == player: _on_exit_entered())
-	exit_zone.body_exited.connect(_on_exit_left)
+	for i in entry.team.size():
+		var unit: Unit = UNIT.instantiate()
+		unit.position = exit_zone.position + Vector2.from_angle(TAU * i / entry.team.size()) * 70.0
+		world.add_child(unit)
+		unit.setup(entry.team[i], self, protected)
+		unit.downed.connect(func(u): hud.show_message("⚠ %s bị hạ gục! Ra lệnh cứu (chuột phải vào người đó)." % u.display_name()))
+		unit.lost.connect(_on_unit_lost)
+		units.append(unit)
 
 
-func _spawn_resource_nodes(params: Dictionary) -> void:
+func _scaled(count: float, kind: String) -> int:
+	return int(round(count * Difficulty.scale(kind, difficulty)))
+
+
+func _spawn_resource_nodes() -> void:
 	var nodes: Dictionary = params.get("resource_nodes", {}).duplicate()
 	# Nhiệm vụ khai thác: đảm bảo đủ mỏ chứa đúng loại nguyên liệu cần
 	if objective.get("type", "") == "mine":
 		for node in Content.all("resource_nodes"):
 			if node.get("drops", {}).has(objective.item):
 				var per_node := float(node.drops[objective.item][0])
-				nodes[node.id] = maxi(int(nodes.get(node.id, 0)), ceili(goal / per_node) + 2)
+				nodes[node.id] = maxi(int(nodes.get(node.id, 0)), ceili(goal / per_node) + 4)
 				break
 	for node_id in nodes:
-		for i in int(nodes[node_id]):
+		for i in _scaled(float(nodes[node_id]), "reward"):
 			var node: ResourceNode = RESOURCE_NODE.instantiate()
-			node.position = map.cell_to_world(gen.random_cell_in_room(rng, rng.randi_range(1, gen.rooms.size() - 1)))
+			node.position = map.cell_to_world(gen.random_cell_in_room(rng, _random_room()))
 			node.setup(node_id)
 			node.depleted.connect(_on_node_depleted)
 			world.add_child(node)
 
 
-func _spawn_enemies(params: Dictionary) -> void:
-	var bonus := Game.year / 5
+func _spawn_enemies() -> void:
 	for enemy_id in params.get("enemies", {}):
-		for i in int(params.enemies[enemy_id]) + bonus:
-			spawn_enemy(enemy_id, map.cell_to_world(gen.random_cell_in_room(rng, rng.randi_range(1, gen.rooms.size() - 1))))
+		for i in _scaled(float(params.enemies[enemy_id]), "enemy_count"):
+			spawn_enemy(enemy_id, map.cell_to_world(gen.random_cell_in_room(rng, _random_room())))
 
 
 func spawn_enemy(enemy_id: String, pos: Vector2) -> Enemy:
 	var enemy: Enemy = ENEMY.instantiate()
 	enemy.position = pos
 	world.add_child(enemy)
-	enemy.setup(enemy_id, player)
+	enemy.setup(enemy_id, difficulty)
 	enemy.died.connect(_on_enemy_died)
 	enemy.summon_requested.connect(func(id, p): spawn_enemy(id, p))
 	return enemy
 
 
-func _spawn_hazards(params: Dictionary, location: Dictionary) -> void:
+func _spawn_hazards() -> void:
 	var hazards: Array = location.get("hazards", [])
 	if hazards.is_empty():
 		return
-	var dps := float(Content.config.get("player", {}).get("hazard_dps", 8))
+	var dps := float(Content.config.get("player", {}).get("hazard_dps", 8)) * Difficulty.scale("enemy_damage", difficulty)
 	for i in int(params.get("hazard_zones", 0)):
-		var room := gen.rooms[rng.randi_range(1, gen.rooms.size() - 1)]
+		var room := gen.rooms[_random_room()]
 		var zone: HazardZone = HAZARD.instantiate()
 		zone.setup(hazards[rng.randi() % hazards.size()], Vector2(room.size) * map.cell_size * 0.8, dps)
 		zone.position = (Vector2(room.position) + Vector2(room.size) / 2.0) * map.cell_size
 		world.add_child(zone)
+
+
+func _spawn_caches() -> void:
+	for i in _scaled(float(params.get("caches", 0)), "reward"):
+		var cache: Objective = OBJECTIVE.instantiate()
+		cache.setup("cache", "Tủ tiếp tế", map.accent)
+		cache.position = map.cell_to_world(gen.random_cell_in_room(rng, _random_room()))
+		cache.completed.connect(func(c): _drop_loot(Loot.roll(rng, "lt_cache"), c.global_position))
+		world.add_child(cache)
 
 
 func _spawn_objectives() -> void:
@@ -161,28 +205,91 @@ func _spawn_objectives() -> void:
 				if objective.type == "rescue" and entry.target != "":
 					sprite = "res://assets/characters/%s_stand.png" % Content.get_entry("characters", entry.target).get("sprite", "survivor")
 				obj.setup(objective.type, objective.get("label", ""), map.accent, sprite)
-				obj.position = map.cell_to_world(gen.random_cell_in_room(rng, far_rooms[i % far_rooms.size()]))
+				# Rải mục tiêu ở nửa xa của bản đồ để buộc phải khám phá
+				var room: int = far_rooms[(i * 2) % maxi(1, far_rooms.size() / 2 + 1)] if not far_rooms.is_empty() else 0
+				obj.position = map.cell_to_world(gen.random_cell_in_room(rng, room))
 				obj.completed.connect(func(_o): _add_progress(1))
 				world.add_child(obj)
 		"boss":
-			var boss := spawn_enemy(objective.boss, map.cell_to_world(gen.room_center(far_rooms[0])))
-			hud.track_boss(boss)
+			var boss := spawn_enemy(objective.boss, map.cell_to_world(gen.room_center(far_rooms[0] if not far_rooms.is_empty() else 0)))
+			hud.call_deferred("track_boss", boss)
 
 
-# --- Tiến trình -----------------------------------------------------------------
+# --- Kỹ năng gọi từ Unit ------------------------------------------------------------------
+
+func spawn_turret(pos: Vector2, ability: Dictionary, power: float) -> void:
+	var turret := AllyTurret.new()
+	turret.position = pos
+	turret.collision_layer = 0
+	turret.setup(ability, power)
+	world.add_child(turret)
+
+
+func spawn_flare(pos: Vector2, radius: float, duration: float) -> void:
+	var flare := PointLight2D.new()
+	flare.texture = preload("res://assets/fx/light.png")
+	flare.texture_scale = radius / 128.0
+	flare.color = Color("#FFE0B0")
+	flare.energy = 1.0
+	flare.position = pos
+	add_child(flare)
+	world.add_child(Explosion.create(pos, 60.0, Color("#FFE0B0"), "spark"))
+	var tween := create_tween()
+	tween.tween_interval(duration * 0.7)
+	tween.tween_property(flare, "energy", 0.0, duration * 0.3)
+	tween.tween_callback(flare.queue_free)
+
+
+func reveal(duration: float) -> void:
+	_revealed_until = elapsed + duration
+	hud.show_message("Quét địa hình: hiện toàn bộ quái và mỏ trên minimap")
+
+
+func is_revealed() -> bool:
+	return elapsed < _revealed_until
+
+
+func use_consumable(unit: Unit, slot: int) -> void:
+	var list: Array = Game.loadout.get("consumables", [])
+	if slot >= list.size() or not unit.is_active():
+		return
+	var item_id: String = list[slot]
+	if item_count(item_id) <= 0:
+		hud.show_message("Hết " + Content.get_entry("items", item_id).get("name", item_id))
+		return
+	if int(run_loot.get(item_id, 0)) > 0:
+		run_loot[item_id] -= 1
+		if run_loot[item_id] <= 0:
+			run_loot.erase(item_id)
+	else:
+		Game.add_item(item_id, -1)
+	unit.apply_consumable(Content.get_entry("items", item_id).get("use", {}))
+	Sfx.play("pickup")
+	hud.show_message("%s dùng %s" % [unit.display_name(), Content.get_entry("items", item_id).get("name", "")])
+
+
+func item_count(item_id: String) -> int:
+	return Game.item_count(item_id) + int(run_loot.get(item_id, 0))
+
+
+# --- Tiến trình -----------------------------------------------------------------------
 
 func _on_enemy_died(enemy: Enemy) -> void:
 	if enemy.data.has("loot"):
-		_drop_loot(Loot.roll(rng, enemy.data.loot), enemy.global_position)
+		for i in maxi(1, _scaled(1.0, "reward")):
+			_drop_loot(Loot.roll(rng, enemy.data.loot), enemy.global_position)
 	if enemy.is_boss and objective.get("type", "") == "boss" and enemy.enemy_id == objective.boss:
 		_add_progress(1)
 		hud.show_message("%s đã bị hạ!" % enemy.data.get("name", ""))
 
 
-func _on_node_depleted(node: ResourceNode) -> void:
+func _on_node_depleted(node: ResourceNode, by: Node) -> void:
 	_drop_loot(Loot.roll_drops(rng, node.data.get("drops", {})), node.global_position)
 	if node.data.has("loot"):
 		_drop_loot(Loot.roll(rng, node.data.loot), node.global_position)
+	# Nhà khoa học / máy quét phân tích vật chất lạ -> điểm nghiên cứu
+	if node.node_id in ["crystal_vein", "xeno_pod"] and units.any(func(u): return u.is_active() and u.tool_data().get("type", "") == "scanner"):
+		run_research += 2.0
 
 
 func _drop_loot(loot: Dictionary, pos: Vector2) -> void:
@@ -190,8 +297,8 @@ func _drop_loot(loot: Dictionary, pos: Vector2) -> void:
 		if int(loot[item_id]) <= 0:
 			continue
 		var pickup: Pickup = PICKUP.instantiate()
-		pickup.position = pos + Vector2.from_angle(rng.randf() * TAU) * rng.randf_range(4.0, 22.0)
-		pickup.setup(item_id, int(loot[item_id]), player)
+		pickup.position = pos + Vector2.from_angle(rng.randf() * TAU) * rng.randf_range(4.0, 26.0)
+		pickup.setup(item_id, int(loot[item_id]))
 		pickup.picked.connect(_on_picked)
 		world.call_deferred("add_child", pickup)
 
@@ -204,22 +311,12 @@ func _on_picked(item_id: String, count: int) -> void:
 	hud.update_loot(run_loot)
 
 
-func _consume_item(item_id: String) -> void:
-	if int(run_loot.get(item_id, 0)) > 0:
-		run_loot[item_id] -= 1
-		if run_loot[item_id] <= 0:
-			run_loot.erase(item_id)
-		hud.update_loot(run_loot)
-	else:
-		Game.add_item(item_id, -1)
-
-
 func _add_progress(amount: int) -> void:
 	progress = mini(goal, progress + amount)
 	_update_objective()
 	if objective_done():
 		exit_zone.unlocked = true
-		hud.show_message("Mục tiêu hoàn thành! Quay về tàu con thoi.")
+		hud.show_message("Mục tiêu hoàn thành! Nhấn B (Rút lui) để đưa đội về tàu con thoi.")
 
 
 func objective_done() -> bool:
@@ -230,29 +327,75 @@ func _update_objective() -> void:
 	hud.set_objective("%s: %d/%d" % [objective.get("label", "Mục tiêu"), progress, goal], objective_done())
 
 
-func _on_exit_left(body: Node) -> void:
-	if body == player:
-		_in_exit = false
-		_left_spawn = true
+func _on_unit_lost(unit: Unit) -> void:
+	hud.show_message("✝ Mất liên lạc với %s." % unit.display_name())
 
 
-func _on_exit_entered() -> void:
-	_in_exit = true
-	if not _left_spawn and not objective_done():
-		return
-	if objective_done():
-		_finish(true, false, true)
-	else:
-		hud.show_message("Nhấn E để rút lui (nhiệm vụ thất bại, giữ đồ đã nhặt)")
+func active_units() -> Array:
+	return units.filter(func(u): return u.is_active())
 
 
-func _process(_delta: float) -> void:
+# --- Thời gian, đợt quái, rút lui ------------------------------------------------------------
+
+func _process(delta: float) -> void:
 	if _finished:
 		return
-	if _in_exit and _left_spawn and Input.is_action_just_pressed("interact") and not objective_done():
-		_finish(false, false, true)
 	if Input.is_action_just_pressed("pause"):
 		_toggle_pause()
+	if get_tree().paused:
+		return
+	elapsed += delta
+	if not evac_active and elapsed >= time_limit:
+		hud.show_message("⚠ Hết thời gian! Tàu con thoi buộc phải cất cánh.")
+		call_evac()
+	if elapsed >= next_wave and not evac_active:
+		_spawn_wave()
+	if active_units().is_empty():
+		# Cả đội gục / mất liên lạc: không ai mang được gì về
+		_finish(false, false)
+		return
+	if evac_active:
+		evac_left -= delta
+		var outside := active_units().filter(func(u): return not u in exit_zone.units_inside())
+		if outside.is_empty() or evac_left <= 0.0:
+			_finish(objective_done(), true)
+
+
+func _spawn_wave() -> void:
+	var waves: Dictionary = params.get("waves", {})
+	wave_index += 1
+	next_wave = elapsed + float(waves.get("interval", 60))
+	var far_rooms := gen.rooms_by_distance_desc()
+	if far_rooms.is_empty():
+		return
+	var room: int = far_rooms[rng.randi() % maxi(1, far_rooms.size() / 2)]
+	var growth := int(waves.get("growth", 1)) * (wave_index - 1)
+	var count := 0
+	for enemy_id in waves.get("enemies", {}):
+		for i in _scaled(float(waves.enemies[enemy_id]) + growth, "wave_size"):
+			var enemy := spawn_enemy(enemy_id, map.cell_to_world(gen.random_cell_in_room(rng, room)))
+			enemy._awake = true
+			count += 1
+	hud.show_message("⚠ Đợt quái thứ %d (%d con) đang kéo đến!" % [wave_index, count])
+
+
+func call_evac() -> void:
+	if evac_active or _finished:
+		return
+	evac_active = true
+	evac_left = float(Content.config.get("squad", {}).get("evac_countdown", 25))
+	var group := active_units()
+	for i in group.size():
+		group[i].command({"type": "evac", "pos": exit_zone.global_position + Vector2.from_angle(TAU * i / maxf(1, group.size())) * 50.0})
+	hud.show_message("RÚT LUI! Mọi người về tàu con thoi trong %d giây." % roundi(evac_left))
+
+
+func seconds_left() -> float:
+	return maxf(0.0, time_limit - elapsed)
+
+
+func next_wave_in() -> float:
+	return maxf(0.0, next_wave - elapsed)
 
 
 func _toggle_pause() -> void:
@@ -262,17 +405,37 @@ func _toggle_pause() -> void:
 	hud.show_pause(get_tree().paused)
 
 
-func _finish(success: bool, leader_down: bool, keep_loot: bool) -> void:
+func _abort() -> void:
+	# Bỏ nhiệm vụ: tàu con thoi đón ngay những ai còn đứng được, không mang đồ về
+	for u in active_units():
+		u.state = Unit.State.EVACUATED
+	run_loot = {}
+	_finish(false, false)
+
+
+## evacuated: true nếu kết thúc bằng rút lui (người trong vùng tàu con thoi được đón).
+func _finish(success: bool, evacuated: bool) -> void:
 	if _finished:
 		return
 	_finished = true
 	get_tree().paused = false
 	Engine.time_scale = 1.0
-	player.set_physics_process(false)
+	var aboard := []
+	var missing := []
+	for u in units:
+		var safe: bool = u.state == Unit.State.EVACUATED or (evacuated and u.is_active() and u in exit_zone.units_inside())
+		if safe:
+			aboard.append(u.char_id)
+		else:
+			missing.append(u.char_id)
+		u.set_physics_process(false)
+	var keep_loot := not aboard.is_empty()
 	if keep_loot:
 		Loot.give(Game, run_loot)
-	var report := MissionSystem.finish_action(Game, success, leader_down)
+		if success and run_research > 0.0:
+			ResearchSystem.add_points(Game, run_research)
+	var report := MissionSystem.finish_action(Game, success, missing)
 	SaveManager.save_game()
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.set_physics_process(false)
-	hud.show_result(report, run_loot if keep_loot else {}, leader_down)
+	hud.show_result(report, run_loot if keep_loot else {}, aboard)

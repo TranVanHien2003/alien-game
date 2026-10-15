@@ -1,0 +1,165 @@
+[
+	{
+		"id": "soldier",
+		"name": "Chiến binh",
+		"color": "#FF5A5A",
+		"description": "Tuyến đầu. Máu và giáp cao, hỏa lực mạnh.",
+		"modifiers": {
+			"max_hp": 40,
+			"armor": 10,
+			"damage_mult": 0.15
+		},
+		"weapon_types": [
+			"pistol",
+			"rifle",
+			"shotgun",
+			"heavy"
+		],
+		"tool_types": [],
+		"abilities": [
+			"frag_grenade",
+			"suppress"
+		],
+		"key_skills": [
+			"survival",
+			"command"
+		],
+		"default_weapon": "w_assault_rifle"
+	},
+	{
+		"id": "engineer",
+		"name": "Kỹ sư",
+		"color": "#FFC94D",
+		"description": "Sửa chữa, mở khóa, dựng tháp pháo. Tương tác nhanh gấp đôi.",
+		"modifiers": {
+			"interact_speed": 1.0,
+			"armor": 5
+		},
+		"weapon_types": [
+			"pistol",
+			"smg"
+		],
+		"tool_types": [
+			"repair",
+			"turret"
+		],
+		"abilities": [
+			"deploy_turret",
+			"overcharge"
+		],
+		"key_skills": [
+			"engineering"
+		],
+		"default_weapon": "w_pulse_pistol",
+		"default_tool": "t_repair_kit"
+	},
+	{
+		"id": "miner",
+		"name": "Thợ mỏ",
+		"color": "#C9A27A",
+		"description": "Khai thác cực nhanh, chịu đòn tốt.",
+		"modifiers": {
+			"mining_power": 1.5,
+			"max_hp": 20,
+			"pickup_radius": 40
+		},
+		"weapon_types": [
+			"pistol",
+			"shotgun"
+		],
+		"tool_types": [
+			"drill"
+		],
+		"abilities": [
+			"seismic_charge"
+		],
+		"key_skills": [
+			"engineering",
+			"survival"
+		],
+		"default_weapon": "w_pulse_pistol",
+		"default_tool": "t_mining_drill"
+	},
+	{
+		"id": "medic",
+		"name": "Y sĩ",
+		"color": "#7CFFB2",
+		"description": "Tự hồi máu đồng đội gần đó, cứu người gục rất nhanh.",
+		"modifiers": {
+			"heal_power": 1.0,
+			"revive_speed": 1.5
+		},
+		"weapon_types": [
+			"pistol",
+			"smg"
+		],
+		"tool_types": [
+			"med"
+		],
+		"abilities": [
+			"heal_pulse",
+			"field_medic"
+		],
+		"key_skills": [
+			"medicine"
+		],
+		"default_weapon": "w_pulse_pistol",
+		"default_tool": "t_med_beam"
+	},
+	{
+		"id": "scout",
+		"name": "Trinh sát",
+		"color": "#00E5FF",
+		"description": "Nhanh, tầm nhìn xa, bắn tỉa từ xa.",
+		"modifiers": {
+			"move_speed": 60,
+			"sight_radius": 160,
+			"crit_chance": 0.1
+		},
+		"weapon_types": [
+			"pistol",
+			"smg",
+			"sniper"
+		],
+		"tool_types": [
+			"scanner"
+		],
+		"abilities": [
+			"flare",
+			"sprint"
+		],
+		"key_skills": [
+			"piloting",
+			"survival"
+		],
+		"default_weapon": "w_smg",
+		"default_tool": "t_scanner"
+	},
+	{
+		"id": "scientist",
+		"name": "Nhà khoa học",
+		"color": "#FF2BD6",
+		"description": "Quét địa hình, phân tích mẫu vật: thêm điểm nghiên cứu khi khai thác vật chất lạ.",
+		"modifiers": {
+			"max_energy": 40,
+			"energy_regen": 4,
+			"sight_radius": 60
+		},
+		"weapon_types": [
+			"pistol"
+		],
+		"tool_types": [
+			"scanner",
+			"med"
+		],
+		"abilities": [
+			"scan",
+			"xeno_pheromone"
+		],
+		"key_skills": [
+			"science"
+		],
+		"default_weapon": "w_pulse_pistol",
+		"default_tool": "t_scanner"
+	}
+]

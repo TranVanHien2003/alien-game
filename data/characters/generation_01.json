@@ -2,7 +2,8 @@
 	{
 		"id": "khang",
 		"name": "Trần Minh Khang",
-		"role": "Thuyền trưởng",
+		"title": "Thuyền trưởng",
+		"role": "soldier",
 		"generation": 1,
 		"birth_year": -48,
 		"traits": [
@@ -19,7 +20,8 @@
 	{
 		"id": "thu_ha",
 		"name": "Lê Thu Hà",
-		"role": "Trưởng y tế",
+		"title": "Trưởng y tế",
+		"role": "medic",
 		"generation": 1,
 		"birth_year": -41,
 		"traits": [
@@ -36,7 +38,8 @@
 	{
 		"id": "bao",
 		"name": "Nguyễn Văn Bảo",
-		"role": "Kỹ sư trưởng",
+		"title": "Kỹ sư trưởng",
+		"role": "engineer",
 		"generation": 1,
 		"birth_year": -35,
 		"traits": [
@@ -53,7 +56,8 @@
 	{
 		"id": "lan_anh",
 		"name": "Phạm Lan Anh",
-		"role": "Kỹ sư nông nghiệp",
+		"title": "Kỹ sư nông nghiệp",
+		"role": "scientist",
 		"generation": 1,
 		"birth_year": -29,
 		"traits": [
@@ -71,7 +75,8 @@
 	{
 		"id": "lac",
 		"name": "LẠC",
-		"role": "Trí tuệ nhân tạo của tàu",
+		"title": "Trí tuệ nhân tạo của tàu",
+		"role": "scientist",
 		"generation": 0,
 		"birth_year": -5,
 		"traits": [
@@ -89,7 +94,8 @@
 	{
 		"id": "huy",
 		"name": "Đỗ Quang Huy",
-		"role": "Phi công",
+		"title": "Phi công",
+		"role": "scout",
 		"generation": 1,
 		"birth_year": -27,
 		"traits": [
@@ -105,7 +111,8 @@
 	{
 		"id": "mai",
 		"name": "Vũ Ngọc Mai",
-		"role": "Nhà vật lý thiên văn",
+		"title": "Nhà vật lý thiên văn",
+		"role": "scientist",
 		"generation": 1,
 		"birth_year": -33,
 		"traits": [
@@ -122,7 +129,8 @@
 	{
 		"id": "tuan",
 		"name": "Hoàng Tuấn",
-		"role": "Chuyên viên EVA",
+		"title": "Chuyên viên EVA",
+		"role": "miner",
 		"generation": 1,
 		"birth_year": -25,
 		"traits": [
@@ -135,5 +143,80 @@
 			"piloting": 1
 		},
 		"sprite": "soldier"
+	},
+	{
+		"id": "hai",
+		"name": "Lý Văn Hải",
+		"title": "Thợ mỏ tiểu hành tinh",
+		"role": "miner",
+		"generation": 1,
+		"birth_year": -38,
+		"traits": [
+			"chăm chỉ",
+			"ít nói"
+		],
+		"bio": "Thợ mỏ tiểu hành tinh ba đời. Nghe tiếng đá là biết bên trong có gì.",
+		"skills": {
+			"engineering": 3,
+			"survival": 3
+		},
+		"sprite": "man_old"
+	},
+	{
+		"id": "quang",
+		"name": "Trịnh Quang",
+		"title": "Lính thủy đánh bộ",
+		"role": "soldier",
+		"generation": 1,
+		"birth_year": -30,
+		"traits": [
+			"kỷ luật",
+			"nóng tính"
+		],
+		"bio": "Cựu lính thủy đánh bộ. Ngủ cũng ôm súng.",
+		"skills": {
+			"survival": 3,
+			"command": 2,
+			"piloting": 1
+		},
+		"sprite": "soldier",
+		"tint": "#FFD8D8"
+	},
+	{
+		"id": "thanh",
+		"name": "Đào Thanh",
+		"title": "Trinh sát viên",
+		"role": "scout",
+		"generation": 1,
+		"birth_year": -24,
+		"traits": [
+			"nhanh nhẹn",
+			"tò mò"
+		],
+		"bio": "Trẻ nhất đoàn khởi hành. Luôn là người đầu tiên bước vào nơi chưa ai đến.",
+		"skills": {
+			"piloting": 3,
+			"survival": 2
+		},
+		"sprite": "survivor",
+		"tint": "#D8F0FF"
+	},
+	{
+		"id": "bich",
+		"name": "Ngô Ngọc Bích",
+		"title": "Y tá phẫu thuật",
+		"role": "medic",
+		"generation": 1,
+		"birth_year": -31,
+		"traits": [
+			"điềm tĩnh"
+		],
+		"bio": "Y tá phẫu thuật. Từng cứu sống cả một trạm quỹ đạo sau vụ nổ.",
+		"skills": {
+			"medicine": 3,
+			"science": 1
+		},
+		"sprite": "woman_green",
+		"tint": "#FFE8F0"
 	}
 ]
